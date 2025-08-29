@@ -1,209 +1,326 @@
 <!doctype html>
-<html lang="en">
+<html lang="et">
 <head>
+  <!-- BUILD v24 -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Edvin Tirmaste | Portfolio</title>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-
+  <title>Edvin Tirmaste — Portfolio</title>
+  <meta name="description" content="Edvin Tirmaste — Fotograafia & video." />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
-    /* ---------- Base ---------- */
     :root{
-      --bg:#0c0f1b;
-      --ink:#ffffff;
-      --ink-dim:rgba(255,255,255,.92);
+      --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2; --brand-glow:#fff59a;
+
+      --header-h: 92px;
+
+      /* Brand spread */
+      --brand-min: 520px;
+      --brand-fluid: 70vw;
+      --brand-max: 1000px;
+      --brand-size: clamp(14px, 1vw, 20px);
+      --word-gap: clamp(14px, 2vw, 48px);
+
+      /* Top bar fade */
+      --bar-top:.75; --bar-btm:.30;
+      --fade-height: 96px; --fade-start:.28;
+
+      /* Divider (center line + glow) */
+      --divider-opacity:.35;
+      --divider-glow-width: 34px;
+      --divider-glow-blur: 14px;
+
+      /* Frosted on hover */
+      --frost-bg: rgba(255,255,255,.06);
+      --frost-blur: 8px;
+      --frost-sat: 115%;
+      --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
+
+      /* Arrow accents */
+      --accent-left:#8dd8ff;
+      --accent-right:#ffb3e1;
     }
+
     *{box-sizing:border-box}
-    html,body{height:100%}
+    html{
+      scroll-behavior:smooth;
+      scroll-snap-type:y mandatory;
+      scroll-padding-top: var(--header-h);
+    }
     body{
-      margin:0;
-      color:var(--ink);
-      background: var(--bg);
-      font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
-
-    /* ---------- Header name (top bar, spaced letters) ---------- */
-    .site-title{
-      position: fixed;
-      inset: 0 auto auto 50%;
-      transform: translateX(-50%);
-      margin-top: 12px;
-      font-family:"Space Grotesk", system-ui, sans-serif;
-      font-weight:600;
-      letter-spacing: 1.25rem;
-      text-transform: uppercase;
-      font-size:.85rem;
-      opacity:.9;
-      user-select:none;
-      pointer-events:none;
-      white-space:nowrap;
-      z-index: 6;
-      /* no borders/lines */
-      background: transparent;
-    }
-
-    /* ---------- Split hero ---------- */
-    .split-hero{
+      margin:0; background:var(--bg); color:var(--fg);
+      font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
       position:relative;
-      min-height:100svh;
-      overflow:hidden;
-      isolation:isolate;
-      /* Side “spray” vibe – non-destructive to your assets */
-      background:
-        radial-gradient(1400px 80% at -10% 50%, rgba(251,234,70,.45), rgba(251,234,70,0) 55%),
-        radial-gradient(1400px 80% at 110% 50%, rgba(251,234,70,.45), rgba(251,234,70,0) 55%),
-        radial-gradient(900px 70% at -15% 50%, rgba(140,100,255,.28), rgba(140,100,255,0) 60%),
-        radial-gradient(900px 70% at 115% 50%, rgba(140,100,255,.28), rgba(140,100,255,0) 60%),
-        var(--bg);
     }
-    .split-hero::after{
-      content:"";
-      position:absolute; inset:0;
-      background-image: radial-gradient(rgba(255,255,255,.12) 1px, transparent 1px);
-      background-size: 3px 3px;
-      mix-blend-mode: overlay;
-      opacity:.05;
-      pointer-events:none;
+
+    /* Background */
+    .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
+    .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
+
+    /* Top bar with soft fade */
+    header.site-header{
+      position:fixed; top:0; left:0; right:0; height:var(--header-h); z-index:10;
+      background: linear-gradient(to bottom,
+        rgba(2,2,28,var(--bar-top)),
+        rgba(2,2,28,var(--bar-btm))
+      );
+      backdrop-filter: blur(4px) saturate(110%);
+      -webkit-backdrop-filter: blur(4px) saturate(110%);
+      border:0; box-shadow:none;
+    }
+    header.site-header::after{
+      content:""; position:absolute; left:0; right:0; top:100%;
+      height:var(--fade-height); pointer-events:none;
+      background: linear-gradient(to bottom,
+        rgba(2,2,28,var(--fade-start)) 0%,
+        rgba(2,2,28,0) 100%
+      );
+    }
+    .nav{
+      height:var(--header-h); display:flex; align-items:center; justify-content:center;
+      padding-inline: clamp(16px, 5vw, 64px);
+    }
+
+    /* Brand (spread letters) */
+    .brand{
+      width: clamp(var(--brand-min), var(--brand-fluid), var(--brand-max));
+      display:flex; align-items:center; justify-content:space-between;
+      text-transform:uppercase; letter-spacing:0; white-space:nowrap;
+      user-select:none; filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
+    }
+    .brand span{
+      font-family:"Space Grotesk", Inter, system-ui;
+      font-weight:700; font-size:var(--brand-size); line-height:1;
+      text-shadow:0 0 16px rgba(255,245,154,.32);
+    }
+    .brand .space{ flex:0 0 var(--word-gap); }
+
+    /* ===== EXACT HALF/HALF HERO ===== */
+    .hero{
+      margin-top: var(--header-h);
+      height: calc(100svh - var(--header-h));
+      scroll-snap-align:start;
+      position:relative;
       z-index:1;
     }
-
-    /* vertical center glow */
-    .center-glow{
-      position:absolute;
-      top:0; bottom:0; left:50%;
-      width:2px;
-      transform:translateX(-50%);
-      background:linear-gradient(180deg, transparent, rgba(170,179,255,.4), transparent);
-      filter: blur(2px);
-      opacity:.5;
-      z-index:2;
-      pointer-events:none;
-    }
-
-    /* Clickable halves */
-    .side{
-      position:absolute; inset:0;
-      display:grid; place-items:end start;
-      text-decoration:none; color:inherit;
-      z-index:3;
-      transition: opacity .25s ease, transform .25s ease;
-    }
-    .side--left  { grid-template-columns: 1fr 1fr; clip-path: inset(0 50% 0 0); }
-    .side--right { grid-template-columns: 1fr 1fr; clip-path: inset(0 0 0 50%); place-items:end end; }
-
-    .side-inner{ padding: clamp(18px, 5vw, 56px); }
-
-    .side-title{
-      margin:0 0 .35rem 0;
-      font-family:"Space Grotesk", system-ui, sans-serif;
-      font-weight:700;
-      letter-spacing:.15em;
-      text-transform:uppercase;
-      font-size: clamp(28px, 4vw, 48px);
-      text-shadow: 0 4px 20px rgba(0,0,0,.45);
-    }
-    .side-tags{
-      margin:.1rem 0 0 0;
-      font-size: .85rem;
-      letter-spacing:.18em;
-      text-transform:uppercase;
-      opacity:.75;
-    }
-    .side:hover .side-title{ opacity:.95; transform: translateY(-1px); }
-
-    /* ---------- Intros in the upper corners (AGREED TEXTS) ---------- */
+    /* intro pill (longer, about/skills) */
     .intro{
-      position:absolute;
-      z-index:4;
-      top: 14vh;
-      max-width: 36ch;
-      font-weight:400;
-      line-height:1.45;
-      letter-spacing:.01em;
-      color: var(--ink-dim);
-      text-wrap: balance;
-      pointer-events:none;
-      text-shadow: 0 0 12px rgba(20, 20, 60, 0.65);
-      font-size: clamp(14px, 1.6vw, 18px);
-    }
-    .intro--left  { left: 8vw; }
-    .intro--right { right: 8vw; text-align:right; }
-
-    /* ---------- “Choose your focus” pill ---------- */
-    .focus-pill{
-      position:absolute;
-      top: 64px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index:5;
-      font-size:.72rem;
-      letter-spacing:.22em;
-      text-transform:uppercase;
-      padding:.5rem .9rem;
-      border-radius: 999px;
+      position:absolute; left:50%; top:10px; transform:translateX(-50%);
+      font-size: clamp(12px, 1.02vw, 14px);
+      letter-spacing:.06em; color:var(--muted);
+      background: rgba(2,2,28,.46);
       border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.05);
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      user-select:none;
+      padding:8px 14px; border-radius:999px;
+      -webkit-backdrop-filter: blur(6px) saturate(120%);
+      backdrop-filter: blur(6px) saturate(120%);
+      box-shadow: 0 6px 18px rgba(0,0,0,.25);
       pointer-events:none;
     }
 
-    /* ---------- Mobile ---------- */
-    @media (max-width: 900px){
-      .site-title{ letter-spacing:.8rem; font-size:.8rem; }
-      .intro{ top: 11vh; max-width: 30ch; }
+    .split-50{
+      position:relative;
+      display:grid; grid-template-columns: 1fr 1fr; gap:0;
+      inline-size:100%; block-size:100%;
     }
-    @media (max-width: 820px){
-      .center-glow{ display:none; }
-      .side{ clip-path: none; position:relative; display:block; }
-      .side--left, .side--right{ grid-template-columns: 1fr; }
-      .side-inner{ padding: 1.25rem; }
-      .intro{
-        position:static;
-        margin: 84px 1.25rem 0;
-        text-align:left;
-        pointer-events:auto;
-      }
-      .intro--right{ text-align:left; margin-top:.75rem; }
-      .focus-pill{ top: 20px; }
+    .split-50::after{
+      content:""; position:absolute; inset-block:0; inset-inline-start:50%;
+      width:1px; transform:translateX(-.5px);
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,.18), transparent);
+      opacity:var(--divider-opacity); pointer-events:none;
+    }
+    .split-50::before{
+      content:""; position:absolute; inset-block:0; inset-inline-start:50%;
+      width: var(--divider-glow-width); transform:translateX(-50%);
+      background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
+      filter: blur(var(--divider-glow-blur));
+      opacity:.42; pointer-events:none;
+    }
+
+    .half{
+      display:flex; align-items:center; justify-content:center; flex-direction:column;
+      gap:12px;
+      inline-size:100%; block-size:100%;
+      text-decoration:none; color:var(--fg);
+      background: transparent;
+      -webkit-backdrop-filter: none; backdrop-filter: none;
+      transition: background-color .25s ease, backdrop-filter .25s ease, transform .25s ease, box-shadow .25s ease, opacity .25s ease;
+      position:relative; isolation:isolate;
+      padding: 0 clamp(18px, 3.5vw, 48px);
+    }
+    .half:hover{
+      background: var(--frost-bg);
+      -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat));
+      backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat));
+      box-shadow: var(--frost-shadow);
+    }
+
+    /* edge chevrons */
+    .edge{
+      position:absolute; top:50%; transform:translateY(-50%); z-index:2;
+      width:46px; height:46px; pointer-events:none;
+    }
+    .edge .disc{
+      position:absolute; inset:0; border-radius:999px;
+      background: rgba(2,2,28,.50);
+      border:1px solid rgba(255,255,255,.14);
+      -webkit-backdrop-filter: blur(6px) saturate(120%);
+      backdrop-filter: blur(6px) saturate(120%);
+      box-shadow: 0 6px 18px rgba(0,0,0,.35);
+    }
+    .edge svg{
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      width:24px; height:24px; fill:none; stroke-width:2.25; stroke-linecap:round; stroke-linejoin:round;
+      filter: drop-shadow(0 1px 6px rgba(0,0,0,.35));
+    }
+    .edge-left{ left:12px; }
+    .edge-right{ right:12px; }
+    .edge-left svg{ stroke: var(--accent-left); }
+    .edge-right svg{ stroke: var(--accent-right); }
+    .half:hover .edge{ transform:translateY(-50%) scale(1.06); }
+
+    .half h2{
+      margin:0;
+      font-family:"Space Grotesk", Inter, system-ui;
+      font-size: clamp(28px, 3.6vw, 56px);
+      letter-spacing:.10em; text-transform:uppercase;
+      text-shadow:0 2px 18px rgba(0,0,0,.45);
+      pointer-events:none;
+      text-align:center;
+    }
+
+    /* bullets under each heading */
+    .bullets{
+      margin:0; padding:0; list-style:none;
+      display:flex; flex-direction:column; gap:8px;
+      color:var(--muted);
+      font-size: clamp(12px, 1vw, 15px);
+      line-height:1.35;
+      max-width: 40ch;
+      text-align:center;
+      opacity:.95;
+    }
+    .bullets li{
+      display:flex; align-items:center; gap:10px; justify-content:center;
+    }
+    .bullets li::before{
+      content:"•"; opacity:.7;
+    }
+    .half:hover .bullets{ color:var(--fg); opacity:1; }
+
+    /* Sections below */
+    .panel{
+      min-height:100svh; padding: 24px clamp(16px, 5vw, 64px);
+      display:flex; align-items:center; justify-content:center;
+      scroll-snap-align:start; position:relative; z-index:1;
+    }
+    .section-wrap{ width:min(1100px, 92vw); margin-inline:auto; }
+    .section-wrap h3{
+      font-family:"Space Grotesk", Inter, system-ui; font-size: clamp(22px, 2.4vw, 36px);
+      letter-spacing:.04em; margin:0 0 12px 0;
+    }
+    .section-wrap p{ margin:0 0 18px 0; color:var(--muted) }
+
+    /* debug badge */
+    .debug-badge{
+      position:fixed; left:8px; top:8px; z-index:9999;
+      font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px; opacity:.85;
+      box-shadow:0 2px 8px rgba(0,0,0,.25);
+      user-select:none; pointer-events:none;
+    }
+
+    @media (max-width: 900px){
+      .intro{ top:8px }
+      .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+      .split-50::after, .split-50::before{ display:none; }
+      .edge-left{ left:10px }
+      .edge-right{ right:10px }
+      .bullets{ max-width: 46ch; }
     }
   </style>
 </head>
 <body>
+  <div class="debug-badge">v24</div>
 
-  <header class="site-title">E D V I N&nbsp;&nbsp;T I R M A S T E</header>
-  <div class="focus-pill">Choose your focus</div>
+  <!-- Background -->
+  <div class="bg-wrap" aria-hidden="true">
+    <img src="assets/mainpagebg.png?v=24" alt="">
+  </div>
 
-  <main class="split-hero">
-    <!-- Upper-corner intros (exact texts) -->
-    <div class="intro intro--left">
-      I shape photography to your story and aesthetic.
+  <!-- Top bar -->
+  <header class="site-header" role="banner">
+    <div class="nav">
+      <div class="brand" id="brand">EDVIN TIRMASTE</div>
     </div>
-    <div class="intro intro--right">
-      Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens.
+  </header>
+
+  <!-- EXACT HALF/HALF HERO -->
+  <section class="hero" id="home" aria-label="Split hero">
+    <div class="intro">Filmmaker-trained generalist in Tallinn — story-first visuals built for web & social.</div>
+
+    <div class="split-50">
+      <a class="half left" href="#photo">
+        <span class="edge edge-left" aria-hidden="true">
+          <span class="disc"></span>
+          <svg viewBox="0 0 24 24"><path d="M15 5 L7 12 L15 19"/></svg>
+        </span>
+        <h2>Photography</h2>
+        <ul class="bullets">
+          <li>Events & candid storytelling</li>
+          <li>Portraits with natural-light + clean retouch</li>
+          <li>Brand/product shots optimized for web & social</li>
+        </ul>
+      </a>
+
+      <a class="half right" href="#video">
+        <span class="edge edge-right" aria-hidden="true">
+          <span class="disc"></span>
+          <svg viewBox="0 0 24 24"><path d="M9 5 L17 12 L9 19"/></svg>
+        </span>
+        <h2>Videography</h2>
+        <ul class="bullets">
+          <li>Short-form reels with tight music timing</li>
+          <li>Shoot → edit → export (vertical & 16:9)</li>
+          <li>Color grade + sound polish for clarity</li>
+        </ul>
+      </a>
     </div>
+  </section>
 
-    <!-- Left half -->
-    <a class="side side--left" href="photography.html" aria-label="Go to Photography">
-      <div class="side-inner">
-        <h2 class="side-title">Photography</h2>
-        <p class="side-tags">Events • Portraits • Brands</p>
-      </div>
-    </a>
+  <!-- PHOTO (stub) -->
+  <section class="panel" id="photo" aria-label="Photography">
+    <div class="section-wrap">
+      <h3>Photography</h3>
+      <p>Gallery/cards go here.</p>
+    </div>
+  </section>
 
-    <!-- Right half -->
-    <a class="side side--right" href="videography.html" aria-label="Go to Videography">
-      <div class="side-inner">
-        <h2 class="side-title">Videography</h2>
-        <p class="side-tags">Reels • Edits • Promos</p>
-      </div>
-    </a>
+  <!-- VIDEO (stub) -->
+  <section class="panel" id="video" aria-label="Videography">
+    <div class="section-wrap">
+      <h3>Videography</h3>
+      <p>Reels / modal player here.</p>
+    </div>
+  </section>
 
-    <div class="center-glow" aria-hidden="true"></div>
-  </main>
+  <footer class="panel" style="min-height:auto; padding:40px 24px; scroll-snap-align:end">
+    <div class="section-wrap">
+      © <span id="y"></span> Edvin Tirmaste
+    </div>
+  </footer>
 
+  <script>
+    // Build spaced letters in header
+    (function(){
+      const el = document.getElementById('brand');
+      const text = el.textContent.trim().toUpperCase();
+      el.textContent = '';
+      for (const ch of text){
+        const span = document.createElement('span');
+        if (ch === ' ') { span.className = 'space'; }
+        else { span.textContent = ch; }
+        el.appendChild(span);
+      }
+    })();
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
