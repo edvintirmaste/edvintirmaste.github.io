@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v24 + corner intros closer + inline bullets + aligned headings -->
+  <!-- BUILD v24 + intro pills + no-overlap + inline bullets + aligned headings -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -38,8 +38,9 @@
       --accent-left:#8dd8ff;
       --accent-right:#ffb3e1;
 
-      /* Corner intro offset from center line (smaller = closer to center) */
-      --intro-offset: 26vw;
+      /* Intro pill controls */
+      --intro-width: clamp(26ch, 30ch, 34ch);           /* same width for both pills */
+      --intro-center-gap: clamp(18px, 3.2vw, 60px);     /* space between inner edges (near the center line) */
     }
 
     *{box-sizing:border-box}
@@ -105,19 +106,31 @@
       z-index:1;
     }
 
-    /* Corner intros (agreed lines, pulled toward center) */
+    /* Intro pills row: guarantees alignment + no overlap */
+    .intro-row{
+      position:absolute; left:0; right:0;
+      top: clamp(28px, 12vh, 140px);
+      display:grid;
+      grid-template-columns: 1fr var(--intro-center-gap) 1fr; /* center gap controls closeness to middle */
+      align-items:start;
+      z-index:2;
+      pointer-events:none;
+    }
     .corner-intro{
-      position:absolute; z-index:2;
-      top: clamp(36px, 12vh, 140px);
-      max-width: 40ch;
+      width: var(--intro-width);
       line-height:1.45;
       font-size: clamp(14px, 1.05vw, 16px);
       color: rgba(233,233,238,.95);
       text-shadow: 0 0 14px rgba(0,0,0,.55);
-      pointer-events:none;
+      padding: 10px 14px;
+      border-radius: 999px;                                  /* pill */
+      background: rgba(2,2,28,.46);
+      border:1px solid rgba(255,255,255,.12);
+      -webkit-backdrop-filter: blur(6px) saturate(120%);
+      backdrop-filter: blur(6px) saturate(120%);
     }
-    .corner-intro.left  { left:  calc(50% - var(--intro-offset)); text-align:left; }
-    .corner-intro.right { right: calc(50% - var(--intro-offset)); text-align:right; }
+    .corner-intro.left  { justify-self:end;  text-align:left; }
+    .corner-intro.right { justify-self:start; text-align:right; }
 
     .split-50{
       position:relative;
@@ -190,7 +203,7 @@
       text-align:center;
     }
 
-    /* Bullets inline (same height area on both sides to keep titles level) */
+    /* Bullets inline (keep titles level with same min height area) */
     .bullets{
       margin:0; padding:0; list-style:none;
       display:flex; flex-wrap:wrap; justify-content:center;
@@ -198,7 +211,6 @@
       color:var(--muted);
       font-size: clamp(12px, 1vw, 15px);
       line-height:1.35;
-      /* two-line min height so different item counts don't shift the titles */
       min-height: calc(1.35em * 2 + 6px);
       text-align:center;
       opacity:.95;
@@ -216,7 +228,7 @@
 
     .half:hover .bullets{ color:var(--fg); opacity:1; }
 
-    /* Sections below */
+    /* Panels below */
     .panel{
       min-height:100svh; padding: 24px clamp(16px, 5vw, 64px);
       display:flex; align-items:center; justify-content:center;
@@ -237,10 +249,18 @@
       user-select:none; pointer-events:none;
     }
 
-    @media (max-width: 900px){
-      /* corner intros stack nicely on mobile */
-      .corner-intro{ position:static; margin: 10px 16px 0; text-align:left; }
-      .corner-intro.right{ margin-top: 8px; }
+    /* Responsive */
+    @media (max-width: 1100px){
+      .intro-row{
+        grid-template-columns: 1fr;      /* stack pills */
+        row-gap: 8px;
+        justify-items:center;
+      }
+      .corner-intro{
+        width: min(92vw, var(--intro-width));
+        text-align:center;
+      }
+      .corner-intro.right{ text-align:center; }
       .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
       .split-50::after, .split-50::before{ display:none; }
       .edge-left{ left:10px }
@@ -266,9 +286,12 @@
 
   <!-- EXACT HALF/HALF HERO -->
   <section class="hero" id="home" aria-label="Split hero">
-    <!-- Corner intros (agreed lines) -->
-    <div class="corner-intro left">I shape photography to your story and aesthetic.</div>
-    <div class="corner-intro right">Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens.</div>
+
+    <!-- Intro pills (aligned, non-overlapping) -->
+    <div class="intro-row">
+      <div class="corner-intro left">I shape photography to your story and aesthetic.</div>
+      <div class="corner-intro right">Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens.</div>
+    </div>
 
     <div class="split-50">
       <a class="half left" href="#photo">
