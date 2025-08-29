@@ -14,29 +14,34 @@
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial}
+    body{
+      margin:0;background:var(--bg);color:var(--fg);
+      font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
+      position:relative; /* create a stacking context */
+    }
     h1,h2,h3{font-family:"Space Grotesk",Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;font-weight:700;letter-spacing:-.2px}
     a{color:inherit;text-decoration:none}
     .wrap{max-width:var(--maxw);margin-inline:auto;padding:24px}
 
-    /* === STATIC BACKGROUND (cross-mobile safe) =================== */
+    /* === STATIC BACKGROUND (now above body, below content) ======= */
     #bg{
-      position: fixed; inset: 0; z-index: -1; pointer-events: none;
-      background-color: var(--bg);
-      background-image: url("assets/mainpagebg.png");
-      background-repeat: no-repeat;
-      background-position: 50% 50%;
-      background-size: min(120vmin, 2000px);
+      position:fixed; inset:0; z-index:0; pointer-events:none;
+      background-color:var(--bg);
+      background-image:url("assets/mainpagebg.png");
+      background-repeat:no-repeat;
+      background-position:50% 50%;
+      background-size:min(120vmin,2000px);
     }
-    @media (max-width: 640px){
+    @media (max-width:640px){
       #bg{
-        background-position: 50% 46%;
-        background-size: 170vmin;
+        background-position:50% 46%;
+        background-size:170vmin;
       }
     }
 
-    /* Temporary scaffold card (we’ll replace with the Hero next) */
-    main{min-height:100svh;display:grid;place-items:center;padding:24px}
+    /* Temporary scaffold card (content sits above bg) */
+    main{min-height:100svh;display:grid;place-items:center;padding:24px; position:relative; z-index:1;}
+    footer{padding:28px 24px;border-top:1px solid var(--line);text-align:center;color:var(--muted); position:relative; z-index:1;}
     .card{
       background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:var(--radius);
       padding:28px; text-align:center; max-width:720px; margin-inline:auto;
@@ -47,7 +52,6 @@
       border:1px solid rgba(255,255,255,.14);background:rgba(20,20,40,.72);color:var(--fg)
     }
     .btn:focus{outline:2px solid var(--accent);outline-offset:2px}
-    footer{padding:28px 24px;border-top:1px solid var(--line);text-align:center;color:var(--muted)}
   </style>
 </head>
 <body>
