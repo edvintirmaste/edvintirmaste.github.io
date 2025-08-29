@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v19 -->
+  <!-- BUILD v20 -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -11,24 +11,29 @@
     :root{
       --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2; --brand-glow:#fff59a;
 
-      /* Header sizing */
+      /* Header */
       --header-h: 92px;
 
-      /* Header name spread & sizing (as before) */
+      /* Brand spread */
       --brand-min: 520px;
       --brand-fluid: 70vw;
       --brand-max: 1000px;
       --brand-size: clamp(14px, 1vw, 20px);
       --word-gap: clamp(14px, 2vw, 48px);
 
-      /* Top bar + fade-under */
+      /* Top bar fade */
       --bar-top:.75; --bar-btm:.30;
       --fade-height: 96px; --fade-start:.28;
 
-      /* Split visuals */
-      --split-accent-left: rgba(141,216,255,.10);
-      --split-accent-right: rgba(255,179,225,.10);
+      /* Divider line */
       --divider-opacity:.35;
+
+      /* Frosted on hover */
+      --frost-bg: rgba(255,255,255,.06);
+      --frost-blur: 8px;
+      --frost-sat: 115%;
+      --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
+      --chev: %23e9e9ee; /* encoded # for SVGs */
     }
 
     *{box-sizing:border-box}
@@ -43,11 +48,11 @@
       position:relative;
     }
 
-    /* Background */
+    /* Background image */
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* Top bar that softly fades into the page */
+    /* Top bar with soft fade */
     header.site-header{
       position:fixed; top:0; left:0; right:0; height:var(--header-h); z-index:10;
       background: linear-gradient(to bottom,
@@ -85,10 +90,10 @@
     }
     .brand .space{ flex:0 0 var(--word-gap); }
 
-    /* ===== Split hero (EXACT half/half area) ===== */
+    /* ===== EXACT HALF/HALF HERO ===== */
     .hero{
-      margin-top: var(--header-h);                 /* start right below header */
-      height: calc(100svh - var(--header-h));      /* end exactly at the fold */
+      margin-top: var(--header-h);
+      height: calc(100svh - var(--header-h));
       scroll-snap-align:start;
       position:relative;
       z-index:1;
@@ -104,19 +109,50 @@
       background: linear-gradient(to bottom, transparent, rgba(255,255,255,.18), transparent);
       opacity:var(--divider-opacity); pointer-events:none;
     }
+
+    /* Halves: no dimming by default */
     .half{
       display:flex; align-items:center; justify-content:center;
       inline-size:100%; block-size:100%;
       text-decoration:none; color:var(--fg);
-      /* subtle overlays so the halves feel distinct but keep the bg visible */
-      background:
-        radial-gradient(120% 120% at 50% 0%, rgba(0,0,0,.0), rgba(0,0,0,.20)),
-        linear-gradient(180deg, rgba(0,0,0,.06), rgba(0,0,0,.18));
-      transition: filter .25s ease, transform .25s ease;
+      background: transparent; /* important: no overlay */
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      transition: background-color .25s ease, backdrop-filter .25s ease, transform .25s ease, box-shadow .25s ease, opacity .25s ease;
+      position:relative;
+      isolation:isolate;
     }
-    .half.left { box-shadow: inset 0 0 220px var(--split-accent-left); }
-    .half.right{ box-shadow: inset 0 0 220px var(--split-accent-right); }
-    .half:hover{ filter: brightness(1.05) }
+
+    /* Side chevrons (roof-shape arrows) at screen edges */
+    .half.left::after,
+    .half.right::after{
+      content:""; position:absolute; top:50%; transform:translateY(-50%);
+      width:38px; height:38px; opacity:.8; pointer-events:none;
+      filter: drop-shadow(0 2px 10px rgba(0,0,0,.35));
+      transition: opacity .2s ease, transform .2s ease;
+      background-repeat:no-repeat; background-position:center; background-size:100% 100%;
+    }
+    .half.left::after{
+      left:12px;
+      /* < chevron */
+      background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='var(--fg)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M18 4 L6 12 L18 20'/></svg>");
+    }
+    .half.right::after{
+      right:12px;
+      /* > chevron */
+      background-image: url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23e9e9ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 4 L18 12 L6 20'/></svg>\");
+    }
+
+    /* Frosted effect only on hover of the selected side */
+    .half:hover{
+      background: var(--frost-bg);
+      -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat));
+      backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat));
+      box-shadow: var(--frost-shadow);
+    }
+    .half:hover::after{
+      opacity:1; transform:translateY(-50%) scale(1.06);
+    }
 
     .half h2{
       margin:0;
@@ -124,9 +160,10 @@
       font-size: clamp(28px, 3.6vw, 56px);
       letter-spacing:.10em; text-transform:uppercase;
       text-shadow:0 2px 18px rgba(0,0,0,.45);
+      pointer-events:none;
     }
 
-    /* Next sections */
+    /* Sections below */
     .panel{
       min-height:100svh; padding: 24px clamp(16px, 5vw, 64px);
       display:flex; align-items:center; justify-content:center;
@@ -139,7 +176,7 @@
     }
     .section-wrap p{ margin:0 0 18px 0; color:var(--muted) }
 
-    /* tiny debug badge */
+    /* debug badge */
     .debug-badge{
       position:fixed; left:8px; top:8px; z-index:9999;
       font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px; opacity:.85;
@@ -147,19 +184,20 @@
       user-select:none; pointer-events:none;
     }
 
-    /* Mobile: stack top/bottom if desired (can disable if you want strict halves on mobile too) */
     @media (max-width: 900px){
       .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
       .split-50::after{ display:none; }
+      .half.left::after{ left:10px }
+      .half.right::after{ right:10px }
     }
   </style>
 </head>
 <body>
-  <div class="debug-badge">v19</div>
+  <div class="debug-badge">v20</div>
 
   <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=19" alt="">
+    <img src="assets/mainpagebg.png?v=20" alt="">
   </div>
 
   <!-- Top bar -->
@@ -177,7 +215,7 @@
     </div>
   </section>
 
-  <!-- PHOTO section (stub) -->
+  <!-- PHOTO (stub) -->
   <section class="panel" id="photo" aria-label="Photography">
     <div class="section-wrap">
       <h3>Photography</h3>
@@ -185,7 +223,7 @@
     </div>
   </section>
 
-  <!-- VIDEO section (stub) -->
+  <!-- VIDEO (stub) -->
   <section class="panel" id="video" aria-label="Videography">
     <div class="section-wrap">
       <h3>Videography</h3>
