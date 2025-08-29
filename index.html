@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v24 + corner intros -->
+  <!-- BUILD v24 + corner intros repositioned -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -103,33 +103,20 @@
       z-index:1;
     }
 
-    /* (old center intro pill kept here in case you want it later)
-    .intro{
-      position:absolute; left:50%; top:10px; transform:translateX(-50%);
-      font-size: clamp(12px, 1.02vw, 14px);
-      letter-spacing:.06em; color:var(--muted);
-      background: rgba(2,2,28,.46);
-      border:1px solid rgba(255,255,255,.12);
-      padding:8px 14px; border-radius:999px;
-      -webkit-backdrop-filter: blur(6px) saturate(120%);
-      backdrop-filter: blur(6px) saturate(120%);
-      box-shadow: 0 6px 18px rgba(0,0,0,.25);
-      pointer-events:none;
-    } */
-
-    /* NEW: agreed intros in the upper corners */
+    /* NEW: agreed intros in the upper corners (moved inward toward center) */
     .corner-intro{
       position:absolute; z-index:2;
       top: clamp(36px, 12vh, 140px);
       max-width: 40ch;
       line-height:1.45;
       font-size: clamp(14px, 1.05vw, 16px);
-      color: rgba(233,233,238,.95); /* var(--fg) with slight dim */
+      color: rgba(233,233,238,.95);
       text-shadow: 0 0 14px rgba(0,0,0,.55);
       pointer-events:none;
     }
-    .corner-intro.left  { left: clamp(16px, 7vw, 140px); text-align:left; }
-    .corner-intro.right { right: clamp(16px, 7vw, 140px); text-align:right; }
+    /* Position relative to center line; tweak 36vw to nudge */
+    .corner-intro.left  { left:  calc(50% - 36vw); text-align:left; }
+    .corner-intro.right { right: calc(50% - 36vw); text-align:right; }
 
     .split-50{
       position:relative;
@@ -271,7 +258,7 @@
 
   <!-- EXACT HALF/HALF HERO -->
   <section class="hero" id="home" aria-label="Split hero">
-    <!-- NEW: agreed corner intros -->
+    <!-- Corner intros (agreed lines, moved inward) -->
     <div class="corner-intro left">I shape photography to your story and aesthetic.</div>
     <div class="corner-intro right">Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens.</div>
 
@@ -283,9 +270,10 @@
         </span>
         <h2>Photography</h2>
         <ul class="bullets">
-          <li>Events & candid storytelling</li>
-          <li>Portraits with natural-light + clean retouch</li>
-          <li>Brand/product shots optimized for web & social</li>
+          <li>Events</li>
+          <li>Modelling</li>
+          <li>Real Estate</li>
+          <li>Product and more</li>
         </ul>
       </a>
 
@@ -296,9 +284,9 @@
         </span>
         <h2>Videography</h2>
         <ul class="bullets">
-          <li>Short-form reels with tight music timing</li>
-          <li>Shoot → edit → export (vertical & 16:9)</li>
-          <li>Color grade + sound polish for clarity</li>
+          <li>Writing</li>
+          <li>Filming</li>
+          <li>Editing</li>
         </ul>
       </a>
     </div>
