@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v14 -->
+  <!-- BUILD v15 -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -9,21 +9,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2;
-      --brand-glow:#fff59a;
+      --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2; --brand-glow:#fff59a;
 
-      /* spread & sizing */
-      --brand-min: 520px;          /* safer minimum so mobiles don't overflow */
-      --brand-fluid: 72vw;         /* spread across header */
-      --brand-max: 1060px;         /* hard cap so it never spills */
-      /* SMALLER letters on big screens */
-      --brand-size: clamp(16px, 1.15vw, 26px);
-      --word-gap: clamp(16px, 2.5vw, 60px);
+      /* spread & sizing — smaller letters on large screens */
+      --brand-min: 520px;
+      --brand-fluid: 70vw;         /* spread across header */
+      --brand-max: 1000px;         /* hard cap */
+      --brand-size: clamp(14px, 1vw, 20px); /* smaller than before */
+      --word-gap: clamp(14px, 2vw, 48px);
 
-      /* top bar visibility */
-      --bar-top: .65;   /* top of gradient opacity */
-      --bar-btm: .28;   /* bottom of gradient opacity */
-      --blur: 4px;      /* backdrop blur */
+      /* top bar look */
+      --bar-top: .75;   /* stronger at top */
+      --bar-btm: .36;   /* fades down */
+      --blur: 4px;
     }
 
     *{box-sizing:border-box}
@@ -34,13 +32,13 @@
       position:relative;
     }
 
-    /* Background image */
+    /* Background */
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* Top bar (subtle translucent band, no edge line) */
+    /* Top bar (subtle translucent band) */
     header.site-header{
-      position:fixed; top:0; left:0; right:0; height:96px; z-index:5;
+      position:fixed; top:0; left:0; right:0; height:92px; z-index:5;
       background: linear-gradient(to bottom,
         rgba(2,2,28,var(--bar-top)),
         rgba(2,2,28,var(--bar-btm))
@@ -50,11 +48,11 @@
       border:0; box-shadow:none;
     }
     .nav{
-      height:96px; display:flex; align-items:center; justify-content:center;
+      height:92px; display:flex; align-items:center; justify-content:center;
       padding-inline: clamp(16px, 5vw, 64px);
     }
 
-    /* Spread brand letters within a strict width clamp */
+    /* Name spread */
     .brand{
       width: clamp(var(--brand-min), var(--brand-fluid), var(--brand-max));
       display:flex; align-items:center; justify-content:space-between;
@@ -65,9 +63,9 @@
     .brand span{
       font-family:"Space Grotesk", Inter, system-ui;
       font-weight:700; font-size:var(--brand-size); line-height:1;
-      text-shadow:0 0 18px rgba(255,245,154,.35);
+      text-shadow:0 0 16px rgba(255,245,154,.32);
     }
-    .brand .space{ flex:0 0 var(--word-gap); } /* gap between words */
+    .brand .space{ flex:0 0 var(--word-gap); }
 
     main{min-height:100svh; padding-top:120px; position:relative; z-index:1}
     .wrap{max-width:1100px; margin-inline:auto; padding:0 24px}
@@ -77,7 +75,7 @@
 <body>
   <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=14" alt="">
+    <img src="assets/mainpagebg.png?v=15" alt="">
   </div>
 
   <!-- Top bar -->
