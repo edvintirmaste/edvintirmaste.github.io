@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v17 -->
+  <!-- BUILD v18 -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -11,7 +11,7 @@
     :root{
       --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2; --brand-glow:#fff59a;
 
-      /* Name spread & sizing (same vibe, modest size) */
+      /* Header name spread & sizing */
       --brand-min: 520px;
       --brand-fluid: 70vw;
       --brand-max: 1000px;
@@ -30,17 +30,16 @@
       --pane-bg-b: rgba(8,8,34,.42);
       --pane-border: rgba(255,255,255,.08);
       --pane-hover: rgba(255,255,255,.12);
-      --accent-a: #8dd8ff;  /* subtle tint left */
-      --accent-b: #ffb3e1;  /* subtle tint right */
+      --accent-a: #8dd8ff;
+      --accent-b: #ffb3e1;
       --hint: rgba(233,233,238,.65);
     }
 
     *{box-sizing:border-box}
     html{
       scroll-behavior:smooth;
-      /* Snap full-screen sections for that "wipe" feel */
       scroll-snap-type:y mandatory;
-      scroll-padding-top: 120px; /* keep header clear on anchor jump */
+      scroll-padding-top: 120px;
     }
     body{
       margin:0; background:var(--bg); color:var(--fg);
@@ -52,7 +51,7 @@
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* Top bar with fade into page */
+    /* Top bar that fades into page */
     header.site-header{
       position:fixed; top:0; left:0; right:0; height:92px; z-index:10;
       background: linear-gradient(to bottom,
@@ -90,21 +89,27 @@
     }
     .brand .space{ flex:0 0 var(--word-gap); }
 
-    /* Panels (full-viewport sections) */
+    /* Panels / sections */
     .panel{
       min-height:100svh;
       position:relative;
       display:flex; align-items:center; justify-content:center;
-      padding: 140px clamp(16px, 5vw, 64px) 64px; /* top leaves room for header */
+      padding: 140px clamp(16px, 5vw, 64px) 64px;
       scroll-snap-align:start;
       z-index:1;
     }
 
-    /* Split hero */
+    /* Split hero layout */
     .split{
+      position:relative;
       width:min(1400px, 92vw);
       display:grid; grid-template-columns: 1fr 1fr; gap: var(--split-gap);
       align-items:stretch;
+    }
+    .split::after{
+      content:""; position:absolute; top:0; bottom:0; left:50%; width:1px; transform:translateX(-.5px);
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,.18), transparent);
+      opacity:.35; pointer-events:none;
     }
     .half{
       position:relative; display:flex; flex-direction:column; justify-content:flex-end;
@@ -150,18 +155,10 @@
       margin:0; color:var(--muted); max-width:52ch;
       font-size: clamp(14px, 1.1vw, 16px);
     }
-    /* subtle accent glows per side */
     .half.left { box-shadow: inset 0 0 120px rgba(141,216,255,.10), 0 10px 30px rgba(0,0,0,.25); }
     .half.right{ box-shadow: inset 0 0 120px rgba(255,179,225,.10), 0 10px 30px rgba(0,0,0,.25); }
     .half.left .cap h2 { text-shadow: 0 0 26px color-mix(in oklab, var(--accent-a) 40%, transparent); }
     .half.right .cap h2{ text-shadow: 0 0 26px color-mix(in oklab, var(--accent-b) 40%, transparent); }
-
-    /* optional center divider line hint */
-    .split::after{
-      content:""; position:absolute; top:0; bottom:0; left:50%; width:1px; transform:translateX(-.5px);
-      background: linear-gradient(to bottom, transparent, rgba(255,255,255,.18), transparent);
-      opacity:.35; pointer-events:none;
-    }
 
     /* Scroll hint */
     .scroll-hint{
@@ -171,7 +168,7 @@
     }
     .scroll-hint svg{ width:18px; height:18px; }
 
-    /* Content sections below */
+    /* Content sections (stubs) */
     .section-wrap{ width:min(1100px, 92vw); margin-inline:auto; }
     .section-wrap h3{
       font-family:"Space Grotesk", Inter, system-ui; font-size: clamp(22px, 2.4vw, 36px);
@@ -179,7 +176,14 @@
     }
     .section-wrap p{ margin:0 0 18px 0; color:var(--muted) }
 
-    /* Responsive */
+    /* Tiny debug badge so we always know the live build */
+    .debug-badge{
+      position:fixed; left:8px; top:8px; z-index:9999;
+      font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px; opacity:.85;
+      box-shadow:0 2px 8px rgba(0,0,0,.25);
+      user-select:none; pointer-events:none;
+    }
+
     @media (max-width: 900px){
       .split{ grid-template-columns: 1fr; }
       .split::after{ display:none; }
@@ -188,9 +192,11 @@
   </style>
 </head>
 <body>
+  <div class="debug-badge">v18</div>
+
   <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=17" alt="">
+    <img src="assets/mainpagebg.png?v=18" alt="">
   </div>
 
   <!-- Top bar -->
