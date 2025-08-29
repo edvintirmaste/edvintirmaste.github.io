@@ -9,93 +9,63 @@
   <style>
     :root{
       --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2;
-      --maxw:1100px; --glow:#fff59a;   /* soft yellow to match your spray */
-      --bg-scale:1;                    /* original bg sizing */
+      --bg-scale:1;                 /* keep your background sizing */
+      --brand-glow:#fff59a;         /* soft yellow glow to match spray */
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{
-      margin:0; background:var(--bg); color:var(--fg);
-      font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
-      position:relative;
-    }
-    .wrap{max-width:var(--maxw); margin-inline:auto; padding:0 24px}
+    body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;position:relative}
+    .wrap{max-width:1100px;margin-inline:auto;padding:0 24px}
 
-    /* Full-bleed background (unchanged sizing) */
-    .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
-    .bg-wrap img{
-      position:absolute; inset:0; width:100%; height:100%;
-      object-fit:cover; object-position:center;
-      transform:scale(var(--bg-scale)); transform-origin:center;
-      will-change:transform;
-    }
+    /* Full-bleed background (unchanged) */
+    .bg-wrap{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+    .bg-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transform:scale(var(--bg-scale));transform-origin:center}
 
-    /* Header — no border/shadow seam */
+    /* ===== TOP BAR (centered brand, caps, spacing, glow; seam removed) */
     header.site-header{
       position:fixed; top:0; left:0; right:0; z-index:3; height:72px;
-      background:rgba(2,2,28,.46);
-      backdrop-filter:blur(10px) saturate(1.05);
-      -webkit-backdrop-filter:blur(10px) saturate(1.05);
-      border-bottom:none; box-shadow:none;
+      background:rgba(2,2,28,.42);      /* single tint (no gradient seam) */
+      border:0; box-shadow:none;        /* remove tiny edge line */
+      backdrop-filter:none;             /* avoid blur seam on some GPUs */
+      -webkit-backdrop-filter:none;
     }
-    .nav{height:72px; display:flex; align-items:center; justify-content:space-between}
+    .nav{height:72px; display:grid; grid-template-columns:1fr auto 1fr; align-items:center}
     .brand{
-      font-family:"Space Grotesk",Inter; font-weight:700;
-      font-size:1.1rem; letter-spacing:-.2px; opacity:.98;
-    }
-
-    /* HERO — centered name with caps, wider spacing, glow */
-    main{min-height:100svh; position:relative; z-index:1}
-    .pad-top{padding-top:96px} /* keeps hero clear of header */
-    .hero{
-      min-height:calc(100svh - 96px);
-      display:grid; place-items:center; text-align:center;
-      padding:24px;
-    }
-    .hero-title{
-      margin:0 0 10px 0;
+      justify-self:center;
       font-family:"Space Grotesk",Inter,system-ui;
       font-weight:700;
-      font-size:clamp(42px, 9vw, 112px);
       text-transform:uppercase;
-      letter-spacing:.18em;      /* bigger spacing */
-      line-height:1.04;
+      letter-spacing:.20em;             /* wider spacing */
+      font-size:clamp(22px, 2.2vw, 36px);
+      line-height:1;
       text-shadow:
-        0 0 12px rgba(0,0,0,.35),
-        0 0 28px color-mix(in oklab, var(--glow) 40%, transparent);
-      position:relative;
+        0 0 10px rgba(0,0,0,.45),
+        0 0 24px color-mix(in oklab, var(--brand-glow) 55%, transparent);
     }
-    .hero-title::after{
-      content:""; position:absolute; inset:-16% -18% -26% -18%; z-index:-1;
-      background:
-        radial-gradient(60% 60% at 50% 45%, color-mix(in oklab, var(--glow) 28%, transparent) 0%, transparent 60%),
-        radial-gradient(70% 70% at 50% 60%, rgba(60,68,180,.18) 0%, transparent 70%);
-      filter:blur(14px);
-    }
-    .tagline{color:var(--muted); margin:6px 0 0 0; font-size:clamp(14px, 1.6vw, 18px)}
-    footer{padding:28px 24px; text-align:center; color:var(--muted); position:relative; z-index:1}
+    .nav .left, .nav .right{height:1px} /* placeholders for future items */
+
+    /* Page content (empty for now) */
+    main{min-height:100svh;padding-top:96px;position:relative;z-index:1}
+    footer{padding:28px 24px;text-align:center;color:var(--muted);position:relative;z-index:1}
   </style>
 </head>
 <body>
-  <!-- Background (cache-busted) -->
+  <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=5" alt="">
+    <img src="assets/mainpagebg.png?v=6" alt="">
   </div>
 
   <!-- Top bar -->
   <header class="site-header" role="banner">
     <div class="wrap nav">
-      <div class="brand">Edvin Tirmaste</div>
-      <div></div>
+      <div class="left"></div>
+      <div class="brand">EDVIN TIRMASTE</div>
+      <div class="right"></div>
     </div>
   </header>
 
-  <!-- HERO -->
-  <main class="pad-top">
-    <section class="wrap hero">
-      <h1 class="hero-title">EDVIN TIRMASTE</h1>
-      <p class="tagline">Fotograaf & videotootja</p>
-    </section>
+  <main class="wrap">
+    <!-- keep empty for now; we’ll add the Foto / Video block next -->
   </main>
 
   <footer>© <span id="y"></span> Edvin Tirmaste</footer>
