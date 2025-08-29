@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v18 -->
+  <!-- BUILD v19 -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -11,7 +11,10 @@
     :root{
       --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2; --brand-glow:#fff59a;
 
-      /* Header name spread & sizing */
+      /* Header sizing */
+      --header-h: 92px;
+
+      /* Header name spread & sizing (as before) */
       --brand-min: 520px;
       --brand-fluid: 70vw;
       --brand-max: 1000px;
@@ -22,24 +25,17 @@
       --bar-top:.75; --bar-btm:.30;
       --fade-height: 96px; --fade-start:.28;
 
-      /* Split hero controls */
-      --split-gap: clamp(18px, 2vw, 28px);
-      --pane-radius: 18px;
-      --pane-blur: 8px;
-      --pane-bg-a: rgba(8,8,34,.48);
-      --pane-bg-b: rgba(8,8,34,.42);
-      --pane-border: rgba(255,255,255,.08);
-      --pane-hover: rgba(255,255,255,.12);
-      --accent-a: #8dd8ff;
-      --accent-b: #ffb3e1;
-      --hint: rgba(233,233,238,.65);
+      /* Split visuals */
+      --split-accent-left: rgba(141,216,255,.10);
+      --split-accent-right: rgba(255,179,225,.10);
+      --divider-opacity:.35;
     }
 
     *{box-sizing:border-box}
     html{
       scroll-behavior:smooth;
       scroll-snap-type:y mandatory;
-      scroll-padding-top: 120px;
+      scroll-padding-top: var(--header-h);
     }
     body{
       margin:0; background:var(--bg); color:var(--fg);
@@ -51,9 +47,9 @@
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* Top bar that fades into page */
+    /* Top bar that softly fades into the page */
     header.site-header{
-      position:fixed; top:0; left:0; right:0; height:92px; z-index:10;
+      position:fixed; top:0; left:0; right:0; height:var(--header-h); z-index:10;
       background: linear-gradient(to bottom,
         rgba(2,2,28,var(--bar-top)),
         rgba(2,2,28,var(--bar-btm))
@@ -71,7 +67,7 @@
       );
     }
     .nav{
-      height:92px; display:flex; align-items:center; justify-content:center;
+      height:var(--header-h); display:flex; align-items:center; justify-content:center;
       padding-inline: clamp(16px, 5vw, 64px);
     }
 
@@ -89,86 +85,53 @@
     }
     .brand .space{ flex:0 0 var(--word-gap); }
 
-    /* Panels / sections */
-    .panel{
-      min-height:100svh;
-      position:relative;
-      display:flex; align-items:center; justify-content:center;
-      padding: 140px clamp(16px, 5vw, 64px) 64px;
+    /* ===== Split hero (EXACT half/half area) ===== */
+    .hero{
+      margin-top: var(--header-h);                 /* start right below header */
+      height: calc(100svh - var(--header-h));      /* end exactly at the fold */
       scroll-snap-align:start;
+      position:relative;
       z-index:1;
     }
-
-    /* Split hero layout */
-    .split{
+    .split-50{
       position:relative;
-      width:min(1400px, 92vw);
-      display:grid; grid-template-columns: 1fr 1fr; gap: var(--split-gap);
-      align-items:stretch;
+      display:grid; grid-template-columns: 1fr 1fr; gap:0;
+      inline-size:100%; block-size:100%;
     }
-    .split::after{
-      content:""; position:absolute; top:0; bottom:0; left:50%; width:1px; transform:translateX(-.5px);
+    .split-50::after{
+      content:""; position:absolute; inset-block:0; inset-inline-start:50%;
+      width:1px; transform:translateX(-.5px);
       background: linear-gradient(to bottom, transparent, rgba(255,255,255,.18), transparent);
-      opacity:.35; pointer-events:none;
+      opacity:var(--divider-opacity); pointer-events:none;
     }
     .half{
-      position:relative; display:flex; flex-direction:column; justify-content:flex-end;
-      border-radius: var(--pane-radius);
-      overflow: clip;
-      isolation:isolate;
-      color:var(--fg); text-decoration:none;
-      border:1px solid var(--pane-border);
+      display:flex; align-items:center; justify-content:center;
+      inline-size:100%; block-size:100%;
+      text-decoration:none; color:var(--fg);
+      /* subtle overlays so the halves feel distinct but keep the bg visible */
       background:
-        radial-gradient(80% 80% at 20% 10%, transparent, transparent 60%, rgba(0,0,0,.25)),
-        linear-gradient(180deg, var(--pane-bg-a), var(--pane-bg-b));
-      -webkit-backdrop-filter: blur(var(--pane-blur));
-      backdrop-filter: blur(var(--pane-blur));
-      transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-      min-height: clamp(420px, 56vh, 720px);
+        radial-gradient(120% 120% at 50% 0%, rgba(0,0,0,.0), rgba(0,0,0,.20)),
+        linear-gradient(180deg, rgba(0,0,0,.06), rgba(0,0,0,.18));
+      transition: filter .25s ease, transform .25s ease;
     }
-    .half::before{
-      content:""; position:absolute; inset:0; z-index:-1;
-      background: linear-gradient(to bottom,
-        transparent 0%,
-        rgba(0,0,0,.22) 70%,
-        rgba(0,0,0,.38) 100%
-      );
-    }
-    .half:hover{
-      transform: translateY(-2px);
-      border-color: var(--pane-hover);
-      box-shadow: 0 14px 38px rgba(0,0,0,.32);
-    }
-    .half .cap{
-      position:absolute; inset:auto 18px 18px 18px;
-      display:flex; flex-direction:column; gap:10px;
-    }
+    .half.left { box-shadow: inset 0 0 220px var(--split-accent-left); }
+    .half.right{ box-shadow: inset 0 0 220px var(--split-accent-right); }
+    .half:hover{ filter: brightness(1.05) }
+
     .half h2{
       margin:0;
       font-family:"Space Grotesk", Inter, system-ui;
-      font-size: clamp(28px, 3.4vw, 48px);
-      line-height:1.05; letter-spacing:.08em; text-transform:uppercase;
+      font-size: clamp(28px, 3.6vw, 56px);
+      letter-spacing:.10em; text-transform:uppercase;
       text-shadow:0 2px 18px rgba(0,0,0,.45);
     }
-    .half p{
-      margin:0; color:var(--muted); max-width:52ch;
-      font-size: clamp(14px, 1.1vw, 16px);
-    }
-    .half.left { box-shadow: inset 0 0 120px rgba(141,216,255,.10), 0 10px 30px rgba(0,0,0,.25); }
-    .half.right{ box-shadow: inset 0 0 120px rgba(255,179,225,.10), 0 10px 30px rgba(0,0,0,.25); }
-    .half.left .cap h2 { text-shadow: 0 0 26px color-mix(in oklab, var(--accent-a) 40%, transparent); }
-    .half.right .cap h2{ text-shadow: 0 0 26px color-mix(in oklab, var(--accent-b) 40%, transparent); }
 
-    /* Scroll hint */
-    .scroll-hint{
-      position:absolute; bottom:20px; left:50%; transform:translateX(-50%);
-      font-size:12px; color:var(--hint); text-decoration:none; letter-spacing:.14em; text-transform:uppercase;
-      display:flex; align-items:center; gap:10px; opacity:.9;
+    /* Next sections */
+    .panel{
+      min-height:100svh; padding: 24px clamp(16px, 5vw, 64px);
+      display:flex; align-items:center; justify-content:center;
+      scroll-snap-align:start; position:relative; z-index:1;
     }
-    .scroll-hint svg{ width:18px; height:18px; }
-
-    /* Content sections (stubs) */
     .section-wrap{ width:min(1100px, 92vw); margin-inline:auto; }
     .section-wrap h3{
       font-family:"Space Grotesk", Inter, system-ui; font-size: clamp(22px, 2.4vw, 36px);
@@ -176,7 +139,7 @@
     }
     .section-wrap p{ margin:0 0 18px 0; color:var(--muted) }
 
-    /* Tiny debug badge so we always know the live build */
+    /* tiny debug badge */
     .debug-badge{
       position:fixed; left:8px; top:8px; z-index:9999;
       font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px; opacity:.85;
@@ -184,19 +147,19 @@
       user-select:none; pointer-events:none;
     }
 
+    /* Mobile: stack top/bottom if desired (can disable if you want strict halves on mobile too) */
     @media (max-width: 900px){
-      .split{ grid-template-columns: 1fr; }
-      .split::after{ display:none; }
-      .half{ min-height: 46vh; }
+      .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+      .split-50::after{ display:none; }
     }
   </style>
 </head>
 <body>
-  <div class="debug-badge">v18</div>
+  <div class="debug-badge">v19</div>
 
   <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=18" alt="">
+    <img src="assets/mainpagebg.png?v=19" alt="">
   </div>
 
   <!-- Top bar -->
@@ -206,35 +169,19 @@
     </div>
   </header>
 
-  <!-- HERO: half & half -->
-  <section class="panel" id="home" aria-label="Hero split">
-    <div class="split">
-      <a class="half left" href="#photo">
-        <div class="cap">
-          <h2>Photography</h2>
-          <p>Clean, story-led frames. Events, portraits, brands. Built for web and social.</p>
-        </div>
-      </a>
-
-      <a class="half right" href="#video">
-        <div class="cap">
-          <h2>Videography</h2>
-          <p>Crisp cuts and momentum. Shoots, edit, export. Short-form ready.</p>
-        </div>
-      </a>
+  <!-- EXACT HALF/HALF HERO -->
+  <section class="hero" id="home" aria-label="Split hero">
+    <div class="split-50">
+      <a class="half left" href="#photo"><h2>Photography</h2></a>
+      <a class="half right" href="#video"><h2>Videography</h2></a>
     </div>
-
-    <a class="scroll-hint" href="#photo" aria-label="Scroll to work">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M19 12l-7 7-7-7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      scroll
-    </a>
   </section>
 
   <!-- PHOTO section (stub) -->
   <section class="panel" id="photo" aria-label="Photography">
     <div class="section-wrap">
       <h3>Photography</h3>
-      <p>Drop gallery/cards here later. Think 6–8 tiles with hover to enlarge.</p>
+      <p>Gallery/cards go here.</p>
     </div>
   </section>
 
@@ -242,7 +189,7 @@
   <section class="panel" id="video" aria-label="Videography">
     <div class="section-wrap">
       <h3>Videography</h3>
-      <p>Embed reels or thumbnails that open a modal player. We’ll wire this next.</p>
+      <p>Reels / modal player here.</p>
     </div>
   </section>
 
