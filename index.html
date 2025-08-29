@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v24 -->
+  <!-- BUILD v24 + corner intros -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -102,7 +102,8 @@
       position:relative;
       z-index:1;
     }
-    /* intro pill (longer, about/skills) */
+
+    /* (old center intro pill kept here in case you want it later)
     .intro{
       position:absolute; left:50%; top:10px; transform:translateX(-50%);
       font-size: clamp(12px, 1.02vw, 14px);
@@ -114,7 +115,21 @@
       backdrop-filter: blur(6px) saturate(120%);
       box-shadow: 0 6px 18px rgba(0,0,0,.25);
       pointer-events:none;
+    } */
+
+    /* NEW: agreed intros in the upper corners */
+    .corner-intro{
+      position:absolute; z-index:2;
+      top: clamp(36px, 12vh, 140px);
+      max-width: 40ch;
+      line-height:1.45;
+      font-size: clamp(14px, 1.05vw, 16px);
+      color: rgba(233,233,238,.95); /* var(--fg) with slight dim */
+      text-shadow: 0 0 14px rgba(0,0,0,.55);
+      pointer-events:none;
     }
+    .corner-intro.left  { left: clamp(16px, 7vw, 140px); text-align:left; }
+    .corner-intro.right { right: clamp(16px, 7vw, 140px); text-align:right; }
 
     .split-50{
       position:relative;
@@ -224,103 +239,4 @@
       position:fixed; left:8px; top:8px; z-index:9999;
       font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px; opacity:.85;
       box-shadow:0 2px 8px rgba(0,0,0,.25);
-      user-select:none; pointer-events:none;
-    }
-
-    @media (max-width: 900px){
-      .intro{ top:8px }
-      .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
-      .split-50::after, .split-50::before{ display:none; }
-      .edge-left{ left:10px }
-      .edge-right{ right:10px }
-      .bullets{ max-width: 46ch; }
-    }
-  </style>
-</head>
-<body>
-  <div class="debug-badge">v24</div>
-
-  <!-- Background -->
-  <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=24" alt="">
-  </div>
-
-  <!-- Top bar -->
-  <header class="site-header" role="banner">
-    <div class="nav">
-      <div class="brand" id="brand">EDVIN TIRMASTE</div>
-    </div>
-  </header>
-
-  <!-- EXACT HALF/HALF HERO -->
-  <section class="hero" id="home" aria-label="Split hero">
-    <div class="intro">Filmmaker-trained generalist in Tallinn — story-first visuals built for web & social.</div>
-
-    <div class="split-50">
-      <a class="half left" href="#photo">
-        <span class="edge edge-left" aria-hidden="true">
-          <span class="disc"></span>
-          <svg viewBox="0 0 24 24"><path d="M15 5 L7 12 L15 19"/></svg>
-        </span>
-        <h2>Photography</h2>
-        <ul class="bullets">
-          <li>Events & candid storytelling</li>
-          <li>Portraits with natural-light + clean retouch</li>
-          <li>Brand/product shots optimized for web & social</li>
-        </ul>
-      </a>
-
-      <a class="half right" href="#video">
-        <span class="edge edge-right" aria-hidden="true">
-          <span class="disc"></span>
-          <svg viewBox="0 0 24 24"><path d="M9 5 L17 12 L9 19"/></svg>
-        </span>
-        <h2>Videography</h2>
-        <ul class="bullets">
-          <li>Short-form reels with tight music timing</li>
-          <li>Shoot → edit → export (vertical & 16:9)</li>
-          <li>Color grade + sound polish for clarity</li>
-        </ul>
-      </a>
-    </div>
-  </section>
-
-  <!-- PHOTO (stub) -->
-  <section class="panel" id="photo" aria-label="Photography">
-    <div class="section-wrap">
-      <h3>Photography</h3>
-      <p>Gallery/cards go here.</p>
-    </div>
-  </section>
-
-  <!-- VIDEO (stub) -->
-  <section class="panel" id="video" aria-label="Videography">
-    <div class="section-wrap">
-      <h3>Videography</h3>
-      <p>Reels / modal player here.</p>
-    </div>
-  </section>
-
-  <footer class="panel" style="min-height:auto; padding:40px 24px; scroll-snap-align:end">
-    <div class="section-wrap">
-      © <span id="y"></span> Edvin Tirmaste
-    </div>
-  </footer>
-
-  <script>
-    // Build spaced letters in header
-    (function(){
-      const el = document.getElementById('brand');
-      const text = el.textContent.trim().toUpperCase();
-      el.textContent = '';
-      for (const ch of text){
-        const span = document.createElement('span');
-        if (ch === ' ') { span.className = 'space'; }
-        else { span.textContent = ch; }
-        el.appendChild(span);
-      }
-    })();
-    document.getElementById('y').textContent = new Date().getFullYear();
-  </script>
-</body>
-</html>
+      user-select:none; pointer-ev
