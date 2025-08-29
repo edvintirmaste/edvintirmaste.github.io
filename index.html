@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v20 -->
+  <!-- BUILD v21 -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -25,15 +25,20 @@
       --bar-top:.75; --bar-btm:.30;
       --fade-height: 96px; --fade-start:.28;
 
-      /* Divider line */
+      /* Divider */
       --divider-opacity:.35;
+      --divider-glow-width: 42px;   /* width of the glow column */
+      --divider-glow-blur: 18px;    /* softness of glow */
 
       /* Frosted on hover */
       --frost-bg: rgba(255,255,255,.06);
       --frost-blur: 8px;
       --frost-sat: 115%;
       --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
-      --chev: %23e9e9ee; /* encoded # for SVGs */
+
+      /* Accents for arrows */
+      --accent-a:#8dd8ff; /* left */
+      --accent-b:#ffb3e1; /* right */
     }
 
     *{box-sizing:border-box}
@@ -103,11 +108,20 @@
       display:grid; grid-template-columns: 1fr 1fr; gap:0;
       inline-size:100%; block-size:100%;
     }
+    /* center line */
     .split-50::after{
       content:""; position:absolute; inset-block:0; inset-inline-start:50%;
       width:1px; transform:translateX(-.5px);
       background: linear-gradient(to bottom, transparent, rgba(255,255,255,.18), transparent);
       opacity:var(--divider-opacity); pointer-events:none;
+    }
+    /* subtle glow around the center line */
+    .split-50::before{
+      content:""; position:absolute; inset-block:0; inset-inline-start:50%;
+      width: var(--divider-glow-width); transform:translateX(-50%);
+      background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
+      filter: blur(var(--divider-glow-blur));
+      opacity:.45; pointer-events:none;
     }
 
     /* Halves: no dimming by default */
@@ -115,7 +129,7 @@
       display:flex; align-items:center; justify-content:center;
       inline-size:100%; block-size:100%;
       text-decoration:none; color:var(--fg);
-      background: transparent; /* important: no overlay */
+      background: transparent;
       -webkit-backdrop-filter: none;
       backdrop-filter: none;
       transition: background-color .25s ease, backdrop-filter .25s ease, transform .25s ease, box-shadow .25s ease, opacity .25s ease;
@@ -123,24 +137,36 @@
       isolation:isolate;
     }
 
-    /* Side chevrons (roof-shape arrows) at screen edges */
+    /* Side chevrons with frosted discs for contrast */
+    .half.left::before,
+    .half.right::before{
+      content:""; position:absolute; top:50%; transform:translateY(-50%);
+      width:44px; height:44px; border-radius:999px; opacity:.9; pointer-events:none;
+      background: rgba(2,2,28,.50);
+      border:1px solid rgba(255,255,255,.14);
+      -webkit-backdrop-filter: blur(6px) saturate(120%);
+      backdrop-filter: blur(6px) saturate(120%);
+      box-shadow: 0 6px 18px rgba(0,0,0,.35);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .half.left::before{ left:10px; }
+    .half.right::before{ right:10px; }
+
     .half.left::after,
     .half.right::after{
       content:""; position:absolute; top:50%; transform:translateY(-50%);
-      width:38px; height:38px; opacity:.8; pointer-events:none;
+      width:38px; height:38px; opacity:.95; pointer-events:none;
       filter: drop-shadow(0 2px 10px rgba(0,0,0,.35));
       transition: opacity .2s ease, transform .2s ease;
       background-repeat:no-repeat; background-position:center; background-size:100% 100%;
     }
     .half.left::after{
       left:12px;
-      /* < chevron */
-      background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='var(--fg)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M18 4 L6 12 L18 20'/></svg>");
+      background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%238dd8ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M18 4 L6 12 L18 20'/></svg>");
     }
     .half.right::after{
       right:12px;
-      /* > chevron */
-      background-image: url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23e9e9ee' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 4 L18 12 L6 20'/></svg>\");
+      background-image: url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23ffb3e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M6 4 L18 12 L6 20'/></svg>\");
     }
 
     /* Frosted effect only on hover of the selected side */
@@ -150,9 +176,8 @@
       backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat));
       box-shadow: var(--frost-shadow);
     }
-    .half:hover::after{
-      opacity:1; transform:translateY(-50%) scale(1.06);
-    }
+    .half:hover::before{ opacity:1; transform:translateY(-50%) scale(1.06); }
+    .half:hover::after{  opacity:1; transform:translateY(-50%) scale(1.08); }
 
     .half h2{
       margin:0;
@@ -186,18 +211,18 @@
 
     @media (max-width: 900px){
       .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
-      .split-50::after{ display:none; }
-      .half.left::after{ left:10px }
-      .half.right::after{ right:10px }
+      .split-50::after, .split-50::before{ display:none; }
+      .half.left::before{ left:10px }
+      .half.right::before{ right:10px }
     }
   </style>
 </head>
 <body>
-  <div class="debug-badge">v20</div>
+  <div class="debug-badge">v21</div>
 
   <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=20" alt="">
+    <img src="assets/mainpagebg.png?v=21" alt="">
   </div>
 
   <!-- Top bar -->
