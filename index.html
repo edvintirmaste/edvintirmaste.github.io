@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v24 + intro pills + no-overlap + inline bullets + aligned headings -->
+  <!-- BUILD v24 + original intro layout + pill wrapper only -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -13,9 +13,7 @@
       --header-h: 92px;
 
       /* Brand spread */
-      --brand-min: 520px;
-      --brand-fluid: 70vw;
-      --brand-max: 1000px;
+      --brand-min: 520px; --brand-fluid: 70vw; --brand-max: 1000px;
       --brand-size: clamp(14px, 1vw, 20px);
       --word-gap: clamp(14px, 2vw, 48px);
 
@@ -25,172 +23,107 @@
 
       /* Divider (center line + glow) */
       --divider-opacity:.35;
-      --divider-glow-width: 34px;
-      --divider-glow-blur: 14px;
+      --divider-glow-width: 34px; --divider-glow-blur: 14px;
 
       /* Frosted on hover */
       --frost-bg: rgba(255,255,255,.06);
-      --frost-blur: 8px;
-      --frost-sat: 115%;
-      --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
+      --frost-blur: 8px; --frost-sat: 115%; --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
 
       /* Arrow accents */
-      --accent-left:#8dd8ff;
-      --accent-right:#ffb3e1;
+      --accent-left:#8dd8ff; --accent-right:#ffb3e1;
 
-      /* Intro pill controls */
-      --intro-width: clamp(28ch, 32ch, 36ch);           /* same width for both pills */
-      --intro-center-gap: clamp(24px, 4vw, 80px);     /* space between inner edges (near the center line) */
+      /* ORIGINAL intro placement: smaller = closer to center */
+      --intro-offset: 26vw;
     }
 
     *{box-sizing:border-box}
-    html{
-      scroll-behavior:smooth;
-      scroll-snap-type:y mandatory;
-      scroll-padding-top: var(--header-h);
-    }
-    body{
-      margin:0; background:var(--bg); color:var(--fg);
-      font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
-      position:relative;
-    }
+    html{ scroll-behavior:smooth; scroll-snap-type:y mandatory; scroll-padding-top: var(--header-h); }
+    body{ margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial; position:relative; }
 
     /* Background */
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* Top bar with soft fade */
+    /* Top bar */
     header.site-header{
-      position:fixed; top:0; left:0; right:0; height:var(--header-h); z-index:10;
-      background: linear-gradient(to bottom,
-        rgba(2,2,28,var(--bar-top)),
-        rgba(2,2,28,var(--bar-btm))
-      );
-      backdrop-filter: blur(4px) saturate(110%);
-      -webkit-backdrop-filter: blur(4px) saturate(110%);
+      position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:10;
+      background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
+      backdrop-filter: blur(4px) saturate(110%); -webkit-backdrop-filter: blur(4px) saturate(110%);
       border:0; box-shadow:none;
     }
     header.site-header::after{
-      content:""; position:absolute; left:0; right:0; top:100%;
-      height:var(--fade-height); pointer-events:none;
-      background: linear-gradient(to bottom,
-        rgba(2,2,28,var(--fade-start)) 0%,
-        rgba(2,2,28,0) 100%
-      );
+      content:""; position:absolute; left:0; right:0; top:100%; height:var(--fade-height); pointer-events:none;
+      background: linear-gradient(to bottom, rgba(2,2,28,var(--fade-start)) 0%, rgba(2,2,28,0) 100%);
     }
-    .nav{
-      height:var(--header-h); display:flex; align-items:center; justify-content:center;
-      padding-inline: clamp(16px, 5vw, 64px);
-    }
+    .nav{ height:var(--header-h); display:flex; align-items:center; justify-content:center; padding-inline: clamp(16px, 5vw, 64px); }
 
     /* Brand (spread letters) */
     .brand{
       width: clamp(var(--brand-min), var(--brand-fluid), var(--brand-max));
       display:flex; align-items:center; justify-content:space-between;
-      text-transform:uppercase; letter-spacing:0; white-space:nowrap;
-      user-select:none; filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
+      text-transform:uppercase; white-space:nowrap; user-select:none;
+      filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
     }
-    .brand span{
-      font-family:"Space Grotesk", Inter, system-ui;
-      font-weight:700; font-size:var(--brand-size); line-height:1;
-      text-shadow:0 0 16px rgba(255,245,154,.32);
-    }
+    .brand span{ font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1; text-shadow:0 0 16px rgba(255,245,154,.32); }
     .brand .space{ flex:0 0 var(--word-gap); }
 
-    /* ===== EXACT HALF/HALF HERO ===== */
-    .hero{
-      margin-top: var(--header-h);
-      height: calc(100svh - var(--header-h));
-      scroll-snap-align:start;
-      position:relative;
-      z-index:1;
-    }
+    /* ===== HERO ===== */
+    .hero{ margin-top: var(--header-h); height: calc(100svh - var(--header-h)); scroll-snap-align:start; position:relative; z-index:1; }
 
-    /* Intro pills row: guarantees alignment + no overlap */
-    .intro-row{
-      position:absolute; left:0; right:0;
-      top: clamp(28px, 12vh, 140px);
-      display:grid;
-      grid-template-columns: 1fr var(--intro-center-gap) 1fr; /* center gap controls closeness to middle */
-      align-items:start;
-      z-index:2;
-      pointer-events:none;
-    }
+    /* ORIGINAL corner intros (text unchanged), now with a pill that hugs content */
     .corner-intro{
-      width: var(--intro-width);
+      position:absolute; z-index:2;
+      top: clamp(36px, 12vh, 140px);
+      max-width: 40ch;                 /* same as before */
       line-height:1.45;
       font-size: clamp(14px, 1.05vw, 16px);
       color: rgba(233,233,238,.95);
       text-shadow: 0 0 14px rgba(0,0,0,.55);
-      padding: 10px 14px;
-      border-radius: 999px;                                  /* pill */
+      pointer-events:none;
+    }
+    .corner-intro.left  { left:  calc(50% - var(--intro-offset)); text-align:left; }
+    .corner-intro.right { right: calc(50% - var(--intro-offset)); text-align:right; }
+
+    /* Pill wrapper that DOES NOT change wrapping/width decisions */
+    .corner-intro .pill{
+      display:inline-block;
+      padding: 8px 12px;
+      border-radius: 9999px;
       background: rgba(2,2,28,.46);
       border:1px solid rgba(255,255,255,.12);
       -webkit-backdrop-filter: blur(6px) saturate(120%);
       backdrop-filter: blur(6px) saturate(120%);
+      box-shadow: 0 6px 18px rgba(0,0,0,.25);
     }
-    .corner-intro.left  { justify-self:end;  text-align:left; }
-    .corner-intro.right { justify-self:start; text-align:right; }
 
     .split-50{
-      position:relative;
-      display:grid; grid-template-columns: 1fr 1fr; gap:0;
-      inline-size:100%; block-size:100%;
+      position:relative; display:grid; grid-template-columns: 1fr 1fr; gap:0; inline-size:100%; block-size:100%;
     }
     .split-50::after{
-      content:""; position:absolute; inset-block:0; inset-inline-start:50%;
-      width:1px; transform:translateX(-.5px);
-      background: linear-gradient(to bottom, transparent, rgba(255,255,255,.18), transparent);
-      opacity:var(--divider-opacity); pointer-events:none;
+      content:""; position:absolute; inset-block:0; inset-inline-start:50%; width:1px; transform:translateX(-.5px);
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,.18), transparent); opacity:var(--divider-opacity); pointer-events:none;
     }
     .split-50::before{
-      content:""; position:absolute; inset-block:0; inset-inline-start:50%;
-      width: var(--divider-glow-width); transform:translateX(-50%);
-      background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
-      filter: blur(var(--divider-glow-blur));
+      content:""; position:absolute; inset-block:0; inset-inline-start:50%; width: var(--divider-glow-width); transform:translateX(-50%);
+      background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0)); filter: blur(var(--divider-glow-blur));
       opacity:.42; pointer-events:none;
     }
 
     .half{
-      display:flex; align-items:center; justify-content:center; flex-direction:column;
-      gap:12px;
-      inline-size:100%; block-size:100%;
-      text-decoration:none; color:var(--fg);
-      background: transparent;
-      -webkit-backdrop-filter: none; backdrop-filter: none;
+      display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
+      inline-size:100%; block-size:100%; text-decoration:none; color:var(--fg);
+      background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none;
       transition: background-color .25s ease, backdrop-filter .25s ease, transform .25s ease, box-shadow .25s ease, opacity .25s ease;
-      position:relative; isolation:isolate;
-      padding: 0 clamp(18px, 3.5vw, 48px);
+      position:relative; isolation:isolate; padding: 0 clamp(18px, 3.5vw, 48px);
     }
-    .half:hover{
-      background: var(--frost-bg);
-      -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat));
-      backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat));
-      box-shadow: var(--frost-shadow);
-    }
+    .half:hover{ background: var(--frost-bg); -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat)); backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat)); box-shadow: var(--frost-shadow); }
 
     /* edge chevrons */
-    .edge{
-      position:absolute; top:50%; transform:translateY(-50%); z-index:2;
-      width:46px; height:46px; pointer-events:none;
-    }
-    .edge .disc{
-      position:absolute; inset:0; border-radius:999px;
-      background: rgba(2,2,28,.50);
-      border:1px solid rgba(255,255,255,.14);
-      -webkit-backdrop-filter: blur(6px) saturate(120%);
-      backdrop-filter: blur(6px) saturate(120%);
-      box-shadow: 0 6px 18px rgba(0,0,0,.35);
-    }
-    .edge svg{
-      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      width:24px; height:24px; fill:none; stroke-width:2.25; stroke-linecap:round; stroke-linejoin:round;
-      filter: drop-shadow(0 1px 6px rgba(0,0,0,.35));
-    }
-    .edge-left{ left:12px; }
-    .edge-right{ right:12px; }
-    .edge-left svg{ stroke: var(--accent-left); }
-    .edge-right svg{ stroke: var(--accent-right); }
+    .edge{ position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:46px; height:46px; pointer-events:none; }
+    .edge .disc{ position:absolute; inset:0; border-radius:999px; background: rgba(2,2,28,.50); border:1px solid rgba(255,255,255,.14); -webkit-backdrop-filter: blur(6px) saturate(120%); backdrop-filter: blur(6px) saturate(120%); box-shadow: 0 6px 18px rgba(0,0,0,.35); }
+    .edge svg{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:24px; height:24px; fill:none; stroke-width:2.25; stroke-linecap:round; stroke-linejoin:round; filter: drop-shadow(0 1px 6px rgba(0,0,0,.35)); }
+    .edge-left{ left:12px } .edge-right{ right:12px }
+    .edge-left svg{ stroke: var(--accent-left) } .edge-right svg{ stroke: var(--accent-right) }
     .half:hover .edge{ transform:translateY(-50%) scale(1.06); }
 
     .half h2{
@@ -199,73 +132,36 @@
       font-size: clamp(28px, 3.6vw, 56px);
       letter-spacing:.10em; text-transform:uppercase;
       text-shadow:0 2px 18px rgba(0,0,0,.45);
-      pointer-events:none;
-      text-align:center;
+      pointer-events:none; text-align:center;
     }
 
-    /* Bullets inline (keep titles level with same min height area) */
+    /* Bullets inline + keep titles level */
     .bullets{
       margin:0; padding:0; list-style:none;
-      display:flex; flex-wrap:wrap; justify-content:center;
-      gap:.35rem .9rem;
-      color:var(--muted);
-      font-size: clamp(12px, 1vw, 15px);
-      line-height:1.35;
-      min-height: calc(1.35em * 2 + 6px);
-      text-align:center;
-      opacity:.95;
+      display:flex; flex-wrap:wrap; justify-content:center; gap:.35rem .9rem;
+      color:var(--muted); font-size: clamp(12px, 1vw, 15px); line-height:1.35;
+      min-height: calc(1.35em * 2 + 6px); text-align:center; opacity:.95;
     }
-    .bullets li{
-      display:inline-flex; align-items:center;
-      white-space:nowrap;
-    }
-    .bullets li::before{
-      content:"•";
-      opacity:.7;
-      margin-right:.55rem;
-    }
+    .bullets li{ display:inline-flex; align-items:center; white-space:nowrap; }
+    .bullets li::before{ content:"•"; opacity:.7; margin-right:.55rem; }
     .bullets li:first-child::before{ content:""; margin:0; }
-
     .half:hover .bullets{ color:var(--fg); opacity:1; }
 
     /* Panels below */
-    .panel{
-      min-height:100svh; padding: 24px clamp(16px, 5vw, 64px);
-      display:flex; align-items:center; justify-content:center;
-      scroll-snap-align:start; position:relative; z-index:1;
-    }
+    .panel{ min-height:100svh; padding: 24px clamp(16px, 5vw, 64px); display:flex; align-items:center; justify-content:center; scroll-snap-align:start; position:relative; z-index:1; }
     .section-wrap{ width:min(1100px, 92vw); margin-inline:auto; }
-    .section-wrap h3{
-      font-family:"Space Grotesk", Inter, system-ui; font-size: clamp(22px, 2.4vw, 36px);
-      letter-spacing:.04em; margin:0 0 12px 0;
-    }
+    .section-wrap h3{ font-family:"Space Grotesk", Inter, system-ui; font-size: clamp(22px, 2.4vw, 36px); letter-spacing:.04em; margin:0 0 12px 0; }
     .section-wrap p{ margin:0 0 18px 0; color:var(--muted) }
 
-    /* debug badge */
-    .debug-badge{
-      position:fixed; left:8px; top:8px; z-index:9999;
-      font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px; opacity:.85;
-      box-shadow:0 2px 8px rgba(0,0,0,.25);
-      user-select:none; pointer-events:none;
-    }
+    .debug-badge{ position:fixed; left:8px; top:8px; z-index:9999; font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px; opacity:.85; box-shadow:0 2px 8px rgba(0,0,0,.25); user-select:none; pointer-events:none; }
 
-    /* Responsive */
-    @media (max-width: 1100px){
-      .intro-row{
-        grid-template-columns: 1fr;      /* stack pills */
-        row-gap: 8px;
-        justify-items:center;
-      }
-      .corner-intro{
-        width: min(92vw, var(--intro-width));
-        text-align:center;
-      }
-      .corner-intro.right{ text-align:center; }
+    @media (max-width: 900px){
+      .corner-intro{ position:static; margin: 10px 16px 0; text-align:left; max-width: 46ch; }
+      .corner-intro.right{ margin-top: 8px; }
       .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
       .split-50::after, .split-50::before{ display:none; }
-      .edge-left{ left:10px }
-      .edge-right{ right:10px }
-      .bullets{ min-height: 0; } /* allow natural flow on mobile */
+      .edge-left{ left:10px } .edge-right{ right:10px }
+      .bullets{ min-height: 0; }
     }
   </style>
 </head>
@@ -284,13 +180,14 @@
     </div>
   </header>
 
-  <!-- EXACT HALF/HALF HERO -->
+  <!-- HERO -->
   <section class="hero" id="home" aria-label="Split hero">
-
-    <!-- Intro pills (aligned, non-overlapping) -->
-    <div class="intro-row">
-      <div class="corner-intro left">I shape photography to your story and aesthetic.</div>
-      <div class="corner-intro right">Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens.</div>
+    <!-- Original intros, pill wrapped -->
+    <div class="corner-intro left">
+      <span class="pill">I shape photography to your story and aesthetic.</span>
+    </div>
+    <div class="corner-intro right">
+      <span class="pill">Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens.</span>
     </div>
 
     <div class="split-50">
@@ -353,8 +250,8 @@
       el.textContent = '';
       for (const ch of text){
         const span = document.createElement('span');
-        if (ch === ' ') { span.className = 'space'; }
-        else { span.textContent = ch; }
+        if (ch === ' ') span.className = 'space';
+        else span.textContent = ch;
         el.appendChild(span);
       }
     })();
