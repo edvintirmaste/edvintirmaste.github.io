@@ -8,10 +8,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2; --accent:#7dd3fc;
-      --line:#1a1b2e; --maxw:1100px;
-      --bg-scale:1;             /* ← back to original background scale */
-      --glow:#fff59a;           /* soft yellow glow that matches your art */
+      --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2;
+      --maxw:1100px; --glow:#fff59a;   /* soft yellow to match your spray */
+      --bg-scale:1;                    /* original bg sizing */
     }
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
@@ -20,11 +19,6 @@
       font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
       position:relative;
     }
-    h1,h2,h3{
-      font-family:"Space Grotesk",Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial;
-      font-weight:700; letter-spacing:-.2px;
-    }
-    a{color:inherit; text-decoration:none}
     .wrap{max-width:var(--maxw); margin-inline:auto; padding:0 24px}
 
     /* Full-bleed background (unchanged sizing) */
@@ -36,61 +30,63 @@
       will-change:transform;
     }
 
-    /* Header — remove the off-color edge line */
+    /* Header — no border/shadow seam */
     header.site-header{
       position:fixed; top:0; left:0; right:0; z-index:3; height:72px;
-      background:rgba(2,2,28,.48);              /* single tint (no gradient seam) */
-      backdrop-filter:blur(10px) saturate(1.08);
-      -webkit-backdrop-filter:blur(10px) saturate(1.08);
-      border-bottom:none;                        /* ← edge line removed */
-      box-shadow:none;
+      background:rgba(2,2,28,.46);
+      backdrop-filter:blur(10px) saturate(1.05);
+      -webkit-backdrop-filter:blur(10px) saturate(1.05);
+      border-bottom:none; box-shadow:none;
     }
     .nav{height:72px; display:flex; align-items:center; justify-content:space-between}
-    .brand{font-family:"Space Grotesk",Inter; font-weight:700; font-size:1.1rem; letter-spacing:-.2px; opacity:.98}
+    .brand{
+      font-family:"Space Grotesk",Inter; font-weight:700;
+      font-size:1.1rem; letter-spacing:-.2px; opacity:.98;
+    }
 
-    /* Hero (center title with caps, wider spacing, subtle glow) */
+    /* HERO — centered name with caps, wider spacing, glow */
     main{min-height:100svh; position:relative; z-index:1}
-    .pad-top{padding-top:96px}                   /* keeps hero clear of header */
-    .hero{min-height:calc(100svh - 96px); display:grid; place-items:center; text-align:center; padding:24px}
+    .pad-top{padding-top:96px} /* keeps hero clear of header */
+    .hero{
+      min-height:calc(100svh - 96px);
+      display:grid; place-items:center; text-align:center;
+      padding:24px;
+    }
     .hero-title{
       margin:0 0 10px 0;
-      font-size:clamp(40px, 8vw, 96px);
-      text-transform:uppercase;                  /* ALL CAPS */
-      letter-spacing:.18em;                      /* wider spacing */
-      line-height:1.05;
+      font-family:"Space Grotesk",Inter,system-ui;
+      font-weight:700;
+      font-size:clamp(42px, 9vw, 112px);
+      text-transform:uppercase;
+      letter-spacing:.18em;      /* bigger spacing */
+      line-height:1.04;
       text-shadow:
         0 0 12px rgba(0,0,0,.35),
         0 0 28px color-mix(in oklab, var(--glow) 40%, transparent);
       position:relative;
     }
     .hero-title::after{
-      content:""; position:absolute; inset:-16% -18% -26% -18%; z-index:-1; pointer-events:none;
+      content:""; position:absolute; inset:-16% -18% -26% -18%; z-index:-1;
       background:
         radial-gradient(60% 60% at 50% 45%, color-mix(in oklab, var(--glow) 28%, transparent) 0%, transparent 60%),
         radial-gradient(70% 70% at 50% 60%, rgba(60,68,180,.18) 0%, transparent 70%);
       filter:blur(14px);
     }
     .tagline{color:var(--muted); margin:6px 0 0 0; font-size:clamp(14px, 1.6vw, 18px)}
-
-    /* Buttons style placeholder (we’ll add Foto/Video later) */
-    .btn{display:inline-flex; align-items:center; gap:10px; margin-top:16px; padding:12px 16px;
-         border-radius:12px; border:1px solid rgba(255,255,255,.14);
-         background:rgba(20,20,40,.6); color:var(--fg)}
-    .btn:focus{outline:2px solid var(--glow); outline-offset:2px}
-    footer{padding:28px 24px; border-top:1px solid var(--line); text-align:center; color:var(--muted); position:relative; z-index:1}
+    footer{padding:28px 24px; text-align:center; color:var(--muted); position:relative; z-index:1}
   </style>
 </head>
 <body>
-  <!-- Background -->
+  <!-- Background (cache-busted) -->
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=4" alt="">
+    <img src="assets/mainpagebg.png?v=5" alt="">
   </div>
 
-  <!-- Header -->
+  <!-- Top bar -->
   <header class="site-header" role="banner">
     <div class="wrap nav">
       <div class="brand">Edvin Tirmaste</div>
-      <div><!-- reserved for ET/EN later --></div>
+      <div></div>
     </div>
   </header>
 
@@ -99,7 +95,6 @@
     <section class="wrap hero">
       <h1 class="hero-title">EDVIN TIRMASTE</h1>
       <p class="tagline">Fotograaf & videotootja</p>
-      <!-- <a class="btn" href="#">Foto</a> <a class="btn" href="#">Video</a> -->
     </section>
   </main>
 
