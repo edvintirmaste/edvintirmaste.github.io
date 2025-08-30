@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v24 + intro boxes tuned -->
+  <!-- BUILD v24 + longer photo intro (no pill) -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -33,8 +33,8 @@
       --accent-left:#8dd8ff; --accent-right:#ffb3e1;
 
       /* Intro placement: smaller = closer to the middle */
-      --intro-offset: 24vw;          /* try 22vw if you want even closer */
-      --intro-top: 12.5vh;           /* vertical position */
+      --intro-offset: 24vw;   /* tweak: 22vw or 20vw to move closer in */
+      --intro-top: 12.5vh;    /* vertical position */
     }
 
     *{box-sizing:border-box}
@@ -71,11 +71,11 @@
     /* ===== HERO ===== */
     .hero{ margin-top: var(--header-h); height: calc(100svh - var(--header-h)); scroll-snap-align:start; position:relative; z-index:1; }
 
-    /* Intro boxes (same text as before; just boxed + tuned) */
+    /* Corner intros (no box/pill) */
     .corner-intro{
       position:absolute; z-index:2;
       top: var(--intro-top);
-      max-width: 40ch;
+      max-width: 52ch; /* allow the longer photography line to breathe */
       line-height:1.45;
       font-size: clamp(14px, 1.05vw, 16px);
       color: rgba(233,233,238,.95);
@@ -84,17 +84,6 @@
     }
     .corner-intro.left  { left:  calc(50% - var(--intro-offset)); text-align:left; }
     .corner-intro.right { right: calc(50% - var(--intro-offset)); text-align:right; }
-
-    .corner-intro .box{
-      display:inline-block;
-      padding: 8px 12px;
-      border-radius: 14px;
-      background: rgba(14,14,40,.46);
-      border:1px solid rgba(255,255,255,.12);
-      -webkit-backdrop-filter: blur(5px) saturate(115%);
-      backdrop-filter: blur(5px) saturate(115%);
-      box-shadow: 0 6px 16px rgba(0,0,0,.25);
-    }
 
     .split-50{
       position:relative; display:grid; grid-template-columns: 1fr 1fr; gap:0; inline-size:100%; block-size:100%;
@@ -182,15 +171,14 @@
 
   <!-- HERO -->
   <section class="hero" id="home" aria-label="Split hero">
-    <!-- Same text as before, just boxed -->
+    <!-- Photography (longer) -->
     <div class="corner-intro left">
-      <span class="box">I shape photography to your story and aesthetic.</span>
-      <!-- OPTIONAL longer version to paste instead:
-      <span class="box">I shape photography to your story and aesthetic. Clean color and consistent sets for web and print.</span>
-      -->
+      I shape photography to your story and aesthetic. Experience in events, modelling, real estate, product, car, street, landscape, wildlife and artistic photography.
     </div>
+
+    <!-- Videography (unchanged) -->
     <div class="corner-intro right">
-      <span class="box">Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens.</span>
+      Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens.
     </div>
 
     <div class="split-50">
