@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v24 + original intro layout + pill wrapper only -->
+  <!-- BUILD v24 + intro boxes tuned -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -32,8 +32,9 @@
       /* Arrow accents */
       --accent-left:#8dd8ff; --accent-right:#ffb3e1;
 
-      /* ORIGINAL intro placement: smaller = closer to center */
-      --intro-offset: 20vw;
+      /* Intro placement: smaller = closer to the middle */
+      --intro-offset: 24vw;          /* try 22vw if you want even closer */
+      --intro-top: 12.5vh;           /* vertical position */
     }
 
     *{box-sizing:border-box}
@@ -70,30 +71,29 @@
     /* ===== HERO ===== */
     .hero{ margin-top: var(--header-h); height: calc(100svh - var(--header-h)); scroll-snap-align:start; position:relative; z-index:1; }
 
-    /* ORIGINAL corner intros (text unchanged), now with a pill that hugs content */
+    /* Intro boxes (same text as before; just boxed + tuned) */
     .corner-intro{
       position:absolute; z-index:2;
-      top: clamp(36px, 12vh, 140px);
-      max-width: 40ch;                 /* same as before */
+      top: var(--intro-top);
+      max-width: 40ch;
       line-height:1.45;
       font-size: clamp(14px, 1.05vw, 16px);
       color: rgba(233,233,238,.95);
-      text-shadow: 0 0 14px rgba(0,0,0,.55);
+      text-shadow: 0 0 10px rgba(0,0,0,.45);
       pointer-events:none;
     }
     .corner-intro.left  { left:  calc(50% - var(--intro-offset)); text-align:left; }
     .corner-intro.right { right: calc(50% - var(--intro-offset)); text-align:right; }
 
-    /* Pill wrapper that DOES NOT change wrapping/width decisions */
-    .corner-intro .pill{
+    .corner-intro .box{
       display:inline-block;
       padding: 8px 12px;
-      border-radius: 9999px;
-      background: rgba(2,2,28,.46);
+      border-radius: 14px;
+      background: rgba(14,14,40,.46);
       border:1px solid rgba(255,255,255,.12);
-      -webkit-backdrop-filter: blur(6px) saturate(120%);
-      backdrop-filter: blur(6px) saturate(120%);
-      box-shadow: 0 6px 18px rgba(0,0,0,.25);
+      -webkit-backdrop-filter: blur(5px) saturate(115%);
+      backdrop-filter: blur(5px) saturate(115%);
+      box-shadow: 0 6px 16px rgba(0,0,0,.25);
     }
 
     .split-50{
@@ -182,12 +182,15 @@
 
   <!-- HERO -->
   <section class="hero" id="home" aria-label="Split hero">
-    <!-- Original intros, pill wrapped -->
+    <!-- Same text as before, just boxed -->
     <div class="corner-intro left">
-      <span class="pill">I shape photography to your story and aesthetic.</span>
+      <span class="box">I shape photography to your story and aesthetic.</span>
+      <!-- OPTIONAL longer version to paste instead:
+      <span class="box">I shape photography to your story and aesthetic. Clean color and consistent sets for web and print.</span>
+      -->
     </div>
     <div class="corner-intro right">
-      <span class="pill">Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens.</span>
+      <span class="box">Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens.</span>
     </div>
 
     <div class="split-50">
