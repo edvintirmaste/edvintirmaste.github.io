@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v24 + aligned intro columns (no pill) -->
+  <!-- BUILD v25 — boxed intros + hyphenation + optional frames/panel -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -21,21 +21,24 @@
       --bar-top:.75; --bar-btm:.30;
       --fade-height: 96px; --fade-start:.28;
 
-      /* Divider (center line + glow) */
+      /* Divider */
       --divider-opacity:.35;
       --divider-glow-width: 34px; --divider-glow-blur: 14px;
 
-      /* Frosted on hover */
+      /* Frost on hover */
       --frost-bg: rgba(255,255,255,.06);
       --frost-blur: 8px; --frost-sat: 115%; --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
 
-      /* Arrow accents */
+      /* Accents */
       --accent-left:#8dd8ff; --accent-right:#ffb3e1;
 
-      /* Intro positioning (no pill) */
-      --intro-top: 12.5vh;   /* vertical position */
-      --intro-width: 52ch;   /* same column width both sides */
-      --intro-gap: 36px;     /* space from center line to inner edge */
+      /* Intro block controls */
+      --intro-top: 12.5vh;        /* vertical position */
+      --intro-width: 50ch;        /* box width (same both sides) */
+      --intro-gap: 36px;          /* space from center line to inner edge */
+      --intro-last: justify;      /* justify | left/right — controls LAST line */
+      --intro-frame-opacity:.18;  /* 0 = off (hairline frame) */
+      --intro-panel: 0;           /* 1 = soft translucent panel behind text */
     }
 
     *{box-sizing:border-box}
@@ -86,25 +89,47 @@
       opacity:.42; pointer-events:none;
     }
 
-    /* Corner intros (no pill, aligned columns) */
+    /* Corner intros — “boxed” paragraph */
     .corner-intro{
       position:absolute; z-index:2; top: var(--intro-top);
       width: var(--intro-width);
-      line-height:1.45;
+      line-height:1.48;
       font-size: clamp(14px, 1.05vw, 16px);
-      color: rgba(233,233,238,.95);
+      color: rgba(233,233,238,.96);
       text-shadow: 0 0 10px rgba(0,0,0,.45);
-      text-align: justify;
-      text-align-last: left;
-      text-wrap: balance;
-      hyphens: auto;
       pointer-events:none;
+
+      /* Typography for nicer justification */
+      text-align: justify;
+      text-align-last: var(--intro-last);
+      text-wrap: pretty;            /* reduce ugly last-line stretches */
+      hyphens: auto;                /* require LANG to be correct */
+      word-break: normal;
+      overflow-wrap: anywhere;      /* avoid huge gaps around long words */
+
+      /* Optional soft panel */
+      background: rgba(10,10,28, calc(var(--intro-panel) * .22));
+      -webkit-backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
+      backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
+
+      padding: calc(var(--intro-panel) * 12px);
+      border-radius: calc(var(--intro-panel) * 12px);
+
+      /* Hairline frame */
+      position: absolute;
     }
     .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width)); }
-    .corner-intro.right {
-      right: calc(50% - var(--intro-gap) - var(--intro-width));
-      text-align-last: right;
+    .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width)); }
+
+    /* Hairline frame (very subtle) */
+    .corner-intro::before,
+    .corner-intro::after{
+      content:""; position:absolute; top: -6px; bottom: -6px; width:1px; pointer-events:none;
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,var(--intro-frame-opacity)), transparent);
+      opacity: calc(1 - var(--intro-panel)); /* hide frame if panel is on */
     }
+    .corner-intro::before{ left:-6px; }
+    .corner-intro::after { right:-6px; }
 
     .half{
       display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
@@ -132,7 +157,7 @@
       pointer-events:none; text-align:center;
     }
 
-    /* Bullets inline + keep titles level */
+    /* Bullets */
     .bullets{
       margin:0; padding:0; list-style:none;
       display:flex; flex-wrap:wrap; justify-content:center; gap:.35rem .9rem;
@@ -157,9 +182,10 @@
       .corner-intro{
         position:static; margin: 10px 16px 0;
         width: min(92vw, var(--intro-width));
-        text-align:left; text-align-last:left;
+        text-align:left; text-align-last:left;   /* mobile = simple left rag */
+        background: none; padding: 0; border-radius: 0;
       }
-      .corner-intro.right{ margin-top: 8px; }
+      .corner-intro::before, .corner-intro::after{ display:none; }
       .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
       .split-50::after, .split-50::before{ display:none; }
       .edge-left{ left:10px } .edge-right{ right:10px }
@@ -168,7 +194,7 @@
   </style>
 </head>
 <body>
-  <div class="debug-badge">v24</div>
+  <div class="debug-badge">v25</div>
 
   <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
@@ -185,13 +211,13 @@
   <!-- HERO -->
   <section class="hero" id="home" aria-label="Split hero">
 
-    <!-- Photography (longer, your exact text) -->
-    <div class="corner-intro left">
+    <!-- Photography intro (boxed) -->
+    <div class="corner-intro left" lang="en">
       I shape photography to your story and aesthetic. Experience in events, modelling, real estate, product, car, street, landscape, wildlife and artistic photography.
     </div>
 
-    <!-- Videography (your exact text with extra line) -->
-    <div class="corner-intro right">
+    <!-- Videography intro (boxed) -->
+    <div class="corner-intro right" lang="en">
       Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens. Films, Commercials, Music Videos and Content Videos in most fields.
     </div>
 
