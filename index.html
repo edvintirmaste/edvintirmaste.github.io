@@ -1,16 +1,19 @@
 <!doctype html>
-<html lang="et">
+<html lang="et" data-build="v28.4">
 <head>
-  <!-- BUILD v28.2 — rails fixed on both sides + softer header fade -->
+  <!-- BUILD v28.4 — dual rails both sides + true frosted downward fade + visible version beacons -->
   <meta charset="utf-8" />
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Edvin Tirmaste — Portfolio</title>
+  <title>[v28.4] Edvin Tirmaste — Portfolio</title>
   <meta name="description" content="Edvin Tirmaste — Fotograafia & video." />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 
   <style>
     :root{
-      --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2; --brand-glow:#fff59a;
+      --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2;
       --header-h: 92px;
 
       /* Brand spread */
@@ -18,10 +21,11 @@
       --brand-size: clamp(14px, 1vw, 20px);
       --word-gap: clamp(14px, 2vw, 48px);
 
-      /* Top bar fade — even lighter/longer */
-      --bar-top:.28; --bar-btm:.10;
-      --fade-height: 320px;
-      --fade-start:.06;
+      /* Top bar + fade */
+      --bar-top:.28;   /* opacity inside the bar */
+      --bar-btm:.10;   /* opacity at bar bottom */
+      --fade-height: 340px;      /* how far the frost effect extends down */
+      --fade-tint:.06;           /* slight tint inside the fade region */
 
       /* Divider */
       --divider-opacity:.35;
@@ -31,11 +35,11 @@
       --frost-bg: rgba(255,255,255,.06);
       --frost-blur: 8px; --frost-sat: 115%; --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
 
-      /* Accent RGB (for rgba() blends) */
-      --accent-left-rgb: 141,216,255;   /* #8dd8ff */
-      --accent-right-rgb: 255,179,225;  /* #ffb3e1 */
+      /* Accent RGB (for rgba blends) */
+      --accent-left-rgb: 141,216,255;   /* blue glow */
+      --accent-right-rgb: 255,179,225;  /* pink glow */
 
-      /* Intro block controls */
+      /* Intro blocks */
       --intro-top: 12.5vh;
       --intro-width: 48ch;
       --intro-gap: 96px;
@@ -43,10 +47,13 @@
 
       /* Rails / glow */
       --intro-rail-w: 3px;
-      --intro-rail-alpha: .45;
-      --intro-glow-w: 40px;
-      --intro-glow-alpha: .28;
-      --intro-rail-gap: 14px;
+      --intro-rail-alpha: .45;   /* bright line strength */
+      --intro-glow-w: 40px;      /* soft glow width */
+      --intro-glow-alpha: .28;   /* glow strength */
+      --intro-rail-gap: 14px;    /* space between text and rail */
+
+      /* Enforce a matching minimum height so rails look equal */
+      --intro-min-lines: 6;      /* change to taste (in lines) */
     }
 
     *{box-sizing:border-box}
@@ -57,29 +64,24 @@
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* Top bar — lighter + longer fade + stronger blur */
+    /* Top bar with a REAL frosted fade continuing below the bar */
     header.site-header{
       position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:10;
       background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
       backdrop-filter: blur(10px) saturate(110%); -webkit-backdrop-filter: blur(10px) saturate(110%);
     }
-    header.site-header::after{
-      content:""; position:absolute; left:0; right:0; top:100%; height:var(--fade-height); pointer-events:none;
-      background: linear-gradient(
-        to bottom,
-        rgba(2,2,28,var(--fade-start)) 0%,
-        rgba(2,2,28,.05) 55%,
-        rgba(2,2,28,0) 100%
-      );
+    /* Frost extension that fades out downward (includes blur + tint) */
+    .header-fade{
+      position:absolute; left:0; right:0; top:100%; height:var(--fade-height); pointer-events:none;
+      background: linear-gradient(to bottom, rgba(2,2,28,var(--fade-tint)), rgba(2,2,28,0));
+      backdrop-filter: blur(10px) saturate(110%); -webkit-backdrop-filter: blur(10px) saturate(110%);
+      /* fade the EFFECT to transparent */
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0));
+              mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0));
     }
-    /* No-blur fallback: lighten further so it never looks “heavy” */
+    /* Fallback if blur isn't supported: color-only gentle fade */
     @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
-      header.site-header{
-        background: linear-gradient(to bottom, rgba(2,2,28,.22), rgba(2,2,28,.08));
-      }
-      header.site-header::after{
-        background: linear-gradient(to bottom, rgba(2,2,28,.04), rgba(2,2,28,0));
-      }
+      .header-fade{ background: linear-gradient(to bottom, rgba(2,2,28,.14), rgba(2,2,28,0)); }
     }
 
     .nav{ height:var(--header-h); display:flex; align-items:center; justify-content:center; padding-inline: clamp(16px, 5vw, 64px); }
@@ -111,7 +113,7 @@
       opacity:.42; pointer-events:none;
     }
 
-    /* Corner intros — rails now use ::before on BOTH blocks */
+    /* Corner intros */
     .corner-intro{
       position:absolute; z-index:2; top: var(--intro-top);
       width: var(--intro-width);
@@ -127,38 +129,46 @@
       word-break: normal; overflow-wrap:anywhere;
       text-wrap: pretty;
 
+      /* equalize visual height so rails match */
+      min-height: calc(var(--intro-min-lines) * 1lh);
+
+      /* reserve rail space on BOTH sides */
+      padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
+      padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w));
+
+      /* optional translucent panel (off by default) */
       background: rgba(10,10,28, calc(var(--intro-panel) * .22));
       -webkit-backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
       backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
       border-radius: calc(var(--intro-panel) * 12px);
       padding-block: calc(var(--intro-panel) * 12px);
     }
-    .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left;  padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w)); }
-    .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w)); }
+    .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
+    .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
 
-    /* Rails (both use ::before; physical left/right for Opera compatibility) */
-    .corner-intro::before{
-      content:""; position:absolute; top:0; bottom:0;
-      width: calc(var(--intro-glow-w) + var(--intro-rail-w));
+    /* === Rails: both sides on BOTH blocks === */
+    .corner-intro::before,
+    .corner-intro::after{
+      content:""; position:absolute; top:0; bottom:0; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
       pointer-events:none; background-repeat:no-repeat;
     }
-    /* Left block: rail on its RIGHT edge (frames the inner side) */
-    .corner-intro.left::before{
-      right:0;
-      background:
-        /* bright vertical rail */
-        linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
-          right center / var(--intro-rail-w) 100% no-repeat,
-        /* soft glow bulging outward */
-        radial-gradient(100% 60% at right center, rgba(var(--accent-left-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
-    }
-    /* Right block: rail on its LEFT edge (frames the inner side) */
-    .corner-intro.right::before{
+    /* LEFT side rail (blue-ish glow) */
+    .corner-intro::before{
       left:0;
       background:
+        /* bright rail */
         linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
           left center / var(--intro-rail-w) 100% no-repeat,
-        radial-gradient(100% 60% at left center, rgba(var(--accent-right-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
+        /* glow */
+        radial-gradient(100% 60% at left center, rgba(var(--accent-left-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
+    }
+    /* RIGHT side rail (pink-ish glow) */
+    .corner-intro::after{
+      right:0;
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
+          right center / var(--intro-rail-w) 100% no-repeat,
+        radial-gradient(100% 60% at right center, rgba(var(--accent-right-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
     }
 
     .half{
@@ -205,7 +215,11 @@
     .section-wrap h3{ font-family:"Space Grotesk", Inter, system-ui; font-size: clamp(22px, 2.4vw, 36px); letter-spacing:.04em; margin:0 0 12px 0; }
     .section-wrap p{ margin:0 0 18px 0; color:var(--muted) }
 
-    .debug-badge{ position:fixed; left:8px; top:8px; z-index:9999; font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px; opacity:.85; box-shadow:0 2px 8px rgba(0,0,0,.25); user-select:none; pointer-events:none; }
+    .debug-badge{
+      position:fixed; left:8px; top:8px; z-index:9999;
+      font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px;
+      opacity:.95; box-shadow:0 2px 8px rgba(0,0,0,.25); user-select:none; pointer-events:none;
+    }
 
     /* Responsive */
     @media (max-width: 900px){
@@ -215,8 +229,9 @@
         text-align:left; text-align-last:left;
         background: none; border-radius: 0;
         padding: 0;
+        min-height: 0;             /* mobile: let height flow naturally */
       }
-      .corner-intro::before{ display:none; } /* rails off on narrow phones */
+      .corner-intro::before, .corner-intro::after{ display:none; } /* no rails on narrow phones */
       .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
       .split-50::after, .split-50::before{ display:none; }
       .edge-left{ left:10px } .edge-right{ right:10px }
@@ -226,11 +241,11 @@
 </head>
 
 <body>
-  <div class="debug-badge">v28.2</div>
+  <div class="debug-badge">v28.4</div>
 
   <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=24" alt="">
+    <img src="assets/mainpagebg.png?v=284" alt="">
   </div>
 
   <!-- Top bar -->
@@ -238,6 +253,8 @@
     <div class="nav">
       <div class="brand" id="brand">EDVIN TIRMASTE</div>
     </div>
+    <!-- the frost effect continues below the bar and fades out -->
+    <div class="header-fade" aria-hidden="true"></div>
   </header>
 
   <!-- HERO -->
@@ -301,7 +318,7 @@
 
   <footer class="panel" style="min-height:auto; padding:40px 24px; scroll-snap-align:end">
     <div class="section-wrap">
-      © <span id="y"></span> Edvin Tirmaste
+      © <span id="y"></span> Edvin Tirmaste — <span id="buildFooter">Build v28.4</span>
     </div>
   </footer>
 
@@ -319,6 +336,9 @@
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Visible console beacon so you can confirm the load
+    console.log('Portfolio build v28.4');
   </script>
 </body>
 </html>
