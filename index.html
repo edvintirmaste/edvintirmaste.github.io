@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="et" data-build="v28.6">
+<html lang="et" data-build="v28.7">
 <head>
-  <!-- BUILD v28.6 — revert top bar overlay (no wash) + equal-height centered rails on both sides of both texts -->
+  <!-- BUILD v28.7 — rails aligned by fixed top/height so all four match -->
   <meta charset="utf-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v28.6] Edvin Tirmaste — Portfolio</title>
+  <title>[v28.7] Edvin Tirmaste — Portfolio</title>
   <meta name="description" content="Edvin Tirmaste — Fotograafia & video." />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 
@@ -16,12 +16,12 @@
       --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2;
       --header-h: 92px;
 
-      /* Brand spread */
+      /* Brand */
       --brand-min: 520px; --brand-fluid: 70vw; --brand-max: 1000px;
       --brand-size: clamp(14px, 1vw, 20px);
       --word-gap: clamp(14px, 2vw, 48px);
 
-      /* Top bar (simple, no extending overlay) */
+      /* Top bar (unchanged) */
       --bar-top:.28; --bar-btm:.10;
 
       /* Divider */
@@ -32,9 +32,9 @@
       --frost-bg: rgba(255,255,255,.06);
       --frost-blur: 8px; --frost-sat: 115%; --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
 
-      /* Accents for rails */
-      --accent-left-rgb: 141,216,255;    /* blue glow */
-      --accent-right-rgb: 255,179,225;   /* pink glow */
+      /* Rail colors */
+      --accent-left-rgb: 141,216,255;   /* blue glow */
+      --accent-right-rgb: 255,179,225;  /* pink glow */
 
       /* Intro blocks */
       --intro-top: 12.5vh;
@@ -42,27 +42,25 @@
       --intro-gap: 96px;
       --intro-panel: 0;
 
-      /* Rails / glow */
+      /* Rails */
       --intro-rail-w: 3px;
       --intro-rail-alpha: .45;
       --intro-glow-w: 40px;
       --intro-glow-alpha: .28;
       --intro-rail-gap: 14px;
 
-      /* NEW: force both rails to identical height (in lines) */
-      --rail-height: 6.5lh;   /* change to taste, both sides use this */
-      --rail-v-margin: .35lh; /* trims above/below to avoid looking too long */
+      /* NEW: absolute alignment for all rails (same top/height on both blocks) */
+      --rail-top: .55lh;      /* distance from the block’s top to start of rails */
+      --rail-height: 6.2lh;   /* rail length; all four rails use this */
     }
 
     *{box-sizing:border-box}
     html{ scroll-behavior:smooth; scroll-snap-type:y mandatory; scroll-padding-top: var(--header-h); }
     body{ margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial; position:relative; }
 
-    /* Background */
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* Top bar (reverted: just frosted bar, no page overlay) */
     header.site-header{
       position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
       background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
@@ -70,7 +68,6 @@
     }
     .nav{ height:var(--header-h); display:flex; align-items:center; justify-content:center; padding-inline: clamp(16px, 5vw, 64px); }
 
-    /* Brand (spread letters) */
     .brand{
       width: clamp(var(--brand-min), var(--brand-fluid), var(--brand-max));
       display:flex; align-items:center; justify-content:space-between;
@@ -80,10 +77,8 @@
     .brand span{ font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1; text-shadow:0 0 16px rgba(255,245,154,.22); }
     .brand .space{ flex:0 0 var(--word-gap); }
 
-    /* ===== HERO ===== */
     .hero{ margin-top: var(--header-h); height: calc(100svh - var(--header-h)); scroll-snap-align:start; position:relative; z-index:1; }
 
-    /* Center divider */
     .split-50{
       position:relative; display:grid; grid-template-columns: 1fr 1fr; gap:0; inline-size:100%; block-size:100%;
     }
@@ -97,7 +92,6 @@
       opacity:.42; pointer-events:none;
     }
 
-    /* Corner intros */
     .corner-intro{
       position:absolute; z-index:2; top: var(--intro-top);
       width: var(--intro-width);
@@ -112,11 +106,9 @@
       -webkit-hyphens:auto; hyphens:auto;
       overflow-wrap:anywhere; text-wrap: pretty;
 
-      /* keep text off the rails on both sides */
       padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
       padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w));
 
-      /* optional translucent panel (OFF) */
       background: rgba(10,10,28, calc(var(--intro-panel) * .22));
       -webkit-backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
       backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
@@ -126,15 +118,13 @@
     .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
     .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
 
-    /* === Rails: identical height & centered on BOTH blocks === */
+    /* === Rails: fixed top + fixed height: all four identical === */
     .corner-intro::before,
     .corner-intro::after{
       content:""; position:absolute; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
-      height: calc(var(--rail-height) - (var(--rail-v-margin) * 2));  /* equal height, trimmed a touch */
-      top: 50%; transform: translateY(-50%);                          /* perfectly centered */
+      top: var(--rail-top); height: var(--rail-height);
       pointer-events:none; background-repeat:no-repeat;
     }
-    /* Left rail (blue-ish) */
     .corner-intro::before{
       left:0;
       background:
@@ -142,7 +132,6 @@
           left center / var(--intro-rail-w) 100% no-repeat,
         radial-gradient(100% 60% at left center, rgba(var(--accent-left-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
     }
-    /* Right rail (pink-ish) */
     .corner-intro::after{
       right:0;
       background:
@@ -160,7 +149,6 @@
     }
     .half:hover{ background: var(--frost-bg); -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat)); backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat)); box-shadow: var(--frost-shadow); }
 
-    /* edge chevrons */
     .edge{ position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:46px; height:46px; pointer-events:none; }
     .edge .disc{ position:absolute; inset:0; border-radius:999px; background: rgba(2,2,28,.50); border:1px solid rgba(255,255,255,.14); -webkit-backdrop-filter: blur(6px) saturate(120%); backdrop-filter: blur(6px) saturate(120%); box-shadow: 0 6px 18px rgba(0,0,0,.35); }
     .edge svg{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:24px; height:24px; fill:none; stroke-width:2.25; stroke-linecap:round; stroke-linejoin:round; filter: drop-shadow(0 1px 6px rgba(0,0,0,.35)); }
@@ -177,7 +165,6 @@
       pointer-events:none; text-align:center;
     }
 
-    /* Bullets */
     .bullets{
       margin:0; padding:0; list-style:none;
       display:flex; flex-wrap:wrap; justify-content:center; gap:.35rem .9rem;
@@ -187,9 +174,7 @@
     .bullets li{ display:inline-flex; align-items:center; white-space:nowrap; }
     .bullets li::before{ content:"•"; opacity:.7; margin-right:.55rem; }
     .bullets li:first-child::before{ content:""; margin:0; }
-    .half:hover .bullets{ color:var(--fg); opacity:1; }
 
-    /* Panels below */
     .panel{ min-height:100svh; padding: 24px clamp(16px, 5vw, 64px); display:flex; align-items:center; justify-content:center; scroll-snap-align:start; position:relative; z-index:1; }
     .section-wrap{ width:min(1100px, 92vw); margin-inline:auto; }
     .section-wrap h3{ font-family:"Space Grotesk", Inter, system-ui; font-size: clamp(22px, 2.4vw, 36px); letter-spacing:.04em; margin:0 0 12px 0; }
@@ -198,10 +183,9 @@
     .debug-badge{
       position:fixed; left:8px; top:8px; z-index:9999;
       font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px;
-      opacity:.95; box-shadow:0 2px 8px rgba(0,0,0,.25); user-select:none; pointer-events:none;
+      opacity:.95; box-shadow: 0 2px 8px rgba(0,0,0,.25); user-select:none; pointer-events:none;
     }
 
-    /* Responsive */
     @media (max-width: 900px){
       .corner-intro{
         position:static; margin: 10px 16px 0;
@@ -210,7 +194,7 @@
         background: none; border-radius: 0;
         padding: 0;
       }
-      .corner-intro::before, .corner-intro::after{ display:none; } /* no rails on narrow phones */
+      .corner-intro::before, .corner-intro::after{ display:none; }
       .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
       .split-50::after, .split-50::before{ display:none; }
       .edge-left{ left:10px } .edge-right{ right:10px }
@@ -220,64 +204,50 @@
 </head>
 
 <body>
-  <div class="debug-badge">v28.6</div>
+  <div class="debug-badge">v28.7</div>
 
-  <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=286" alt="">
+    <img src="assets/mainpagebg.png?v=287" alt="">
   </div>
 
-  <!-- Top bar -->
   <header class="site-header" role="banner">
     <div class="nav">
       <div class="brand" id="brand">EDVIN TIRMASTE</div>
     </div>
   </header>
 
-  <!-- HERO -->
   <section class="hero" id="home" aria-label="Split hero">
-
-    <!-- Photography intro -->
     <div class="corner-intro left" lang="en">
       I shape photography to your story and aesthetic. Experience in events, modelling, real estate, product, car, street, landscape, wildlife and artistic photography.
     </div>
 
-    <!-- Videography intro -->
     <div class="corner-intro right" lang="en">
       Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens. Films, Commercials, Music Videos and Content Videos in most fields.
     </div>
 
     <div class="split-50">
       <a class="half left" href="#photo">
-        <span class="edge edge-left" aria-hidden="true">
-          <span class="disc"></span>
+        <span class="edge edge-left" aria-hidden="true"><span class="disc"></span>
           <svg viewBox="0 0 24 24"><path d="M15 5 L7 12 L15 19"/></svg>
         </span>
         <h2>Photography</h2>
         <ul class="bullets">
-          <li>Events</li>
-          <li>Modelling</li>
-          <li>Real Estate</li>
-          <li>Product and more</li>
+          <li>Events</li><li>Modelling</li><li>Real Estate</li><li>Product and more</li>
         </ul>
       </a>
 
       <a class="half right" href="#video">
-        <span class="edge edge-right" aria-hidden="true">
-          <span class="disc"></span>
+        <span class="edge edge-right" aria-hidden="true"><span class="disc"></span>
           <svg viewBox="0 0 24 24"><path d="M9 5 L17 12 L9 19"/></svg>
         </span>
         <h2>Videography</h2>
         <ul class="bullets">
-          <li>Writing</li>
-          <li>Filming</li>
-          <li>Editing</li>
+          <li>Writing</li><li>Filming</li><li>Editing</li>
         </ul>
       </a>
     </div>
   </section>
 
-  <!-- PHOTO (stub) -->
   <section class="panel" id="photo" aria-label="Photography">
     <div class="section-wrap">
       <h3>Photography</h3>
@@ -285,7 +255,6 @@
     </div>
   </section>
 
-  <!-- VIDEO (stub) -->
   <section class="panel" id="video" aria-label="Videography">
     <div class="section-wrap">
       <h3>Videography</h3>
@@ -295,25 +264,23 @@
 
   <footer class="panel" style="min-height:auto; padding:40px 24px; scroll-snap-align:end">
     <div class="section-wrap">
-      © <span id="y"></span> Edvin Tirmaste — <span id="buildFooter">Build v28.6</span>
+      © <span id="y"></span> Edvin Tirmaste — <span>Build v28.7</span>
     </div>
   </footer>
 
   <script>
-    // Build spaced letters in header
     (function(){
       const el = document.getElementById('brand');
       const text = el.textContent.trim().toUpperCase();
       el.textContent = '';
       for (const ch of text){
-        const span = document.createElement('span');
-        if (ch === ' ') { span.className = 'space'; }
-        else { span.textContent = ch; }
-        el.appendChild(span);
+        const s = document.createElement('span');
+        if (ch === ' ') s.className = 'space'; else s.textContent = ch;
+        el.appendChild(s);
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
-    console.log('Portfolio build v28.6');
+    console.log('Portfolio build v28.7');
   </script>
 </body>
 </html>
