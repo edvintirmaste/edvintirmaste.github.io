@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v28 — rails as pseudo-elements + smoother header fade -->
+  <!-- BUILD v28.1 — rail fallback (no color-mix) + lighter header fade -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -18,10 +18,10 @@
       --brand-size: clamp(14px, 1vw, 20px);
       --word-gap: clamp(14px, 2vw, 48px);
 
-      /* Top bar fade (v28 smoother) */
-      --bar-top:.78; --bar-btm:.34;
-      --fade-height: 160px;     /* ↑ longer ramp */
-      --fade-start:.22;         /* starts stronger, fades longer */
+      /* Top bar fade — lighter */
+      --bar-top:.46; --bar-btm:.18;
+      --fade-height: 220px;
+      --fade-start:.10;
 
       /* Divider */
       --divider-opacity:.35;
@@ -31,21 +31,22 @@
       --frost-bg: rgba(255,255,255,.06);
       --frost-blur: 8px; --frost-sat: 115%; --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
 
-      /* Accents */
-      --accent-left:#8dd8ff; --accent-right:#ffb3e1;
+      /* Accents (RGB triplets for rgba() fallbacks) */
+      --accent-left-rgb: 141,216,255;   /* #8dd8ff */
+      --accent-right-rgb: 255,179,225;  /* #ffb3e1 */
 
       /* Intro block controls */
       --intro-top: 12.5vh;
-      --intro-width: 48ch;     /* ~50ch sweet spot */
-      --intro-gap: 96px;       /* distance from center */
-      --intro-panel: 0;        /* 1 = add soft translucent panel */
+      --intro-width: 48ch;
+      --intro-gap: 96px;
+      --intro-panel: 0;
 
-      /* Rails / glow (v28: now on ::before/::after, with reserved space) */
-      --intro-rail-w: 3px;           /* bright line thickness */
-      --intro-rail-alpha: .45;       /* rail brightness */
-      --intro-glow-w: 40px;          /* soft body width */
-      --intro-glow-alpha: .28;       /* glow strength */
-      --intro-rail-gap: 14px;        /* space between text and bright rail */
+      /* Rails / glow */
+      --intro-rail-w: 3px;
+      --intro-rail-alpha: .45;
+      --intro-glow-w: 40px;
+      --intro-glow-alpha: .28;
+      --intro-rail-gap: 14px;
     }
 
     *{box-sizing:border-box}
@@ -56,22 +57,31 @@
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* Top bar (v28: longer fade) */
+    /* Top bar — lighter + stronger blur */
     header.site-header{
       position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:10;
       background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
-      backdrop-filter: blur(4px) saturate(110%); -webkit-backdrop-filter: blur(4px) saturate(110%);
+      backdrop-filter: blur(8px) saturate(110%); -webkit-backdrop-filter: blur(8px) saturate(110%);
     }
     header.site-header::after{
       content:""; position:absolute; left:0; right:0; top:100%; height:var(--fade-height); pointer-events:none;
-      /* softer 3-stop ramp to nothing */
       background: linear-gradient(
         to bottom,
         rgba(2,2,28,var(--fade-start)) 0%,
-        rgba(2,2,28,.12) 55%,
+        rgba(2,2,28,.06) 55%,
         rgba(2,2,28,0) 100%
       );
     }
+    /* If blur isn't supported, lighten even more */
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
+      header.site-header{
+        background: linear-gradient(to bottom, rgba(2,2,28,.36), rgba(2,2,28,.12));
+      }
+      header.site-header::after{
+        background: linear-gradient(to bottom, rgba(2,2,28,.08), rgba(2,2,28,0));
+      }
+    }
+
     .nav{ height:var(--header-h); display:flex; align-items:center; justify-content:center; padding-inline: clamp(16px, 5vw, 64px); }
 
     /* Brand (spread letters) */
@@ -81,7 +91,7 @@
       text-transform:uppercase; white-space:nowrap; user-select:none;
       filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
     }
-    .brand span{ font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1; text-shadow:0 0 16px rgba(255,245,154,.32); }
+    .brand span{ font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1; text-shadow:0 0 16px rgba(255,245,154,.22); }
     .brand .space{ flex:0 0 var(--word-gap); }
 
     /* ===== HERO ===== */
@@ -101,7 +111,7 @@
       opacity:.42; pointer-events:none;
     }
 
-    /* Corner intros — v28: rails/glow as pseudo-elements + padding reserve */
+    /* Corner intros — rails/glow as pseudo-elements + padding reserve */
     .corner-intro{
       position:absolute; z-index:2; top: var(--intro-top);
       width: var(--intro-width);
@@ -109,9 +119,8 @@
       font-size: clamp(14px, 1.05vw, 16px);
       color: rgba(233,233,238,.96);
       text-shadow: 0 0 10px rgba(0,0,0,.45);
-      pointer-events:none;        /* keep links underneath clickable */
+      pointer-events:none;
 
-      /* Typography */
       text-align: justify;
       text-justify: inter-word;
       -webkit-hyphens:auto; hyphens:auto;
@@ -131,30 +140,28 @@
     .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
     .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
 
-    /* Rails + glow (left) */
+    /* Rails + glow (left) — no color-mix, pure rgba */
     .corner-intro.left::before{
       content:""; position:absolute; inset-block:0; inset-inline-start:0;
       width: calc(var(--intro-glow-w) + var(--intro-rail-w));
       pointer-events:none;
       background:
         /* bright rail tight to text edge */
-        linear-gradient(to bottom, transparent, rgba(255,255,255,var(--intro-rail-alpha)), transparent)
+        linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
           left center / var(--intro-rail-w) 100% no-repeat,
-        /* bulged glow */
-        radial-gradient(100% 60% at left center, color-mix(in oklab, var(--accent-left) 100%, transparent 0%) / var(--intro-glow-alpha), transparent 65%);
-      filter: none;
+        /* soft glow */
+        radial-gradient(100% 60% at left center, rgba(var(--accent-left-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
     }
 
-    /* Rails + glow (right) */
+    /* Rails + glow (right) — no color-mix, pure rgba */
     .corner-intro.right::after{
       content:""; position:absolute; inset-block:0; inset-inline-end:0;
       width: calc(var(--intro-glow-w) + var(--intro-rail-w));
       pointer-events:none;
       background:
-        linear-gradient(to bottom, transparent, rgba(255,255,255,var(--intro-rail-alpha)), transparent)
+        linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
           right center / var(--intro-rail-w) 100% no-repeat,
-        radial-gradient(100% 60% at right center, color-mix(in oklab, var(--accent-right) 100%, transparent 0%) / var(--intro-glow-alpha), transparent 65%);
-      filter: none;
+        radial-gradient(100% 60% at right center, rgba(var(--accent-right-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
     }
 
     .half{
@@ -171,7 +178,7 @@
     .edge .disc{ position:absolute; inset:0; border-radius:999px; background: rgba(2,2,28,.50); border:1px solid rgba(255,255,255,.14); -webkit-backdrop-filter: blur(6px) saturate(120%); backdrop-filter: blur(6px) saturate(120%); box-shadow: 0 6px 18px rgba(0,0,0,.35); }
     .edge svg{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:24px; height:24px; fill:none; stroke-width:2.25; stroke-linecap:round; stroke-linejoin:round; filter: drop-shadow(0 1px 6px rgba(0,0,0,.35)); }
     .edge-left{ left:12px } .edge-right{ right:12px }
-    .edge-left svg{ stroke: var(--accent-left) } .edge-right svg{ stroke: var(--accent-right) }
+    .edge-left svg{ stroke: rgb(var(--accent-left-rgb)) } .edge-right svg{ stroke: rgb(var(--accent-right-rgb)) }
     .half:hover .edge{ transform:translateY(-50%) scale(1.06); }
 
     .half h2{
@@ -204,17 +211,16 @@
     .debug-badge{ position:fixed; left:8px; top:8px; z-index:9999; font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px; opacity:.85; box-shadow:0 2px 8px rgba(0,0,0,.25); user-select:none; pointer-events:none; }
 
     /* Responsive */
-    @media (max-width: 1100px){
+    @media (max-width: 900px){
       .corner-intro{
         position:static; margin: 10px 16px 0;
         width: min(92vw, var(--intro-width));
-        text-align:left; text-align-last:left;   /* mobile = simple left rag */
+        text-align:left; text-align-last:left;
         background: none; border-radius: 0;
-        padding: 0;                               /* no reserved rail space on mobile */
+        padding: 0;
       }
       .corner-intro::before,
-      .corner-intro::after{ display:none; }       /* hide rails/glow on mobile */
-
+      .corner-intro::after{ display:none; } /* hide rails/glow on narrow phones only */
       .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
       .split-50::after, .split-50::before{ display:none; }
       .edge-left{ left:10px } .edge-right{ right:10px }
@@ -224,7 +230,7 @@
 </head>
 
 <body>
-  <div class="debug-badge">v28</div>
+  <div class="debug-badge">v28.1</div>
 
   <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
