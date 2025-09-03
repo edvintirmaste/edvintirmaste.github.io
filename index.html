@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v28.1 — rail fallback (no color-mix) + lighter header fade -->
+  <!-- BUILD v28.2 — rails fixed on both sides + softer header fade -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -18,10 +18,10 @@
       --brand-size: clamp(14px, 1vw, 20px);
       --word-gap: clamp(14px, 2vw, 48px);
 
-      /* Top bar fade — lighter */
-      --bar-top:.46; --bar-btm:.18;
-      --fade-height: 220px;
-      --fade-start:.10;
+      /* Top bar fade — even lighter/longer */
+      --bar-top:.28; --bar-btm:.10;
+      --fade-height: 320px;
+      --fade-start:.06;
 
       /* Divider */
       --divider-opacity:.35;
@@ -31,7 +31,7 @@
       --frost-bg: rgba(255,255,255,.06);
       --frost-blur: 8px; --frost-sat: 115%; --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
 
-      /* Accents (RGB triplets for rgba() fallbacks) */
+      /* Accent RGB (for rgba() blends) */
       --accent-left-rgb: 141,216,255;   /* #8dd8ff */
       --accent-right-rgb: 255,179,225;  /* #ffb3e1 */
 
@@ -57,28 +57,28 @@
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* Top bar — lighter + stronger blur */
+    /* Top bar — lighter + longer fade + stronger blur */
     header.site-header{
       position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:10;
       background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
-      backdrop-filter: blur(8px) saturate(110%); -webkit-backdrop-filter: blur(8px) saturate(110%);
+      backdrop-filter: blur(10px) saturate(110%); -webkit-backdrop-filter: blur(10px) saturate(110%);
     }
     header.site-header::after{
       content:""; position:absolute; left:0; right:0; top:100%; height:var(--fade-height); pointer-events:none;
       background: linear-gradient(
         to bottom,
         rgba(2,2,28,var(--fade-start)) 0%,
-        rgba(2,2,28,.06) 55%,
+        rgba(2,2,28,.05) 55%,
         rgba(2,2,28,0) 100%
       );
     }
-    /* If blur isn't supported, lighten even more */
+    /* No-blur fallback: lighten further so it never looks “heavy” */
     @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
       header.site-header{
-        background: linear-gradient(to bottom, rgba(2,2,28,.36), rgba(2,2,28,.12));
+        background: linear-gradient(to bottom, rgba(2,2,28,.22), rgba(2,2,28,.08));
       }
       header.site-header::after{
-        background: linear-gradient(to bottom, rgba(2,2,28,.08), rgba(2,2,28,0));
+        background: linear-gradient(to bottom, rgba(2,2,28,.04), rgba(2,2,28,0));
       }
     }
 
@@ -111,7 +111,7 @@
       opacity:.42; pointer-events:none;
     }
 
-    /* Corner intros — rails/glow as pseudo-elements + padding reserve */
+    /* Corner intros — rails now use ::before on BOTH blocks */
     .corner-intro{
       position:absolute; z-index:2; top: var(--intro-top);
       width: var(--intro-width);
@@ -127,41 +127,38 @@
       word-break: normal; overflow-wrap:anywhere;
       text-wrap: pretty;
 
-      /* Reserve space so text never touches rails */
-      padding-inline: calc(var(--intro-rail-gap) + var(--intro-rail-w));
-
-      /* Optional translucent panel (off by default) */
       background: rgba(10,10,28, calc(var(--intro-panel) * .22));
       -webkit-backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
       backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
       border-radius: calc(var(--intro-panel) * 12px);
       padding-block: calc(var(--intro-panel) * 12px);
     }
-    .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
-    .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
+    .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left;  padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w)); }
+    .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w)); }
 
-    /* Rails + glow (left) — no color-mix, pure rgba */
-    .corner-intro.left::before{
-      content:""; position:absolute; inset-block:0; inset-inline-start:0;
+    /* Rails (both use ::before; physical left/right for Opera compatibility) */
+    .corner-intro::before{
+      content:""; position:absolute; top:0; bottom:0;
       width: calc(var(--intro-glow-w) + var(--intro-rail-w));
-      pointer-events:none;
-      background:
-        /* bright rail tight to text edge */
-        linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
-          left center / var(--intro-rail-w) 100% no-repeat,
-        /* soft glow */
-        radial-gradient(100% 60% at left center, rgba(var(--accent-left-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
+      pointer-events:none; background-repeat:no-repeat;
     }
-
-    /* Rails + glow (right) — no color-mix, pure rgba */
-    .corner-intro.right::after{
-      content:""; position:absolute; inset-block:0; inset-inline-end:0;
-      width: calc(var(--intro-glow-w) + var(--intro-rail-w));
-      pointer-events:none;
+    /* Left block: rail on its RIGHT edge (frames the inner side) */
+    .corner-intro.left::before{
+      right:0;
       background:
+        /* bright vertical rail */
         linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
           right center / var(--intro-rail-w) 100% no-repeat,
-        radial-gradient(100% 60% at right center, rgba(var(--accent-right-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
+        /* soft glow bulging outward */
+        radial-gradient(100% 60% at right center, rgba(var(--accent-left-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
+    }
+    /* Right block: rail on its LEFT edge (frames the inner side) */
+    .corner-intro.right::before{
+      left:0;
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
+          left center / var(--intro-rail-w) 100% no-repeat,
+        radial-gradient(100% 60% at left center, rgba(var(--accent-right-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
     }
 
     .half{
@@ -219,8 +216,7 @@
         background: none; border-radius: 0;
         padding: 0;
       }
-      .corner-intro::before,
-      .corner-intro::after{ display:none; } /* hide rails/glow on narrow phones only */
+      .corner-intro::before{ display:none; } /* rails off on narrow phones */
       .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
       .split-50::after, .split-50::before{ display:none; }
       .edge-left{ left:10px } .edge-right{ right:10px }
@@ -230,7 +226,7 @@
 </head>
 
 <body>
-  <div class="debug-badge">v28.1</div>
+  <div class="debug-badge">v28.2</div>
 
   <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
