@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="et" data-build="v28.5">
+<html lang="et" data-build="v28.6">
 <head>
-  <!-- BUILD v28.5 — centered dual rails on both texts + true downward frosted fade + visible version beacons -->
+  <!-- BUILD v28.6 — revert top bar overlay (no wash) + equal-height centered rails on both sides of both texts -->
   <meta charset="utf-8" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v28.5] Edvin Tirmaste — Portfolio</title>
+  <title>[v28.6] Edvin Tirmaste — Portfolio</title>
   <meta name="description" content="Edvin Tirmaste — Fotograafia & video." />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 
@@ -21,23 +21,20 @@
       --brand-size: clamp(14px, 1vw, 20px);
       --word-gap: clamp(14px, 2vw, 48px);
 
-      /* Top bar + fade */
-      --bar-top:.28;
-      --bar-btm:.10;
-      --fade-height: 360px;    /* length of the frost below the bar */
-      --fade-tint:.06;         /* tint inside the fade */
+      /* Top bar (simple, no extending overlay) */
+      --bar-top:.28; --bar-btm:.10;
 
       /* Divider */
       --divider-opacity:.35;
       --divider-glow-width: 34px; --divider-glow-blur: 14px;
 
-      /* Frost on hover */
+      /* Hover frost */
       --frost-bg: rgba(255,255,255,.06);
       --frost-blur: 8px; --frost-sat: 115%; --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
 
-      /* Accent RGB (for rgba blends) */
-      --accent-left-rgb: 141,216,255;   /* blue glow */
-      --accent-right-rgb: 255,179,225;  /* pink glow */
+      /* Accents for rails */
+      --accent-left-rgb: 141,216,255;    /* blue glow */
+      --accent-right-rgb: 255,179,225;   /* pink glow */
 
       /* Intro blocks */
       --intro-top: 12.5vh;
@@ -51,6 +48,10 @@
       --intro-glow-w: 40px;
       --intro-glow-alpha: .28;
       --intro-rail-gap: 14px;
+
+      /* NEW: force both rails to identical height (in lines) */
+      --rail-height: 6.5lh;   /* change to taste, both sides use this */
+      --rail-v-margin: .35lh; /* trims above/below to avoid looking too long */
     }
 
     *{box-sizing:border-box}
@@ -61,29 +62,12 @@
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* Top bar itself */
+    /* Top bar (reverted: just frosted bar, no page overlay) */
     header.site-header{
       position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
       background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
       backdrop-filter: blur(10px) saturate(110%); -webkit-backdrop-filter: blur(10px) saturate(110%);
     }
-
-    /* Dedicated frost overlay BELOW the bar (works in Opera GX). */
-    .header-frost-fade{
-      position:fixed; left:0; right:0; top:var(--header-h); height:var(--fade-height); z-index:15; pointer-events:none;
-      background: linear-gradient(to bottom,
-                  rgba(2,2,28,var(--fade-tint)) 0%,
-                  rgba(2,2,28,.04) 45%,
-                  rgba(2,2,28,0) 100%);
-      backdrop-filter: blur(12px) saturate(110%); -webkit-backdrop-filter: blur(12px) saturate(110%);
-      /* visually fades the overlay so the blur + tint taper out */
-      -webkit-mask-image: linear-gradient(to bottom, #000, rgba(0,0,0,0));
-              mask-image: linear-gradient(to bottom, #000, rgba(0,0,0,0));
-    }
-    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))){
-      .header-frost-fade{ background: linear-gradient(to bottom, rgba(2,2,28,.14), rgba(2,2,28,0)); }
-    }
-
     .nav{ height:var(--header-h); display:flex; align-items:center; justify-content:center; padding-inline: clamp(16px, 5vw, 64px); }
 
     /* Brand (spread letters) */
@@ -128,43 +112,39 @@
       -webkit-hyphens:auto; hyphens:auto;
       overflow-wrap:anywhere; text-wrap: pretty;
 
-      /* reserve rail space on BOTH sides */
+      /* keep text off the rails on both sides */
       padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
       padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w));
 
-      /* optional translucent panel (off by default) */
+      /* optional translucent panel (OFF) */
       background: rgba(10,10,28, calc(var(--intro-panel) * .22));
       -webkit-backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
       backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
       border-radius: calc(var(--intro-panel) * 12px);
       padding-block: calc(var(--intro-panel) * 12px);
-
-      /* rail pad controls (use lh so it scales with font) */
-      --rail-pad: .35lh; /* breathing room above/below the rails */
     }
     .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
     .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
 
-    /* === Rails: both sides on BOTH blocks, centered to the text === */
+    /* === Rails: identical height & centered on BOTH blocks === */
     .corner-intro::before,
     .corner-intro::after{
-      content:""; position:absolute; left:0; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
-      height: calc(100% - (var(--rail-pad) * 2));
-      top:50%; transform: translateY(-50%); /* centers the rails vertically */
+      content:""; position:absolute; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
+      height: calc(var(--rail-height) - (var(--rail-v-margin) * 2));  /* equal height, trimmed a touch */
+      top: 50%; transform: translateY(-50%);                          /* perfectly centered */
       pointer-events:none; background-repeat:no-repeat;
     }
-    /* LEFT side rail (blue-ish glow) */
+    /* Left rail (blue-ish) */
     .corner-intro::before{
+      left:0;
       background:
-        /* bright rail */
         linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
           left center / var(--intro-rail-w) 100% no-repeat,
-        /* glow */
         radial-gradient(100% 60% at left center, rgba(var(--accent-left-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
     }
-    /* RIGHT side rail (pink-ish glow) */
+    /* Right rail (pink-ish) */
     .corner-intro::after{
-      left:auto; right:0;
+      right:0;
       background:
         linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
           right center / var(--intro-rail-w) 100% no-repeat,
@@ -240,11 +220,11 @@
 </head>
 
 <body>
-  <div class="debug-badge">v28.5</div>
+  <div class="debug-badge">v28.6</div>
 
   <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=285" alt="">
+    <img src="assets/mainpagebg.png?v=286" alt="">
   </div>
 
   <!-- Top bar -->
@@ -253,8 +233,6 @@
       <div class="brand" id="brand">EDVIN TIRMASTE</div>
     </div>
   </header>
-  <!-- Frosted fade below the bar -->
-  <div class="header-frost-fade" aria-hidden="true"></div>
 
   <!-- HERO -->
   <section class="hero" id="home" aria-label="Split hero">
@@ -317,7 +295,7 @@
 
   <footer class="panel" style="min-height:auto; padding:40px 24px; scroll-snap-align:end">
     <div class="section-wrap">
-      © <span id="y"></span> Edvin Tirmaste — <span id="buildFooter">Build v28.5</span>
+      © <span id="y"></span> Edvin Tirmaste — <span id="buildFooter">Build v28.6</span>
     </div>
   </footer>
 
@@ -335,9 +313,7 @@
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
-
-    // Console beacon for visibility
-    console.log('Portfolio build v28.5');
+    console.log('Portfolio build v28.6');
   </script>
 </body>
 </html>
