@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v26 — cleaner last line, wider rails + glow, bigger center gap -->
+  <!-- BUILD v27 — wider gap, bolder rails, cleaner last lines -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -33,16 +33,16 @@
       --accent-left:#8dd8ff; --accent-right:#ffb3e1;
 
       /* Intro block controls */
-      --intro-top: 12.5vh;        /* vertical position */
-      --intro-width: 50ch;        /* box width (same both sides) */
-      --intro-gap: 72px;          /* space from center line to inner edge (bigger now) */
-      --intro-panel: 0;           /* 1 = soft translucent panel behind text */
+      --intro-top: 12.5vh;
+      --intro-width: 48ch;     /* slightly narrower measure to reduce rivers */
+      --intro-gap: 96px;       /* farther from center line */
+      --intro-panel: 0;        /* 1 = soft translucent panel behind text */
 
-      /* Rails / glow */
-      --intro-rail-w: 2px;                        /* bright line thickness */
-      --intro-rail-alpha: .32;                    /* rail brightness */
-      --intro-glow-w: 28px;                       /* soft body width */
-      --intro-glow-alpha: .18;                    /* glow strength */
+      /* Rails / glow (more visible) */
+      --intro-rail-w: 3px;           /* bright line thickness */
+      --intro-rail-alpha: .45;       /* rail brightness */
+      --intro-glow-w: 40px;          /* soft body width */
+      --intro-glow-alpha: .28;       /* glow strength */
     }
 
     *{box-sizing:border-box}
@@ -92,7 +92,7 @@
       opacity:.42; pointer-events:none;
     }
 
-    /* Corner intros — “boxed” paragraph with rails + glow */
+    /* Corner intros — boxed paragraph with rails + glow */
     .corner-intro{
       position:absolute; z-index:2; top: var(--intro-top);
       width: var(--intro-width);
@@ -104,12 +104,12 @@
 
       /* Typography */
       text-align: justify;
-      hyphens: auto;
-      word-break: normal;
-      overflow-wrap: anywhere;
+      text-justify: inter-word;      /* hint for better spacing */
+      -webkit-hyphens:auto; hyphens:auto;
+      word-break: normal; overflow-wrap:anywhere;
       text-wrap: pretty;
 
-      /* Optional soft panel (kept off by default) */
+      /* Visual frame: rails + bulged glow + optional panel */
       background:
         /* LEFT bright rail */
         linear-gradient(to bottom, transparent, rgba(255,255,255,var(--intro-rail-alpha)), transparent) left center / var(--intro-rail-w) 100% no-repeat,
@@ -127,8 +127,8 @@
       border-radius: calc(var(--intro-panel) * 12px);
     }
 
-    .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width)); text-align-last:left; }
-    .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width)); text-align-last:right; }
+    .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
+    .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
 
     .half{
       display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
@@ -192,7 +192,7 @@
   </style>
 </head>
 <body>
-  <div class="debug-badge">v26</div>
+  <div class="debug-badge">v27</div>
 
   <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
@@ -209,12 +209,12 @@
   <!-- HERO -->
   <section class="hero" id="home" aria-label="Split hero">
 
-    <!-- Photography intro — last line left to avoid gaps -->
+    <!-- Photography intro -->
     <div class="corner-intro left" lang="en">
       I shape photography to your story and aesthetic. Experience in events, modelling, real estate, product, car, street, landscape, wildlife and artistic photography.
     </div>
 
-    <!-- Videography intro — last line right to mirror the side -->
+    <!-- Videography intro -->
     <div class="corner-intro right" lang="en">
       Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens. Films, Commercials, Music Videos and Content Videos in most fields.
     </div>
