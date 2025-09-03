@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="et">
 <head>
-  <!-- BUILD v25 — boxed intros + hyphenation + optional frames/panel -->
+  <!-- BUILD v26 — cleaner last line, wider rails + glow, bigger center gap -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Edvin Tirmaste — Portfolio</title>
@@ -35,10 +35,14 @@
       /* Intro block controls */
       --intro-top: 12.5vh;        /* vertical position */
       --intro-width: 50ch;        /* box width (same both sides) */
-      --intro-gap: 36px;          /* space from center line to inner edge */
-      --intro-last: justify;      /* justify | left/right — controls LAST line */
-      --intro-frame-opacity:.18;  /* 0 = off (hairline frame) */
+      --intro-gap: 72px;          /* space from center line to inner edge (bigger now) */
       --intro-panel: 0;           /* 1 = soft translucent panel behind text */
+
+      /* Rails / glow */
+      --intro-rail-w: 2px;                        /* bright line thickness */
+      --intro-rail-alpha: .32;                    /* rail brightness */
+      --intro-glow-w: 28px;                       /* soft body width */
+      --intro-glow-alpha: .18;                    /* glow strength */
     }
 
     *{box-sizing:border-box}
@@ -54,7 +58,6 @@
       position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:10;
       background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
       backdrop-filter: blur(4px) saturate(110%); -webkit-backdrop-filter: blur(4px) saturate(110%);
-      border:0; box-shadow:none;
     }
     header.site-header::after{
       content:""; position:absolute; left:0; right:0; top:100%; height:var(--fade-height); pointer-events:none;
@@ -89,7 +92,7 @@
       opacity:.42; pointer-events:none;
     }
 
-    /* Corner intros — “boxed” paragraph */
+    /* Corner intros — “boxed” paragraph with rails + glow */
     .corner-intro{
       position:absolute; z-index:2; top: var(--intro-top);
       width: var(--intro-width);
@@ -99,37 +102,33 @@
       text-shadow: 0 0 10px rgba(0,0,0,.45);
       pointer-events:none;
 
-      /* Typography for nicer justification */
+      /* Typography */
       text-align: justify;
-      text-align-last: var(--intro-last);
-      text-wrap: pretty;            /* reduce ugly last-line stretches */
-      hyphens: auto;                /* require LANG to be correct */
+      hyphens: auto;
       word-break: normal;
-      overflow-wrap: anywhere;      /* avoid huge gaps around long words */
+      overflow-wrap: anywhere;
+      text-wrap: pretty;
 
-      /* Optional soft panel */
-      background: rgba(10,10,28, calc(var(--intro-panel) * .22));
+      /* Optional soft panel (kept off by default) */
+      background:
+        /* LEFT bright rail */
+        linear-gradient(to bottom, transparent, rgba(255,255,255,var(--intro-rail-alpha)), transparent) left center / var(--intro-rail-w) 100% no-repeat,
+        /* RIGHT bright rail */
+        linear-gradient(to bottom, transparent, rgba(255,255,255,var(--intro-rail-alpha)), transparent) right center / var(--intro-rail-w) 100% no-repeat,
+        /* LEFT bulged glow */
+        radial-gradient(100% 60% at left center, rgba(141,216,255,var(--intro-glow-alpha)), rgba(141,216,255,0) 65%) left center / var(--intro-glow-w) 100% no-repeat,
+        /* RIGHT bulged glow */
+        radial-gradient(100% 60% at right center, rgba(255,179,225,var(--intro-glow-alpha)), rgba(255,179,225,0) 65%) right center / var(--intro-glow-w) 100% no-repeat,
+        /* Panel */
+        rgba(10,10,28, calc(var(--intro-panel) * .22));
       -webkit-backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
       backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
-
       padding: calc(var(--intro-panel) * 12px);
       border-radius: calc(var(--intro-panel) * 12px);
-
-      /* Hairline frame */
-      position: absolute;
     }
-    .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width)); }
-    .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width)); }
 
-    /* Hairline frame (very subtle) */
-    .corner-intro::before,
-    .corner-intro::after{
-      content:""; position:absolute; top: -6px; bottom: -6px; width:1px; pointer-events:none;
-      background: linear-gradient(to bottom, transparent, rgba(255,255,255,var(--intro-frame-opacity)), transparent);
-      opacity: calc(1 - var(--intro-panel)); /* hide frame if panel is on */
-    }
-    .corner-intro::before{ left:-6px; }
-    .corner-intro::after { right:-6px; }
+    .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width)); text-align-last:left; }
+    .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width)); text-align-last:right; }
 
     .half{
       display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
@@ -185,7 +184,6 @@
         text-align:left; text-align-last:left;   /* mobile = simple left rag */
         background: none; padding: 0; border-radius: 0;
       }
-      .corner-intro::before, .corner-intro::after{ display:none; }
       .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
       .split-50::after, .split-50::before{ display:none; }
       .edge-left{ left:10px } .edge-right{ right:10px }
@@ -194,7 +192,7 @@
   </style>
 </head>
 <body>
-  <div class="debug-badge">v25</div>
+  <div class="debug-badge">v26</div>
 
   <!-- Background -->
   <div class="bg-wrap" aria-hidden="true">
@@ -211,12 +209,12 @@
   <!-- HERO -->
   <section class="hero" id="home" aria-label="Split hero">
 
-    <!-- Photography intro (boxed) -->
+    <!-- Photography intro — last line left to avoid gaps -->
     <div class="corner-intro left" lang="en">
       I shape photography to your story and aesthetic. Experience in events, modelling, real estate, product, car, street, landscape, wildlife and artistic photography.
     </div>
 
-    <!-- Videography intro (boxed) -->
+    <!-- Videography intro — last line right to mirror the side -->
     <div class="corner-intro right" lang="en">
       Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens. Films, Commercials, Music Videos and Content Videos in most fields.
     </div>
