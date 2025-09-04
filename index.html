@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="et" data-build="v28.12">
+<html lang="et" data-build="v28.13">
 <head>
-  <!-- MODE: PATCH | TARGET: one-piece header fade + brand glow | BASE: v28.11 -->
-  <!-- BUILD v28.12 — single continuous frost sheet (no seam) + soft brand glow -->
+  <!-- MODE: PATCH | TARGET: seam fix + modest one-piece fade | BASE: v28.12 -->
+  <!-- BUILD v28.13 — 2px overlap kills line; header carries its own short fade; no extra layers -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v28.12] Edvin Tirmaste — Portfolio</title>
+  <title>[v28.13] Edvin Tirmaste — Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -17,14 +17,14 @@
       --brand-size: clamp(14px, 1vw, 20px);
       --word-gap: clamp(14px, 2vw, 48px);
       --brand-glow-rgb: 255,245,154;   /* gentle warm glow */
-      --brand-glow-alpha: .18;
+      --brand-glow-alpha: .14;         /* slightly toned down */
 
-      /* Frost sheet (shared with header) */
+      /* Header / fade */
       --bar-top:.28; --bar-btm:.10;
       --bar-blur: 10px; 
       --bar-sat: 110%;
-      --fade-depth: 200px;            /* 160/200/240 */
-
+      --fade-depth: 160px;             /* shorter, unobtrusive; try 200/240 if you want more */
+      
       /* Divider */
       --divider-opacity:.35;
       --divider-glow-width: 34px; --divider-glow-blur: 14px;
@@ -62,50 +62,46 @@
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* === One-piece frost sheet (no seam) ===
-       This single fixed layer covers the header AND the fade region. */
-    .frost-sheet{
-      position:fixed; inset:0 0 auto 0;
-      height: calc(var(--header-h) + var(--fade-depth));
-      z-index:15;                      /* under header content, over page */
-      pointer-events:none;
-      backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-      -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-      /* Top = bar-top, then to bar-btm at header edge, then fade to 0 */
-      background:
-        linear-gradient(
-          to bottom,
-          rgba(2,2,28,var(--bar-top)) 0px,
-          rgba(2,2,28,var(--bar-btm)) var(--header-h),
-          rgba(2,2,28,0) calc(var(--header-h) + var(--fade-depth))
-        );
-    }
-
-    /* Header becomes pure layout container (transparent background) */
+    /* Header base */
     header.site-header{
       position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
-      background: transparent;
+      background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
+      backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+      -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
     }
+    /* Seam-guard + short fade as part of the header */
+    header.site-header::after{
+      content:"";
+      position:absolute; left:0; right:0;
+      top:100%;
+      height: calc(var(--fade-depth) + 2px); /* +2px overlap kills the line on all DPRs */
+      transform: translateY(-2px);
+      background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-btm)), rgba(2,2,28,0));
+      backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+      -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.98), rgba(0,0,0,0));
+              mask-image: linear-gradient(to bottom, rgba(0,0,0,.98), rgba(0,0,0,0));
+      pointer-events:none;
+    }
+
     .nav{ height:var(--header-h); display:flex; align-items:center; justify-content:center; padding-inline: clamp(16px, 5vw, 64px); }
 
     .brand{
-      position:relative;                           /* needed for glow */
+      position:relative;
       width: clamp(var(--brand-min), var(--brand-fluid), var(--brand-max));
       display:flex; align-items:center; justify-content:space-between;
       text-transform:uppercase; white-space:nowrap; user-select:none;
       filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
     }
-    /* Subtle glow behind the wordmark */
     .brand::after{
       content:"";
       position:absolute; left:-18px; right:-18px; top:50%; height:44px;
       transform:translateY(-50%);
-      background:
-        radial-gradient(60% 100% at center, rgba(var(--brand-glow-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%);
+      background: radial-gradient(60% 100% at center, rgba(var(--brand-glow-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%);
       filter: blur(16px);
       z-index:-1; pointer-events:none;
     }
-    .brand span{ font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1; text-shadow:0 0 16px rgba(255,245,154,.20); }
+    .brand span{ font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1; text-shadow:0 0 16px rgba(255,245,154,.18); }
     .brand .space{ flex:0 0 var(--word-gap); }
 
     .hero{ margin-top: var(--header-h); height: calc(100svh - var(--header-h)); scroll-snap-align:start; position:relative; z-index:1; }
@@ -229,14 +225,11 @@
   </style>
 </head>
 <body>
-  <div class="debug-badge">v28.12</div>
+  <div class="debug-badge">v28.13</div>
 
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=2812" alt="">
+    <img src="assets/mainpagebg.png?v=2813" alt="">
   </div>
-
-  <!-- Single continuous frost layer -->
-  <div class="frost-sheet" aria-hidden="true"></div>
 
   <header class="site-header" role="banner">
     <div class="nav">
@@ -275,7 +268,7 @@
   <section class="panel" id="video"><div class="section-wrap"><h3>Videography</h3><p>Reels / modal player here.</p></div></section>
 
   <footer class="panel" style="min-height:auto; padding:40px 24px; scroll-snap-align:end">
-    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.12</span></div>
+    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.13</span></div>
   </footer>
 
   <script>
@@ -290,7 +283,7 @@
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
-    console.log('Portfolio build v28.12');
+    console.log('Portfolio build v28.13');
   </script>
 </body>
 </html>
