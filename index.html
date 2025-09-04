@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="et" data-build="v28.10">
+<html lang="et" data-build="v28.11">
 <head>
-  <!-- MODE: PATCH | TARGET: top bar fade continuity | BASE: v28.9 -->
-  <!-- BUILD v28.10 — header fade now continues the bar; no separate tint; overlap kills seam -->
+  <!-- MODE: PATCH | TARGET: top bar “one-piece” fade | BASE: v28.10 -->
+  <!-- BUILD v28.11 — fade is part of the header (::after); no separate overlay; zero seam -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v28.10] Edvin Tirmaste — Portfolio</title>
+  <title>[v28.11] Edvin Tirmaste — Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -17,14 +17,13 @@
       --brand-size: clamp(14px, 1vw, 20px);
       --word-gap: clamp(14px, 2vw, 48px);
 
-      /* Top bar base gradient */
+      /* Top bar base + filters (shared with fade) */
       --bar-top:.28; --bar-btm:.10;
-      /* NEW: unify header/fade filter so they match 1:1 */
       --bar-blur: 10px; 
       --bar-sat: 110%;
 
       /* Fade controls */
-      --fade-depth: 200px;   /* adjust to taste: 160 / 200 / 240 */
+      --fade-depth: 200px;   /* try 160 / 200 / 240 */
 
       /* Divider */
       --divider-opacity:.35;
@@ -35,8 +34,8 @@
       --frost-blur: 8px; --frost-sat: 115%; --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
 
       /* Rail colors */
-      --accent-left-rgb: 141,216,255;   /* blue glow */
-      --accent-right-rgb: 255,179,225;  /* pink glow */
+      --accent-left-rgb: 141,216,255;
+      --accent-right-rgb: 255,179,225;
 
       /* Intro blocks */
       --intro-top: 12.5vh;
@@ -52,8 +51,8 @@
       --intro-rail-gap: 14px;
 
       /* equal-length rails centered on the block */
-      --rail-height: 5.8lh;  /* length for all four rails */
-      --rail-offset: 0lh;    /* nudge all rails up(-)/down(+) together */
+      --rail-height: 5.8lh;
+      --rail-offset: 0lh;
     }
 
     *{box-sizing:border-box}
@@ -69,6 +68,20 @@
       backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
       -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
     }
+    /* The fade is now part of the header */
+    header.site-header::after{
+      content:"";
+      position:absolute; left:0; right:0;
+      top: calc(100% - 0.5px);               /* overlap to kill any hairline */
+      height: var(--fade-depth);
+      background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-btm)), rgba(2,2,28,0));
+      backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+      -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.95), rgba(0,0,0,0));
+              mask-image: linear-gradient(to bottom, rgba(0,0,0,.95), rgba(0,0,0,0));
+      pointer-events: none;
+    }
+
     .nav{ height:var(--header-h); display:flex; align-items:center; justify-content:center; padding-inline: clamp(16px, 5vw, 64px); }
 
     .brand{
@@ -79,29 +92,6 @@
     }
     .brand span{ font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1; text-shadow:0 0 16px rgba(255,245,154,.22); }
     .brand .space{ flex:0 0 var(--word-gap); }
-
-    /* REWORKED: fade that is literally the same material as the header */
-    .frost-fade{
-      position:fixed; left:0; right:0; 
-      top: calc(var(--header-h) - 0.5px); /* slight overlap kills hairline */
-      height:var(--fade-depth); z-index:19; pointer-events:none;
-
-      /* continue the header gradient downward */
-      background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-btm)), rgba(2,2,28,0));
-      backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-      -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-
-      /* fade out the *effect* smoothly */
-      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.95), rgba(0,0,0,0));
-              mask-image: linear-gradient(to bottom, rgba(0,0,0,.95), rgba(0,0,0,0));
-    }
-    /* Fallback if mask-image isn’t supported */
-    @supports not ((-webkit-mask-image: linear-gradient(#000,#000)) or (mask-image: linear-gradient(#000,#000))){
-      .frost-fade{
-        /* graceful: only the tint gradient remains, without blur */
-        backdrop-filter:none; -webkit-backdrop-filter:none;
-      }
-    }
 
     .hero{ margin-top: var(--header-h); height: calc(100svh - var(--header-h)); scroll-snap-align:start; position:relative; z-index:1; }
 
@@ -173,7 +163,7 @@
 
     .edge{ position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:46px; height:46px; pointer-events:none; }
     .edge .disc{ position:absolute; inset:0; border-radius:999px; background: rgba(2,2,28,.50); border:1px solid rgba(255,255,255,.14); -webkit-backdrop-filter: blur(6px) saturate(120%); backdrop-filter: blur(6px) saturate(120%); box-shadow: 0 6px 18px rgba(0,0,0,.35); }
-    .edge svg{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:24px; height:24px; fill:none; stroke-width:2.25; stroke-linecap:round; stroke-linejoin:round; filter: drop-shadow(0 1px 6px rgba(0,0,0,.35)); }
+    .edge svg{ position:absolute; left:50%; top:50%; transform:translate(-50%, -50%); width:24px; height:24px; fill:none; stroke-width:2.25; stroke-linecap:round; stroke-linejoin:round; filter: drop-shadow(0 1px 6px rgba(0,0,0,.35)); }
     .edge-left{ left:12px } .edge-right{ right:12px }
     .edge-left svg{ stroke: rgb(var(--accent-left-rgb)) } .edge-right svg{ stroke: rgb(var(--accent-right-rgb)) }
 
@@ -224,10 +214,10 @@
   </style>
 </head>
 <body>
-  <div class="debug-badge">v28.10</div>
+  <div class="debug-badge">v28.11</div>
 
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=2810" alt="">
+    <img src="assets/mainpagebg.png?v=2811" alt="">
   </div>
 
   <header class="site-header" role="banner">
@@ -235,9 +225,6 @@
       <div class="brand" id="brand">EDVIN TIRMASTE</div>
     </div>
   </header>
-
-  <!-- Fade that continues the header material -->
-  <div class="frost-fade" aria-hidden="true"></div>
 
   <section class="hero" id="home" aria-label="Split hero">
     <div class="corner-intro left" lang="en">
@@ -270,7 +257,7 @@
   <section class="panel" id="video"><div class="section-wrap"><h3>Videography</h3><p>Reels / modal player here.</p></div></section>
 
   <footer class="panel" style="min-height:auto; padding:40px 24px; scroll-snap-align:end">
-    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.10</span></div>
+    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.11</span></div>
   </footer>
 
   <script>
@@ -285,7 +272,7 @@
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
-    console.log('Portfolio build v28.10');
+    console.log('Portfolio build v28.11');
   </script>
 </body>
 </html>
