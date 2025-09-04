@@ -1,16 +1,11 @@
 <!doctype html>
-<html lang="et" data-build="v28.7">
+<html lang="et" data-build="v28.8">
 <head>
-  <!-- BUILD v28.7 — rails aligned by fixed top/height so all four match -->
+  <!-- BUILD v28.8 — rails vertically centered + equal length; top bar unchanged -->
   <meta charset="utf-8" />
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v28.7] Edvin Tirmaste — Portfolio</title>
-  <meta name="description" content="Edvin Tirmaste — Fotograafia & video." />
+  <title>[v28.8] Edvin Tirmaste — Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-
   <style>
     :root{
       --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2;
@@ -49,9 +44,9 @@
       --intro-glow-alpha: .28;
       --intro-rail-gap: 14px;
 
-      /* NEW: absolute alignment for all rails (same top/height on both blocks) */
-      --rail-top: .55lh;      /* distance from the block’s top to start of rails */
-      --rail-height: 6.2lh;   /* rail length; all four rails use this */
+      /* NEW: equal-length rails centered on the block */
+      --rail-height: 5.8lh;  /* length for all four rails */
+      --rail-offset: 0lh;    /* nudge all rails up(-)/down(+) together */
     }
 
     *{box-sizing:border-box}
@@ -106,23 +101,19 @@
       -webkit-hyphens:auto; hyphens:auto;
       overflow-wrap:anywhere; text-wrap: pretty;
 
+      /* keep text off the rails on both sides */
       padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
       padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w));
-
-      background: rgba(10,10,28, calc(var(--intro-panel) * .22));
-      -webkit-backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
-      backdrop-filter: saturate(calc(100% + var(--intro-panel)*20%)) blur(calc(var(--intro-panel)*3px));
-      border-radius: calc(var(--intro-panel) * 12px);
-      padding-block: calc(var(--intro-panel) * 12px);
     }
     .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
     .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
 
-    /* === Rails: fixed top + fixed height: all four identical === */
+    /* === Rails: equal length and centered on the text block === */
     .corner-intro::before,
     .corner-intro::after{
       content:""; position:absolute; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
-      top: var(--rail-top); height: var(--rail-height);
+      height: var(--rail-height);
+      top: calc(50% + var(--rail-offset)); transform: translateY(-50%);
       pointer-events:none; background-repeat:no-repeat;
     }
     .corner-intro::before{
@@ -147,14 +138,13 @@
       transition: background-color .25s ease, backdrop-filter .25s ease, transform .25s ease, box-shadow .25s ease, opacity .25s ease;
       position:relative; isolation:isolate; padding: 0 clamp(18px, 3.5vw, 48px);
     }
-    .half:hover{ background: var(--frost-bg); -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat)); backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat)); box-shadow: var(--frost-shadow); }
+    .half:hover{ background: var(--frost-bg); -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(115%); backdrop-filter: blur(var(--frost-blur)) saturate(115%); box-shadow: var(--frost-shadow); }
 
     .edge{ position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:46px; height:46px; pointer-events:none; }
     .edge .disc{ position:absolute; inset:0; border-radius:999px; background: rgba(2,2,28,.50); border:1px solid rgba(255,255,255,.14); -webkit-backdrop-filter: blur(6px) saturate(120%); backdrop-filter: blur(6px) saturate(120%); box-shadow: 0 6px 18px rgba(0,0,0,.35); }
     .edge svg{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:24px; height:24px; fill:none; stroke-width:2.25; stroke-linecap:round; stroke-linejoin:round; filter: drop-shadow(0 1px 6px rgba(0,0,0,.35)); }
     .edge-left{ left:12px } .edge-right{ right:12px }
     .edge-left svg{ stroke: rgb(var(--accent-left-rgb)) } .edge-right svg{ stroke: rgb(var(--accent-right-rgb)) }
-    .half:hover .edge{ transform:translateY(-50%) scale(1.06); }
 
     .half h2{
       margin:0 0 10px 0;
@@ -202,12 +192,11 @@
     }
   </style>
 </head>
-
 <body>
-  <div class="debug-badge">v28.7</div>
+  <div class="debug-badge">v28.8</div>
 
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=287" alt="">
+    <img src="assets/mainpagebg.png?v=288" alt="">
   </div>
 
   <header class="site-header" role="banner">
@@ -220,7 +209,6 @@
     <div class="corner-intro left" lang="en">
       I shape photography to your story and aesthetic. Experience in events, modelling, real estate, product, car, street, landscape, wildlife and artistic photography.
     </div>
-
     <div class="corner-intro right" lang="en">
       Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens. Films, Commercials, Music Videos and Content Videos in most fields.
     </div>
@@ -231,9 +219,7 @@
           <svg viewBox="0 0 24 24"><path d="M15 5 L7 12 L15 19"/></svg>
         </span>
         <h2>Photography</h2>
-        <ul class="bullets">
-          <li>Events</li><li>Modelling</li><li>Real Estate</li><li>Product and more</li>
-        </ul>
+        <ul class="bullets"><li>Events</li><li>Modelling</li><li>Real Estate</li><li>Product and more</li></ul>
       </a>
 
       <a class="half right" href="#video">
@@ -241,31 +227,16 @@
           <svg viewBox="0 0 24 24"><path d="M9 5 L17 12 L9 19"/></svg>
         </span>
         <h2>Videography</h2>
-        <ul class="bullets">
-          <li>Writing</li><li>Filming</li><li>Editing</li>
-        </ul>
+        <ul class="bullets"><li>Writing</li><li>Filming</li><li>Editing</li></ul>
       </a>
     </div>
   </section>
 
-  <section class="panel" id="photo" aria-label="Photography">
-    <div class="section-wrap">
-      <h3>Photography</h3>
-      <p>Gallery/cards go here.</p>
-    </div>
-  </section>
-
-  <section class="panel" id="video" aria-label="Videography">
-    <div class="section-wrap">
-      <h3>Videography</h3>
-      <p>Reels / modal player here.</p>
-    </div>
-  </section>
+  <section class="panel" id="photo"><div class="section-wrap"><h3>Photography</h3><p>Gallery/cards go here.</p></div></section>
+  <section class="panel" id="video"><div class="section-wrap"><h3>Videography</h3><p>Reels / modal player here.</p></div></section>
 
   <footer class="panel" style="min-height:auto; padding:40px 24px; scroll-snap-align:end">
-    <div class="section-wrap">
-      © <span id="y"></span> Edvin Tirmaste — <span>Build v28.7</span>
-    </div>
+    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.8</span></div>
   </footer>
 
   <script>
@@ -280,7 +251,7 @@
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
-    console.log('Portfolio build v28.7');
+    console.log('Portfolio build v28.8');
   </script>
 </body>
 </html>
