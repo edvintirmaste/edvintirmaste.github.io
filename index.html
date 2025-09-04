@@ -1,157 +1,257 @@
 <!doctype html>
-<html lang="et" data-build="v29.0">
+<html lang="et" data-build="v28.8">
 <head>
-  <!-- BUILD v29.0 — Glass bar with masked fade below -->
+  <!-- BUILD v28.8 — rails vertically centered + equal length; top bar unchanged -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v29.0] Edvin Tirmaste — Portfolio</title>
+  <title>[v28.8] Edvin Tirmaste — Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root{
       --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2;
-      --brand-glow:#fff59a;
+      --header-h: 92px;
 
-      /* Header + fade controls */
-      --header-h: 92px;        /* Bar height */
-      --fade-depth: 200px;     /* How far the frost fades into the page (120–320px works well) */
-      --bar-blur: 16px;
-      --bar-sat: 115%;
-      --bar-tint: rgba(255,255,255,.055); /* fallback tint behind blur */
-      --bar-border: rgba(255,255,255,.12);
+      /* Brand */
+      --brand-min: 520px; --brand-fluid: 70vw; --brand-max: 1000px;
+      --brand-size: clamp(14px, 1vw, 20px);
+      --word-gap: clamp(14px, 2vw, 48px);
 
-      /* Layout + rails */
-      --wrap: 1180px;
-      --pad: 24px;
-      --rails: rgba(255,255,255,.14);
+      /* Top bar (unchanged) */
+      --bar-top:.28; --bar-btm:.10;
 
-      /* Wordmark */
-      --brand-size: 18px;
-      --word-gap: 0.35em; /* letter-spacing for spaced wordmark */
+      /* Divider */
+      --divider-opacity:.35;
+      --divider-glow-width: 34px; --divider-glow-blur: 14px;
+
+      /* Hover frost */
+      --frost-bg: rgba(255,255,255,.06);
+      --frost-blur: 8px; --frost-sat: 115%; --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
+
+      /* Rail colors */
+      --accent-left-rgb: 141,216,255;   /* blue glow */
+      --accent-right-rgb: 255,179,225;  /* pink glow */
+
+      /* Intro blocks */
+      --intro-top: 12.5vh;
+      --intro-width: 48ch;
+      --intro-gap: 96px;
+      --intro-panel: 0;
+
+      /* Rails */
+      --intro-rail-w: 3px;
+      --intro-rail-alpha: .45;
+      --intro-glow-w: 40px;
+      --intro-glow-alpha: .28;
+      --intro-rail-gap: 14px;
+
+      /* NEW: equal-length rails centered on the block */
+      --rail-height: 5.8lh;  /* length for all four rails */
+      --rail-offset: 0lh;    /* nudge all rails up(-)/down(+) together */
     }
 
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; background:var(--bg); color:var(--fg);
-      font:16px/1.45 Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
-    }
-    .wrap{max-width:var(--wrap); margin:0 auto; padding:0 var(--pad);}
+    html{ scroll-behavior:smooth; scroll-snap-type:y mandatory; scroll-padding-top: var(--header-h); }
+    body{ margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial; position:relative; }
 
-    /* Fixed rails (very subtle), sit behind everything */
-    .rails{position:fixed; inset:0; pointer-events:none; z-index:0;}
-    .rail{position:absolute; top:0; bottom:0; width:2px; background:linear-gradient(to bottom, transparent 0, var(--rails) 12%, var(--rails) 88%, transparent 100%);}
-    .rail.left{left:calc((100% - var(--wrap))/2 + var(--pad));}
-    .rail.right{right:calc((100% - var(--wrap))/2 + var(--pad));}
+    .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
+    .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* Header bar */
-    header.site{
-      position:fixed; left:0; right:0; top:0; height:var(--header-h);
-      display:flex; align-items:center; z-index:30;
-      background:var(--bar-tint);
-      backdrop-filter:saturate(var(--bar-sat)) blur(var(--bar-blur));
-      -webkit-backdrop-filter:saturate(var(--bar-sat)) blur(var(--bar-blur));
-      border-bottom:1px solid var(--bar-border);
+    header.site-header{
+      position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
+      background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
+      backdrop-filter: blur(10px) saturate(110%); -webkit-backdrop-filter: blur(10px) saturate(110%);
     }
+    .nav{ height:var(--header-h); display:flex; align-items:center; justify-content:center; padding-inline: clamp(16px, 5vw, 64px); }
+
     .brand{
-      font-family:"Space Grotesk", ui-sans-serif, system-ui;
-      font-weight:700;
-      letter-spacing:var(--word-gap);
-      font-size:var(--brand-size);
-      color:#f2f2f6;
-      text-transform:uppercase;
-      white-space:nowrap;
+      width: clamp(var(--brand-min), var(--brand-fluid), var(--brand-max));
+      display:flex; align-items:center; justify-content:space-between;
+      text-transform:uppercase; white-space:nowrap; user-select:none;
+      filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
     }
-    nav.site{
-      display:flex; gap:24px; align-items:center;
-      color:rgba(233,233,238,.75); font-size:14px;
-    }
-    nav.site a{color:inherit; text-decoration:none}
-    nav.site a:hover{color:#fff}
+    .brand span{ font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1; text-shadow:0 0 16px rgba(255,245,154,.22); }
+    .brand .space{ flex:0 0 var(--word-gap); }
 
-    /* Frost fade overlay under the bar (smoothly removes blur/tint) */
-    .frost-fade{
-      position:fixed; left:0; right:0; top:var(--header-h);
-      height:var(--fade-depth); z-index:20; pointer-events:none;
-      background:var(--bar-tint);
-      backdrop-filter:saturate(var(--bar-sat)) blur(var(--bar-blur));
-      -webkit-backdrop-filter:saturate(var(--bar-sat)) blur(var(--bar-blur));
-      /* mask the overlay so it fades to transparent */
-      -webkit-mask-image:linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,0));
-              mask-image:linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,0));
+    .hero{ margin-top: var(--header-h); height: calc(100svh - var(--header-h)); scroll-snap-align:start; position:relative; z-index:1; }
+
+    .split-50{
+      position:relative; display:grid; grid-template-columns: 1fr 1fr; gap:0; inline-size:100%; block-size:100%;
     }
-    /* Non-mask fallback: very soft opacity gradient (older browsers) */
-    @supports not ((-webkit-mask-image: linear-gradient(#000,#000)) or (mask-image: linear-gradient(#000,#000))){
-      .frost-fade{
-        background:linear-gradient(to bottom, rgba(255,255,255,.05), rgba(255,255,255,0));
+    .split-50::after{
+      content:""; position:absolute; inset-block:0; inset-inline-start:50%; width:1px; transform:translateX(-.5px);
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,.18), transparent); opacity:var(--divider-opacity); pointer-events:none;
+    }
+    .split-50::before{
+      content:""; position:absolute; inset-block:0; inset-inline-start:50%; width: var(--divider-glow-width); transform:translateX(-50%);
+      background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0)); filter: blur(var(--divider-glow-blur));
+      opacity:.42; pointer-events:none;
+    }
+
+    .corner-intro{
+      position:absolute; z-index:2; top: var(--intro-top);
+      width: var(--intro-width);
+      line-height:1.48;
+      font-size: clamp(14px, 1.05vw, 16px);
+      color: rgba(233,233,238,.96);
+      text-shadow: 0 0 10px rgba(0,0,0,.45);
+      pointer-events:none;
+
+      text-align: justify;
+      text-justify: inter-word;
+      -webkit-hyphens:auto; hyphens:auto;
+      overflow-wrap:anywhere; text-wrap: pretty;
+
+      /* keep text off the rails on both sides */
+      padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
+      padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w));
+    }
+    .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
+    .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
+
+    /* === Rails: equal length and centered on the text block === */
+    .corner-intro::before,
+    .corner-intro::after{
+      content:""; position:absolute; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
+      height: var(--rail-height);
+      top: calc(50% + var(--rail-offset)); transform: translateY(-50%);
+      pointer-events:none; background-repeat:no-repeat;
+    }
+    .corner-intro::before{
+      left:0;
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
+          left center / var(--intro-rail-w) 100% no-repeat,
+        radial-gradient(100% 60% at left center, rgba(var(--accent-left-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
+    }
+    .corner-intro::after{
+      right:0;
+      background:
+        linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
+          right center / var(--intro-rail-w) 100% no-repeat,
+        radial-gradient(100% 60% at right center, rgba(var(--accent-right-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
+    }
+
+    .half{
+      display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
+      inline-size:100%; block-size:100%; text-decoration:none; color:var(--fg);
+      background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none;
+      transition: background-color .25s ease, backdrop-filter .25s ease, transform .25s ease, box-shadow .25s ease, opacity .25s ease;
+      position:relative; isolation:isolate; padding: 0 clamp(18px, 3.5vw, 48px);
+    }
+    .half:hover{ background: var(--frost-bg); -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(115%); backdrop-filter: blur(var(--frost-blur)) saturate(115%); box-shadow: var(--frost-shadow); }
+
+    .edge{ position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:46px; height:46px; pointer-events:none; }
+    .edge .disc{ position:absolute; inset:0; border-radius:999px; background: rgba(2,2,28,.50); border:1px solid rgba(255,255,255,.14); -webkit-backdrop-filter: blur(6px) saturate(120%); backdrop-filter: blur(6px) saturate(120%); box-shadow: 0 6px 18px rgba(0,0,0,.35); }
+    .edge svg{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:24px; height:24px; fill:none; stroke-width:2.25; stroke-linecap:round; stroke-linejoin:round; filter: drop-shadow(0 1px 6px rgba(0,0,0,.35)); }
+    .edge-left{ left:12px } .edge-right{ right:12px }
+    .edge-left svg{ stroke: rgb(var(--accent-left-rgb)) } .edge-right svg{ stroke: rgb(var(--accent-right-rgb)) }
+
+    .half h2{
+      margin:0 0 10px 0;
+      font-family:"Space Grotesk", Inter, system-ui;
+      font-size: clamp(28px, 3.6vw, 56px);
+      letter-spacing:.10em; text-transform:uppercase;
+      text-shadow:0 2px 18px rgba(0,0,0,.45);
+      pointer-events:none; text-align:center;
+    }
+
+    .bullets{
+      margin:0; padding:0; list-style:none;
+      display:flex; flex-wrap:wrap; justify-content:center; gap:.35rem .9rem;
+      color:var(--muted); font-size: clamp(12px, 1vw, 15px); line-height:1.35;
+      min-height: calc(1.35em * 2 + 6px); text-align:center; opacity:.95;
+    }
+    .bullets li{ display:inline-flex; align-items:center; white-space:nowrap; }
+    .bullets li::before{ content:"•"; opacity:.7; margin-right:.55rem; }
+    .bullets li:first-child::before{ content:""; margin:0; }
+
+    .panel{ min-height:100svh; padding: 24px clamp(16px, 5vw, 64px); display:flex; align-items:center; justify-content:center; scroll-snap-align:start; position:relative; z-index:1; }
+    .section-wrap{ width:min(1100px, 92vw); margin-inline:auto; }
+    .section-wrap h3{ font-family:"Space Grotesk", Inter, system-ui; font-size: clamp(22px, 2.4vw, 36px); letter-spacing:.04em; margin:0 0 12px 0; }
+    .section-wrap p{ margin:0 0 18px 0; color:var(--muted) }
+
+    .debug-badge{
+      position:fixed; left:8px; top:8px; z-index:9999;
+      font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px;
+      opacity:.95; box-shadow: 0 2px 8px rgba(0,0,0,.25); user-select:none; pointer-events:none;
+    }
+
+    @media (max-width: 900px){
+      .corner-intro{
+        position:static; margin: 10px 16px 0;
+        width: min(92vw, var(--intro-width));
+        text-align:left; text-align-last:left;
+        background: none; border-radius: 0;
+        padding: 0;
       }
-    }
-
-    /* Page spacing so content starts below the header */
-    main{padding-top:calc(var(--header-h) + 24px); position:relative; z-index:10;}
-
-    /* Demo-ish hero block (replace with your real content later) */
-    .hero{padding:48px 0 24px}
-    .hero h1{margin:0 0 8px; font:600 34px/1.2 "Space Grotesk", ui-sans-serif; letter-spacing:.01em}
-    .hero p{margin:0; color:var(--muted); max-width:60ch}
-
-    /* Simple gallery grid for visual check */
-    .grid{
-      display:grid; gap:16px; grid-template-columns:repeat(12, 1fr); padding:24px 0 64px;
-    }
-    .tile{aspect-ratio:16/9; border-radius:16px; background:linear-gradient(135deg, #3b3d53, #303245 60%); box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}
-    .span-4{grid-column:span 4}
-    .span-6{grid-column:span 6}
-    .span-3{grid-column:span 3}
-    @media (max-width:960px){
-      .span-6{grid-column:span 12}
-      .span-4{grid-column:span 6}
-      .span-3{grid-column:span 6}
-      nav.site{display:none}
+      .corner-intro::before, .corner-intro::after{ display:none; }
+      .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+      .split-50::after, .split-50::before{ display:none; }
+      .edge-left{ left:10px } .edge-right{ right:10px }
+      .bullets{ min-height: 0; }
     }
   </style>
 </head>
 <body>
-  <!-- subtle rails behind content -->
-  <div class="rails" aria-hidden="true">
-    <div class="rail left"></div>
-    <div class="rail right"></div>
+  <div class="debug-badge">v28.8</div>
+
+  <div class="bg-wrap" aria-hidden="true">
+    <img src="assets/mainpagebg.png?v=288" alt="">
   </div>
 
-  <!-- fixed header -->
-  <header class="site">
-    <div class="wrap" style="display:flex; align-items:center; justify-content:space-between; height:100%;">
-      <div class="brand">EDVIN TIRMASTE</div>
-      <nav class="site">
-        <a href="#work">Work</a>
-        <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-      </nav>
+  <header class="site-header" role="banner">
+    <div class="nav">
+      <div class="brand" id="brand">EDVIN TIRMASTE</div>
     </div>
   </header>
 
-  <!-- masked frost extension under the header -->
-  <div class="frost-fade" aria-hidden="true"></div>
+  <section class="hero" id="home" aria-label="Split hero">
+    <div class="corner-intro left" lang="en">
+      I shape photography to your story and aesthetic. Experience in events, modelling, real estate, product, car, street, landscape, wildlife and artistic photography.
+    </div>
+    <div class="corner-intro right" lang="en">
+      Film-trained generalist. From YouTube workflows to film-set standards. I write, shoot and edit end-to-end for web and screens. Films, Commercials, Music Videos and Content Videos in most fields.
+    </div>
 
-  <!-- content -->
-  <main>
-    <section class="wrap hero">
-      <h1>Portfolio</h1>
-      <p>Glass header with a smooth transparency fade. The rails do not overlap the content and the wordmark stays spaced.</p>
-    </section>
+    <div class="split-50">
+      <a class="half left" href="#photo">
+        <span class="edge edge-left" aria-hidden="true"><span class="disc"></span>
+          <svg viewBox="0 0 24 24"><path d="M15 5 L7 12 L15 19"/></svg>
+        </span>
+        <h2>Photography</h2>
+        <ul class="bullets"><li>Events</li><li>Modelling</li><li>Real Estate</li><li>Product and more</li></ul>
+      </a>
 
-    <section class="wrap">
-      <div class="grid">
-        <div class="tile span-6"></div>
-        <div class="tile span-6"></div>
-        <div class="tile span-4"></div>
-        <div class="tile span-4"></div>
-        <div class="tile span-4"></div>
-        <div class="tile span-3"></div>
-        <div class="tile span-3"></div>
-        <div class="tile span-6"></div>
-      </div>
-    </section>
-  </main>
+      <a class="half right" href="#video">
+        <span class="edge edge-right" aria-hidden="true"><span class="disc"></span>
+          <svg viewBox="0 0 24 24"><path d="M9 5 L17 12 L9 19"/></svg>
+        </span>
+        <h2>Videography</h2>
+        <ul class="bullets"><li>Writing</li><li>Filming</li><li>Editing</li></ul>
+      </a>
+    </div>
+  </section>
+
+  <section class="panel" id="photo"><div class="section-wrap"><h3>Photography</h3><p>Gallery/cards go here.</p></div></section>
+  <section class="panel" id="video"><div class="section-wrap"><h3>Videography</h3><p>Reels / modal player here.</p></div></section>
+
+  <footer class="panel" style="min-height:auto; padding:40px 24px; scroll-snap-align:end">
+    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.8</span></div>
+  </footer>
+
+  <script>
+    (function(){
+      const el = document.getElementById('brand');
+      const text = el.textContent.trim().toUpperCase();
+      el.textContent = '';
+      for (const ch of text){
+        const s = document.createElement('span');
+        if (ch === ' ') s.className = 'space'; else s.textContent = ch;
+        el.appendChild(s);
+      }
+    })();
+    document.getElementById('y').textContent = new Date().getFullYear();
+    console.log('Portfolio build v28.8');
+  </script>
 </body>
 </html>
