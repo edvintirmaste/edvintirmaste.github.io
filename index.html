@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="et" data-build="v28.8">
+<html lang="et" data-build="v28.9">
 <head>
-  <!-- BUILD v28.8 — rails vertically centered + equal length; top bar unchanged -->
+  <!-- BUILD v28.9 — top bar smooth frost fade; rails & layout unchanged from v28.8 -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v28.8] Edvin Tirmaste — Portfolio</title>
+  <title>[v28.9] Edvin Tirmaste — Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -16,8 +16,14 @@
       --brand-size: clamp(14px, 1vw, 20px);
       --word-gap: clamp(14px, 2vw, 48px);
 
-      /* Top bar (unchanged) */
+      /* Top bar (base gradient unchanged) */
       --bar-top:.28; --bar-btm:.10;
+
+      /* NEW (v28.9): frost fade under the bar */
+      --fade-depth: 200px;                   /* try 160 / 200 / 240 */
+      --fade-blur: 10px;                     /* match header blur */
+      --fade-sat: 110%;
+      --fade-tint: rgba(255,255,255,.055);   /* subtle milky tint for frost */
 
       /* Divider */
       --divider-opacity:.35;
@@ -44,7 +50,7 @@
       --intro-glow-alpha: .28;
       --intro-rail-gap: 14px;
 
-      /* NEW: equal-length rails centered on the block */
+      /* equal-length rails centered on the block */
       --rail-height: 5.8lh;  /* length for all four rails */
       --rail-offset: 0lh;    /* nudge all rails up(-)/down(+) together */
     }
@@ -71,6 +77,25 @@
     }
     .brand span{ font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1; text-shadow:0 0 16px rgba(255,245,154,.22); }
     .brand .space{ flex:0 0 var(--word-gap); }
+
+    /* NEW (v28.9): smooth frost fade under the header */
+    .frost-fade{
+      position:fixed; left:0; right:0; top:var(--header-h);
+      height:var(--fade-depth); z-index:19; pointer-events:none;
+      background: var(--fade-tint);
+      backdrop-filter: blur(var(--fade-blur)) saturate(var(--fade-sat));
+      -webkit-backdrop-filter: blur(var(--fade-blur)) saturate(var(--fade-sat));
+      /* fade the overlay to transparent so the frost “tapers out” */
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,0));
+              mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,0));
+    }
+    /* Fallback if mask-image isn’t supported */
+    @supports not ((-webkit-mask-image: linear-gradient(#000,#000)) or (mask-image: linear-gradient(#000,#000))){
+      .frost-fade{
+        background: linear-gradient(to bottom, rgba(255,255,255,.05), rgba(255,255,255,0));
+        -webkit-backdrop-filter: none; backdrop-filter: none;
+      }
+    }
 
     .hero{ margin-top: var(--header-h); height: calc(100svh - var(--header-h)); scroll-snap-align:start; position:relative; z-index:1; }
 
@@ -108,7 +133,7 @@
     .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
     .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
 
-    /* === Rails: equal length and centered on the text block === */
+    /* Rails: equal length and centered on the text block */
     .corner-intro::before,
     .corner-intro::after{
       content:""; position:absolute; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
@@ -193,10 +218,10 @@
   </style>
 </head>
 <body>
-  <div class="debug-badge">v28.8</div>
+  <div class="debug-badge">v28.9</div>
 
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=288" alt="">
+    <img src="assets/mainpagebg.png?v=289" alt="">
   </div>
 
   <header class="site-header" role="banner">
@@ -204,6 +229,9 @@
       <div class="brand" id="brand">EDVIN TIRMASTE</div>
     </div>
   </header>
+
+  <!-- v28.9: masked frost extension under the header -->
+  <div class="frost-fade" aria-hidden="true"></div>
 
   <section class="hero" id="home" aria-label="Split hero">
     <div class="corner-intro left" lang="en">
@@ -236,7 +264,7 @@
   <section class="panel" id="video"><div class="section-wrap"><h3>Videography</h3><p>Reels / modal player here.</p></div></section>
 
   <footer class="panel" style="min-height:auto; padding:40px 24px; scroll-snap-align:end">
-    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.8</span></div>
+    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.9</span></div>
   </footer>
 
   <script>
@@ -251,7 +279,7 @@
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
-    console.log('Portfolio build v28.8');
+    console.log('Portfolio build v28.9');
   </script>
 </body>
 </html>
