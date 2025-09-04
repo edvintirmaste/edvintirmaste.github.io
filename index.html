@@ -1,10 +1,11 @@
 <!doctype html>
-<html lang="et" data-build="v28.9">
+<html lang="et" data-build="v28.10">
 <head>
-  <!-- BUILD v28.9 — top bar smooth frost fade; rails & layout unchanged from v28.8 -->
+  <!-- MODE: PATCH | TARGET: top bar fade continuity | BASE: v28.9 -->
+  <!-- BUILD v28.10 — header fade now continues the bar; no separate tint; overlap kills seam -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v28.9] Edvin Tirmaste — Portfolio</title>
+  <title>[v28.10] Edvin Tirmaste — Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -16,14 +17,14 @@
       --brand-size: clamp(14px, 1vw, 20px);
       --word-gap: clamp(14px, 2vw, 48px);
 
-      /* Top bar (base gradient unchanged) */
+      /* Top bar base gradient */
       --bar-top:.28; --bar-btm:.10;
+      /* NEW: unify header/fade filter so they match 1:1 */
+      --bar-blur: 10px; 
+      --bar-sat: 110%;
 
-      /* NEW (v28.9): frost fade under the bar */
-      --fade-depth: 200px;                   /* try 160 / 200 / 240 */
-      --fade-blur: 10px;                     /* match header blur */
-      --fade-sat: 110%;
-      --fade-tint: rgba(255,255,255,.055);   /* subtle milky tint for frost */
+      /* Fade controls */
+      --fade-depth: 200px;   /* adjust to taste: 160 / 200 / 240 */
 
       /* Divider */
       --divider-opacity:.35;
@@ -65,7 +66,8 @@
     header.site-header{
       position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
       background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
-      backdrop-filter: blur(10px) saturate(110%); -webkit-backdrop-filter: blur(10px) saturate(110%);
+      backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+      -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
     }
     .nav{ height:var(--header-h); display:flex; align-items:center; justify-content:center; padding-inline: clamp(16px, 5vw, 64px); }
 
@@ -78,22 +80,26 @@
     .brand span{ font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1; text-shadow:0 0 16px rgba(255,245,154,.22); }
     .brand .space{ flex:0 0 var(--word-gap); }
 
-    /* NEW (v28.9): smooth frost fade under the header */
+    /* REWORKED: fade that is literally the same material as the header */
     .frost-fade{
-      position:fixed; left:0; right:0; top:var(--header-h);
+      position:fixed; left:0; right:0; 
+      top: calc(var(--header-h) - 0.5px); /* slight overlap kills hairline */
       height:var(--fade-depth); z-index:19; pointer-events:none;
-      background: var(--fade-tint);
-      backdrop-filter: blur(var(--fade-blur)) saturate(var(--fade-sat));
-      -webkit-backdrop-filter: blur(var(--fade-blur)) saturate(var(--fade-sat));
-      /* fade the overlay to transparent so the frost “tapers out” */
-      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,0));
-              mask-image: linear-gradient(to bottom, rgba(0,0,0,.9), rgba(0,0,0,0));
+
+      /* continue the header gradient downward */
+      background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-btm)), rgba(2,2,28,0));
+      backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+      -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+
+      /* fade out the *effect* smoothly */
+      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.95), rgba(0,0,0,0));
+              mask-image: linear-gradient(to bottom, rgba(0,0,0,.95), rgba(0,0,0,0));
     }
     /* Fallback if mask-image isn’t supported */
     @supports not ((-webkit-mask-image: linear-gradient(#000,#000)) or (mask-image: linear-gradient(#000,#000))){
       .frost-fade{
-        background: linear-gradient(to bottom, rgba(255,255,255,.05), rgba(255,255,255,0));
-        -webkit-backdrop-filter: none; backdrop-filter: none;
+        /* graceful: only the tint gradient remains, without blur */
+        backdrop-filter:none; -webkit-backdrop-filter:none;
       }
     }
 
@@ -218,10 +224,10 @@
   </style>
 </head>
 <body>
-  <div class="debug-badge">v28.9</div>
+  <div class="debug-badge">v28.10</div>
 
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=289" alt="">
+    <img src="assets/mainpagebg.png?v=2810" alt="">
   </div>
 
   <header class="site-header" role="banner">
@@ -230,7 +236,7 @@
     </div>
   </header>
 
-  <!-- v28.9: masked frost extension under the header -->
+  <!-- Fade that continues the header material -->
   <div class="frost-fade" aria-hidden="true"></div>
 
   <section class="hero" id="home" aria-label="Split hero">
@@ -264,7 +270,7 @@
   <section class="panel" id="video"><div class="section-wrap"><h3>Videography</h3><p>Reels / modal player here.</p></div></section>
 
   <footer class="panel" style="min-height:auto; padding:40px 24px; scroll-snap-align:end">
-    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.9</span></div>
+    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.10</span></div>
   </footer>
 
   <script>
@@ -279,7 +285,7 @@
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
-    console.log('Portfolio build v28.9');
+    console.log('Portfolio build v28.10');
   </script>
 </body>
 </html>
