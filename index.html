@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="et" data-build="v28.13">
+<html lang="et" data-build="v28.14">
 <head>
-  <!-- MODE: PATCH | TARGET: seam fix + modest one-piece fade | BASE: v28.12 -->
-  <!-- BUILD v28.13 — 2px overlap kills line; header carries its own short fade; no extra layers -->
+  <!-- MODE: PATCH | TARGET: brand glow tone/shape + subtle fracture | BASE: v28.13 -->
+  <!-- BUILD v28.14 — rails-matched brand glow that spans spaced letters + subtle fractured translucency -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v28.13] Edvin Tirmaste — Portfolio</title>
+  <title>[v28.14] Edvin Tirmaste — Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -16,15 +16,23 @@
       --brand-min: 520px; --brand-fluid: 70vw; --brand-max: 1000px;
       --brand-size: clamp(14px, 1vw, 20px);
       --word-gap: clamp(14px, 2vw, 48px);
-      --brand-glow-rgb: 255,245,154;   /* gentle warm glow */
-      --brand-glow-alpha: .14;         /* slightly toned down */
+
+      /* Brand glow palette (match your rails) */
+      --accent-left-rgb: 141,216,255;    /* blue */
+      --accent-right-rgb: 255,179,225;   /* pink */
+      --brand-glow-alpha: .18;           /* global intensity */
 
       /* Header / fade */
       --bar-top:.28; --bar-btm:.10;
       --bar-blur: 10px; 
       --bar-sat: 110%;
-      --fade-depth: 160px;             /* shorter, unobtrusive; try 200/240 if you want more */
-      
+      --fade-depth: 160px;               /* modest fade */
+
+      /* “Fracture” controls (very subtle) */
+      --fracture-strength: .06;          /* 0–.25 (higher = more variation) */
+      --fracture-gap: 32px;              /* column spacing */
+      --fracture-soft: 12px;             /* softened edge width */
+
       /* Divider */
       --divider-opacity:.35;
       --divider-glow-width: 34px; --divider-glow-blur: 14px;
@@ -32,10 +40,6 @@
       /* Hover frost */
       --frost-bg: rgba(255,255,255,.06);
       --frost-blur: 8px; --frost-sat: 115%; --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
-
-      /* Rail colors */
-      --accent-left-rgb: 141,216,255;
-      --accent-right-rgb: 255,179,225;
 
       /* Intro blocks */
       --intro-top: 12.5vh;
@@ -62,25 +66,49 @@
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* Header base */
+    /* Header base (from v28.13) */
     header.site-header{
       position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
       background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
       backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
       -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+      /* FRACTURE: faint vertical variation in translucency */
+      -webkit-mask-image: repeating-linear-gradient(
+        to right,
+        rgba(0,0,0,1) 0 calc(var(--fracture-gap) - 1px),
+        rgba(0,0,0,calc(1 - var(--fracture-strength))) calc(var(--fracture-gap) - 1px) calc(var(--fracture-gap) + var(--fracture-soft))
+      );
+              mask-image: repeating-linear-gradient(
+        to right,
+        rgba(0,0,0,1) 0 calc(var(--fracture-gap) - 1px),
+        rgba(0,0,0,calc(1 - var(--fracture-strength))) calc(var(--fracture-gap) - 1px) calc(var(--fracture-gap) + var(--fracture-soft))
+      );
     }
-    /* Seam-guard + short fade as part of the header */
+    /* Seam-guard + short fade as part of the header (kept) */
     header.site-header::after{
       content:"";
       position:absolute; left:0; right:0;
       top:100%;
-      height: calc(var(--fade-depth) + 2px); /* +2px overlap kills the line on all DPRs */
+      height: calc(var(--fade-depth) + 2px);
       transform: translateY(-2px);
       background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-btm)), rgba(2,2,28,0));
       backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
       -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-      -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.98), rgba(0,0,0,0));
-              mask-image: linear-gradient(to bottom, rgba(0,0,0,.98), rgba(0,0,0,0));
+      /* Fade + FRACTURE combined (intersection) */
+      -webkit-mask-image:
+        linear-gradient(to bottom, rgba(0,0,0,.98), rgba(0,0,0,0)),
+        repeating-linear-gradient(
+          to right,
+          rgba(0,0,0,1) 0 calc(var(--fracture-gap) - 1px),
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) calc(var(--fracture-gap) - 1px) calc(var(--fracture-gap) + var(--fracture-soft))
+        );
+              mask-image:
+        linear-gradient(to bottom, rgba(0,0,0,.98), rgba(0,0,0,0)),
+        repeating-linear-gradient(
+          to right,
+          rgba(0,0,0,1) 0 calc(var(--fracture-gap) - 1px),
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) calc(var(--fracture-gap) - 1px) calc(var(--fracture-gap) + var(--fracture-soft))
+        );
       pointer-events:none;
     }
 
@@ -93,15 +121,31 @@
       text-transform:uppercase; white-space:nowrap; user-select:none;
       filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
     }
+
+    /* BRAND GLOW — rails-matched gradient + per-letter micro glow */
     .brand::after{
       content:"";
-      position:absolute; left:-18px; right:-18px; top:50%; height:44px;
+      position:absolute; left:-12%; right:-12%; top:50%; height:56px;
       transform:translateY(-50%);
-      background: radial-gradient(60% 100% at center, rgba(var(--brand-glow-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%);
-      filter: blur(16px);
+      background:
+        radial-gradient(60% 140% at 20% 50%, rgba(var(--accent-left-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%),
+        radial-gradient(60% 140% at 80% 50%, rgba(var(--accent-right-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%);
+      filter: blur(18px);
+      mix-blend-mode: screen;            /* closer to existing glows */
+      opacity: .9;
       z-index:-1; pointer-events:none;
     }
-    .brand span{ font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1; text-shadow:0 0 16px rgba(255,245,154,.18); }
+    .brand span{ position:relative; display:inline-block; }
+    .brand span:not(.space)::after{
+      content:"";
+      position:absolute; left:50%; top:50%;
+      width:1.15em; height:.9em; transform:translate(-50%,-50%);
+      background: radial-gradient(closest-side, rgba(255,255,255,.06), rgba(0,0,0,0) 70%);
+      filter: blur(6px);
+      z-index:-1; pointer-events:none;
+    }
+
+    .brand span{ font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1; text-shadow:0 0 16px rgba(255,245,154,.12); }
     .brand .space{ flex:0 0 var(--word-gap); }
 
     .hero{ margin-top: var(--header-h); height: calc(100svh - var(--header-h)); scroll-snap-align:start; position:relative; z-index:1; }
@@ -225,10 +269,10 @@
   </style>
 </head>
 <body>
-  <div class="debug-badge">v28.13</div>
+  <div class="debug-badge">v28.14</div>
 
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=2813" alt="">
+    <img src="assets/mainpagebg.png?v=2814" alt="">
   </div>
 
   <header class="site-header" role="banner">
@@ -268,7 +312,7 @@
   <section class="panel" id="video"><div class="section-wrap"><h3>Videography</h3><p>Reels / modal player here.</p></div></section>
 
   <footer class="panel" style="min-height:auto; padding:40px 24px; scroll-snap-align:end">
-    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.13</span></div>
+    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.14</span></div>
   </footer>
 
   <script>
@@ -278,12 +322,13 @@
       el.textContent = '';
       for (const ch of text){
         const s = document.createElement('span');
-        if (ch === ' ') s.className = 'space'; else s.textContent = ch;
+        if (ch === ' ') s.className = 'space';
+        else { s.textContent = ch; }
         el.appendChild(s);
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
-    console.log('Portfolio build v28.13');
+    console.log('Portfolio build v28.14');
   </script>
 </body>
 </html>
