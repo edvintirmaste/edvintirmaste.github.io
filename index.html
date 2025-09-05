@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="et" data-build="v28.14">
+<html lang="et" data-build="v28.15">
 <head>
-  <!-- MODE: PATCH | TARGET: brand glow tone/shape + subtle fracture | BASE: v28.13 -->
-  <!-- BUILD v28.14 — rails-matched brand glow that spans spaced letters + subtle fractured translucency -->
+  <!-- MODE: PATCH | TARGET: cooler brand glow + non-repeating fracture + seam fix | BASE: v28.14 -->
+  <!-- BUILD v28.15 — cooler wordmark glow; organic (non-repeating) fracture; no seam; modest fade -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v28.14] Edvin Tirmaste — Portfolio</title>
+  <title>[v28.15] Edvin Tirmaste — Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -17,10 +17,10 @@
       --brand-size: clamp(14px, 1vw, 20px);
       --word-gap: clamp(14px, 2vw, 48px);
 
-      /* Brand glow palette (match your rails) */
-      --accent-left-rgb: 141,216,255;    /* blue */
-      --accent-right-rgb: 255,179,225;   /* pink */
-      --brand-glow-alpha: .18;           /* global intensity */
+      /* Cooler brand glow (match the mid divider’s cool tone) */
+      --brand-glow1-rgb: 186,205,255;   /* cool white-blue */
+      --brand-glow2-rgb: 186,205,255;   /* same both sides for neutrality */
+      --brand-glow-alpha: .18;          /* overall strength */
 
       /* Header / fade */
       --bar-top:.28; --bar-btm:.10;
@@ -28,10 +28,8 @@
       --bar-sat: 110%;
       --fade-depth: 160px;               /* modest fade */
 
-      /* “Fracture” controls (very subtle) */
-      --fracture-strength: .06;          /* 0–.25 (higher = more variation) */
-      --fracture-gap: 32px;              /* column spacing */
-      --fracture-soft: 12px;             /* softened edge width */
+      /* FRACTURE (organic, non-repeating) */
+      --fracture-strength: .06;          /* 0–.15 (how much translucency varies) */
 
       /* Divider */
       --divider-opacity:.35;
@@ -66,48 +64,91 @@
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* Header base (from v28.13) */
+    /* ===== Header ===== */
     header.site-header{
       position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
       background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
       backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
       -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-      /* FRACTURE: faint vertical variation in translucency */
-      -webkit-mask-image: repeating-linear-gradient(
-        to right,
-        rgba(0,0,0,1) 0 calc(var(--fracture-gap) - 1px),
-        rgba(0,0,0,calc(1 - var(--fracture-strength))) calc(var(--fracture-gap) - 1px) calc(var(--fracture-gap) + var(--fracture-soft))
-      );
-              mask-image: repeating-linear-gradient(
-        to right,
-        rgba(0,0,0,1) 0 calc(var(--fracture-gap) - 1px),
-        rgba(0,0,0,calc(1 - var(--fracture-strength))) calc(var(--fracture-gap) - 1px) calc(var(--fracture-gap) + var(--fracture-soft))
-      );
+      /* FRACTURE (non-repeating): irregular horizontal mask to avoid band/square artifacts */
+      -webkit-mask-image:
+        linear-gradient(90deg,
+          rgba(0,0,0,1) 0%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
+          rgba(0,0,0,1) 7%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
+          rgba(0,0,0,1) 18%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
+          rgba(0,0,0,1) 33%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
+          rgba(0,0,0,1) 52%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
+          rgba(0,0,0,1) 73%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
+          rgba(0,0,0,1) 100%
+        );
+              mask-image:
+        linear-gradient(90deg,
+          rgba(0,0,0,1) 0%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
+          rgba(0,0,0,1) 7%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
+          rgba(0,0,0,1) 18%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
+          rgba(0,0,0,1) 33%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
+          rgba(0,0,0,1) 52%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
+          rgba(0,0,0,1) 73%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
+          rgba(0,0,0,1) 100%
+        );
     }
+
     /* Seam-guard + short fade as part of the header (kept) */
     header.site-header::after{
       content:"";
       position:absolute; left:0; right:0;
       top:100%;
-      height: calc(var(--fade-depth) + 2px);
+      height: calc(var(--fade-depth) + 2px); /* +2px overlap kills line */
       transform: translateY(-2px);
       background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-btm)), rgba(2,2,28,0));
       backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
       -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-      /* Fade + FRACTURE combined (intersection) */
+      /* Blend the vertical fade with the same **non-repeating** fracture */
       -webkit-mask-image:
         linear-gradient(to bottom, rgba(0,0,0,.98), rgba(0,0,0,0)),
-        repeating-linear-gradient(
-          to right,
-          rgba(0,0,0,1) 0 calc(var(--fracture-gap) - 1px),
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) calc(var(--fracture-gap) - 1px) calc(var(--fracture-gap) + var(--fracture-soft))
+        linear-gradient(90deg,
+          rgba(0,0,0,1) 0%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
+          rgba(0,0,0,1) 7%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
+          rgba(0,0,0,1) 18%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
+          rgba(0,0,0,1) 33%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
+          rgba(0,0,0,1) 52%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
+          rgba(0,0,0,1) 73%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
+          rgba(0,0,0,1) 100%
         );
               mask-image:
         linear-gradient(to bottom, rgba(0,0,0,.98), rgba(0,0,0,0)),
-        repeating-linear-gradient(
-          to right,
-          rgba(0,0,0,1) 0 calc(var(--fracture-gap) - 1px),
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) calc(var(--fracture-gap) - 1px) calc(var(--fracture-gap) + var(--fracture-soft))
+        linear-gradient(90deg,
+          rgba(0,0,0,1) 0%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
+          rgba(0,0,0,1) 7%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
+          rgba(0,0,0,1) 18%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
+          rgba(0,0,0,1) 33%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
+          rgba(0,0,0,1) 52%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
+          rgba(0,0,0,1) 73%,
+          rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
+          rgba(0,0,0,1) 100%
         );
       pointer-events:none;
     }
@@ -122,30 +163,36 @@
       filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
     }
 
-    /* BRAND GLOW — rails-matched gradient + per-letter micro glow */
+    /* ===== BRAND GLOW (cool, spans the spaced wordmark; no square artifacts) ===== */
     .brand::after{
       content:"";
-      position:absolute; left:-12%; right:-12%; top:50%; height:56px;
+      position:absolute; left:-14%; right:-14%; top:50%; height:56px;
       transform:translateY(-50%);
       background:
-        radial-gradient(60% 140% at 20% 50%, rgba(var(--accent-left-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%),
-        radial-gradient(60% 140% at 80% 50%, rgba(var(--accent-right-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%);
+        radial-gradient(60% 140% at 22% 50%, rgba(var(--brand-glow1-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%),
+        radial-gradient(60% 140% at 78% 50%, rgba(var(--brand-glow2-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%);
       filter: blur(18px);
-      mix-blend-mode: screen;            /* closer to existing glows */
-      opacity: .9;
+      mix-blend-mode: screen;
+      opacity:.95;
       z-index:-1; pointer-events:none;
     }
-    .brand span{ position:relative; display:inline-block; }
+    /* Remove warm hue from the text; keep a cool subtle halo only */
+    .brand span{
+      position:relative; display:inline-block;
+      font-family:"Space Grotesk", Inter, system-ui;
+      font-weight:700; font-size:var(--brand-size); line-height:1;
+      text-shadow:0 0 16px rgba(180,205,255,.12);
+    }
+    /* Per-letter micro glow (round, not square) */
     .brand span:not(.space)::after{
       content:"";
       position:absolute; left:50%; top:50%;
-      width:1.15em; height:.9em; transform:translate(-50%,-50%);
-      background: radial-gradient(closest-side, rgba(255,255,255,.06), rgba(0,0,0,0) 70%);
-      filter: blur(6px);
+      width:1.05em; height:1.05em; transform:translate(-50%,-50%);
+      background: radial-gradient(closest-side, rgba(200,220,255,.06), rgba(0,0,0,0) 70%);
+      filter: blur(7px);
+      border-radius:50%;
       z-index:-1; pointer-events:none;
     }
-
-    .brand span{ font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1; text-shadow:0 0 16px rgba(255,245,154,.12); }
     .brand .space{ flex:0 0 var(--word-gap); }
 
     .hero{ margin-top: var(--header-h); height: calc(100svh - var(--header-h)); scroll-snap-align:start; position:relative; z-index:1; }
@@ -197,14 +244,14 @@
       background:
         linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
           left center / var(--intro-rail-w) 100% no-repeat,
-        radial-gradient(100% 60% at left center, rgba(var(--accent-left-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
+        radial-gradient(100% 60% at left center, rgba(var(--brand-glow1-rgb), .22) 0, rgba(0,0,0,0) 65%);
     }
     .corner-intro::after{
       right:0;
       background:
         linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
           right center / var(--intro-rail-w) 100% no-repeat,
-        radial-gradient(100% 60% at right center, rgba(var(--accent-right-rgb), var(--intro-glow-alpha)) 0, rgba(0,0,0,0) 65%);
+        radial-gradient(100% 60% at right center, rgba(var(--brand-glow2-rgb), .22) 0, rgba(0,0,0,0) 65%);
     }
 
     .half{
@@ -220,7 +267,7 @@
     .edge .disc{ position:absolute; inset:0; border-radius:999px; background: rgba(2,2,28,.50); border:1px solid rgba(255,255,255,.14); -webkit-backdrop-filter: blur(6px) saturate(120%); backdrop-filter: blur(6px) saturate(120%); box-shadow: 0 6px 18px rgba(0,0,0,.35); }
     .edge svg{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:24px; height:24px; fill:none; stroke-width:2.25; stroke-linecap:round; stroke-linejoin:round; filter: drop-shadow(0 1px 6px rgba(0,0,0,.35)); }
     .edge-left{ left:12px } .edge-right{ right:12px }
-    .edge-left svg{ stroke: rgb(var(--accent-left-rgb)) } .edge-right svg{ stroke: rgb(var(--accent-right-rgb)) }
+    .edge-left svg{ stroke: rgb(141,216,255) } .edge-right svg{ stroke: rgb(255,179,225) }
 
     .half h2{
       margin:0 0 10px 0;
@@ -269,10 +316,10 @@
   </style>
 </head>
 <body>
-  <div class="debug-badge">v28.14</div>
+  <div class="debug-badge">v28.15</div>
 
   <div class="bg-wrap" aria-hidden="true">
-    <img src="assets/mainpagebg.png?v=2814" alt="">
+    <img src="assets/mainpagebg.png?v=2815" alt="">
   </div>
 
   <header class="site-header" role="banner">
@@ -312,7 +359,7 @@
   <section class="panel" id="video"><div class="section-wrap"><h3>Videography</h3><p>Reels / modal player here.</p></div></section>
 
   <footer class="panel" style="min-height:auto; padding:40px 24px; scroll-snap-align:end">
-    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.14</span></div>
+    <div class="section-wrap">© <span id="y"></span> Edvin Tirmaste — <span>Build v28.15</span></div>
   </footer>
 
   <script>
@@ -328,7 +375,7 @@
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
-    console.log('Portfolio build v28.14');
+    console.log('Portfolio build v28.15');
   </script>
 </body>
 </html>
