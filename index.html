@@ -1,20 +1,20 @@
 ---
 ---
 <!doctype html>
-<html lang="et" data-build="v29.0">
+<html lang="et" data-build="v29.1">
 <head>
-  <!-- MODE: REFACTOR | TARGET: component split (Option B) | ZERO VISUAL CHANGE | BASE: v28.15 -->
-  <!-- BUILD v29.0 — scaffolding links (base/header/hero/sections.css) + main.js; visuals identical to v28.15 -->
+  <!-- MODE: REFACTOR | TARGET: move header CSS to assets/header.css | ZERO VISUAL CHANGE | BASE: v29.0 -->
+  <!-- BUILD v29.1 — header styles migrated to assets/css/header.css; visuals identical -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v29.0] Edvin Tirmaste — Portfolio</title>
+  <title>[v29.1] Edvin Tirmaste — Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 
-  <!-- v29.0 CSS scaffolding (no visual change) -->
-  <link rel="stylesheet" href="assets/css/base.css?v=29.0" />
-  <link rel="stylesheet" href="assets/css/header.css?v=29.0" />
-  <link rel="stylesheet" href="assets/css/hero.css?v=29.0" />
-  <link rel="stylesheet" href="assets/css/sections.css?v=29.0" />
+  <!-- Component CSS (order matters) -->
+  <link rel="stylesheet" href="assets/css/base.css?v=29.1" />
+  <link rel="stylesheet" href="assets/css/header.css?v=29.1" />
+  <link rel="stylesheet" href="assets/css/hero.css?v=29.1" />
+  <link rel="stylesheet" href="assets/css/sections.css?v=29.1" />
 
   <style>
     :root{
@@ -73,136 +73,7 @@
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* ===== Header ===== */
-    header.site-header{
-      position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
-      background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
-      backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-      -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-      /* FRACTURE (non-repeating): irregular horizontal mask to avoid band/square artifacts */
-      -webkit-mask-image:
-        linear-gradient(90deg,
-          rgba(0,0,0,1) 0%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
-          rgba(0,0,0,1) 7%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
-          rgba(0,0,0,1) 18%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
-          rgba(0,0,0,1) 33%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
-          rgba(0,0,0,1) 52%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
-          rgba(0,0,0,1) 73%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
-          rgba(0,0,0,1) 100%
-        );
-              mask-image:
-        linear-gradient(90deg,
-          rgba(0,0,0,1) 0%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
-          rgba(0,0,0,1) 7%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
-          rgba(0,0,0,1) 18%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
-          rgba(0,0,0,1) 33%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
-          rgba(0,0,0,1) 52%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
-          rgba(0,0,0,1) 73%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
-          rgba(0,0,0,1) 100%
-        );
-    }
-
-    /* Seam-guard + short fade as part of the header (kept) */
-    header.site-header::after{
-      content:"";
-      position:absolute; left:0; right:0;
-      top:100%;
-      height: calc(var(--fade-depth) + 2px); /* +2px overlap kills line */
-      transform: translateY(-2px);
-      background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-btm)), rgba(2,2,28,0));
-      backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-      -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-      /* Blend the vertical fade with the same **non-repeating** fracture */
-      -webkit-mask-image:
-        linear-gradient(to bottom, rgba(0,0,0,.98), rgba(0,0,0,0)),
-        linear-gradient(90deg,
-          rgba(0,0,0,1) 0%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
-          rgba(0,0,0,1) 7%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
-          rgba(0,0,0,1) 18%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
-          rgba(0,0,0,1) 33%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
-          rgba(0,0,0,1) 52%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
-          rgba(0,0,0,1) 73%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
-          rgba(0,0,0,1) 100%
-        );
-              mask-image:
-        linear-gradient(to bottom, rgba(0,0,0,.98), rgba(0,0,0,0)),
-        linear-gradient(90deg,
-          rgba(0,0,0,1) 0%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
-          rgba(0,0,0,1) 7%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
-          rgba(0,0,0,1) 18%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
-          rgba(0,0,0,1) 33%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
-          rgba(0,0,0,1) 52%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
-          rgba(0,0,0,1) 73%,
-          rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
-          rgba(0,0,0,1) 100%
-        );
-      pointer-events:none;
-    }
-
-    .nav{ height:var(--header-h); display:flex; align-items:center; justify-content:center; padding-inline: clamp(16px, 5vw, 64px); }
-
-    .brand{
-      position:relative;
-      width: clamp(var(--brand-min), var(--brand-fluid), var(--brand-max));
-      display:flex; align-items:center; justify-content:space-between;
-      text-transform:uppercase; white-space:nowrap; user-select:none;
-      filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
-    }
-
-    /* ===== BRAND GLOW (cool, spans the spaced wordmark; no square artifacts) ===== */
-    .brand::after{
-      content:"";
-      position:absolute; left:-14%; right:-14%; top:50%; height:56px;
-      transform:translateY(-50%);
-      background:
-        radial-gradient(60% 140% at 22% 50%, rgba(var(--brand-glow1-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%),
-        radial-gradient(60% 140% at 78% 50%, rgba(var(--brand-glow2-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%);
-      filter: blur(18px);
-      mix-blend-mode: screen;
-      opacity:.95;
-      z-index:-1; pointer-events:none;
-    }
-    /* Remove warm hue from the text; keep a cool subtle halo only */
-    .brand span{
-      position:relative; display:inline-block;
-      font-family:"Space Grotesk", Inter, system-ui;
-      font-weight:700; font-size:var(--brand-size); line-height:1;
-      text-shadow:0 0 16px rgba(180,205,255,.12);
-    }
-    /* Per-letter micro glow (round, not square) */
-    .brand span:not(.space)::after{
-      content:"";
-      position:absolute; left:50%; top:50%;
-      width:1.05em; height:1.05em; transform:translate(-50%,-50%);
-      background: radial-gradient(closest-side, rgba(200,220,255,.06), rgba(0,0,0,0) 70%);
-      filter: blur(7px);
-      border-radius:50%;
-      z-index:-1; pointer-events:none;
-    }
-    .brand .space{ flex:0 0 var(--word-gap); }
+    /* ===== HERO + SECTIONS (remain inline for now) ===== */
 
     .hero{ margin-top: var(--header-h); height: calc(100svh - var(--header-h)); scroll-snap-align:start; position:relative; z-index:1; }
 
@@ -325,7 +196,7 @@
   </style>
 </head>
 <body>
-  <div class="debug-badge">v29.0</div>
+  <div class="debug-badge">v29.1</div>
 
   <div class="bg-wrap" aria-hidden="true">
     <img src="assets/mainpagebg.png?v=2815" alt="">
@@ -340,7 +211,7 @@
 
   {% include footer.html %}
 
-  <!-- v29.0 JS scaffolding (no visual change) -->
+  <!-- JS -->
   <script src="assets/js/main.js?v=29.0" defer></script>
 
   <script>
@@ -356,7 +227,7 @@
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
-    console.log('Portfolio build v29.0');
+    console.log('Portfolio build v29.1');
   </script>
 </body>
 </html>
