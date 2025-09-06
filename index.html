@@ -1,20 +1,20 @@
 ---
 ---
 <!doctype html>
-<html lang="et" data-build="v29.1">
+<html lang="et" data-build="v29.2">
 <head>
-  <!-- MODE: REFACTOR | TARGET: move header CSS to assets/header.css | ZERO VISUAL CHANGE | BASE: v29.0 -->
-  <!-- BUILD v29.1 — header styles migrated to assets/css/header.css; visuals identical -->
+  <!-- MODE: REFACTOR | TARGET: move hero CSS to assets/hero.css | ZERO VISUAL CHANGE | BASE: v29.1 -->
+  <!-- BUILD v29.2 — hero styles migrated; visuals identical -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v29.1] Edvin Tirmaste — Portfolio</title>
+  <title>[v29.2] Edvin Tirmaste — Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 
   <!-- Component CSS (order matters) -->
-  <link rel="stylesheet" href="assets/css/base.css?v=29.1" />
-  <link rel="stylesheet" href="assets/css/header.css?v=29.1" />
-  <link rel="stylesheet" href="assets/css/hero.css?v=29.1" />
-  <link rel="stylesheet" href="assets/css/sections.css?v=29.1" />
+  <link rel="stylesheet" href="assets/css/base.css?v=29.2" />
+  <link rel="stylesheet" href="assets/css/header.css?v=29.2" />
+  <link rel="stylesheet" href="assets/css/hero.css?v=29.2" />
+  <link rel="stylesheet" href="assets/css/sections.css?v=29.2" />
 
   <style>
     :root{
@@ -27,18 +27,18 @@
       --word-gap: clamp(14px, 2vw, 48px);
 
       /* Cooler brand glow (match the mid divider’s cool tone) */
-      --brand-glow1-rgb: 186,205,255;   /* cool white-blue */
-      --brand-glow2-rgb: 186,205,255;   /* same both sides for neutrality */
-      --brand-glow-alpha: .18;          /* overall strength */
+      --brand-glow1-rgb: 186,205,255;
+      --brand-glow2-rgb: 186,205,255;
+      --brand-glow-alpha: .18;
 
       /* Header / fade */
       --bar-top:.28; --bar-btm:.10;
       --bar-blur: 10px; 
       --bar-sat: 110%;
-      --fade-depth: 160px;               /* modest fade */
+      --fade-depth: 160px;
 
       /* FRACTURE (organic, non-repeating) */
-      --fracture-strength: .06;          /* 0–.15 (how much translucency varies) */
+      --fracture-strength: .06;
 
       /* Divider */
       --divider-opacity:.35;
@@ -73,101 +73,7 @@
     .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
     .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
 
-    /* ===== HERO + SECTIONS (remain inline for now) ===== */
-
-    .hero{ margin-top: var(--header-h); height: calc(100svh - var(--header-h)); scroll-snap-align:start; position:relative; z-index:1; }
-
-    .split-50{
-      position:relative; display:grid; grid-template-columns: 1fr 1fr; gap:0; inline-size:100%; block-size:100%;
-    }
-    .split-50::after{
-      content:""; position:absolute; inset-block:0; inset-inline-start:50%; width:1px; transform:translateX(-.5px);
-      background: linear-gradient(to bottom, transparent, rgba(255,255,255,.18), transparent); opacity:var(--divider-opacity); pointer-events:none;
-    }
-    .split-50::before{
-      content:""; position:absolute; inset-block:0; inset-inline-start:50%; width: var(--divider-glow-width); transform:translateX(-50%);
-      background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0)); filter: blur(var(--divider-glow-blur));
-      opacity:.42; pointer-events:none;
-    }
-
-    .corner-intro{
-      position:absolute; z-index:2; top: var(--intro-top);
-      width: var(--intro-width);
-      line-height:1.48;
-      font-size: clamp(14px, 1.05vw, 16px);
-      color: rgba(233,233,238,.96);
-      text-shadow: 0 0 10px rgba(0,0,0,.45);
-      pointer-events:none;
-
-      text-align: justify;
-      text-justify: inter-word;
-      -webkit-hyphens:auto; hyphens:auto;
-      overflow-wrap:anywhere; text-wrap: pretty;
-
-      /* keep text off the rails on both sides */
-      padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
-      padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w));
-    }
-    .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
-    .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
-
-    /* Rails: equal length and centered on the text block */
-    .corner-intro::before,
-    .corner-intro::after{
-      content:""; position:absolute; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
-      height: var(--rail-height);
-      top: calc(50% + var(--rail-offset)); transform: translateY(-50%);
-      pointer-events:none; background-repeat:no-repeat;
-    }
-    .corner-intro::before{
-      left:0;
-      background:
-        linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
-          left center / var(--intro-rail-w) 100% no-repeat,
-        radial-gradient(100% 60% at left center, rgba(var(--brand-glow1-rgb), .22) 0, rgba(0,0,0,0) 65%);
-    }
-    .corner-intro::after{
-      right:0;
-      background:
-        linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
-          right center / var(--intro-rail-w) 100% no-repeat,
-        radial-gradient(100% 60% at right center, rgba(var(--brand-glow2-rgb), .22) 0, rgba(0,0,0,0) 65%);
-    }
-
-    .half{
-      display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
-      inline-size:100%; block-size:100%; text-decoration:none; color:var(--fg);
-      background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none;
-      transition: background-color .25s ease, backdrop-filter .25s ease, transform .25s ease, box-shadow .25s ease, opacity .25s ease;
-      position:relative; isolation:isolate; padding: 0 clamp(18px, 3.5vw, 48px);
-    }
-    .half:hover{ background: var(--frost-bg); -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(115%); backdrop-filter: blur(var(--frost-blur)) saturate(115%); box-shadow: var(--frost-shadow); }
-
-    .edge{ position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:46px; height:46px; pointer-events:none; }
-    .edge .disc{ position:absolute; inset:0; border-radius:999px; background: rgba(2,2,28,.50); border:1px solid rgba(255,255,255,.14); -webkit-backdrop-filter: blur(6px) saturate(120%); backdrop-filter: blur(6px) saturate(120%); box-shadow: 0 6px 18px rgba(0,0,0,.35); }
-    .edge svg{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:24px; height:24px; fill:none; stroke-width:2.25; stroke-linecap:round; stroke-linejoin:round; filter: drop-shadow(0 1px 6px rgba(0,0,0,.35)); }
-    .edge-left{ left:12px } .edge-right{ right:12px }
-    .edge-left svg{ stroke: rgb(141,216,255) } .edge-right svg{ stroke: rgb(255,179,225) }
-
-    .half h2{
-      margin:0 0 10px 0;
-      font-family:"Space Grotesk", Inter, system-ui;
-      font-size: clamp(28px, 3.6vw, 56px);
-      letter-spacing:.10em; text-transform:uppercase;
-      text-shadow:0 2px 18px rgba(0,0,0,.45);
-      pointer-events:none; text-align:center;
-    }
-
-    .bullets{
-      margin:0; padding:0; list-style:none;
-      display:flex; flex-wrap:wrap; justify-content:center; gap:.35rem .9rem;
-      color:var(--muted); font-size: clamp(12px, 1vw, 15px); line-height:1.35;
-      min-height: calc(1.35em * 2 + 6px); text-align:center; opacity:.95;
-    }
-    .bullets li{ display:inline-flex; align-items:center; white-space:nowrap; }
-    .bullets li::before{ content:"•"; opacity:.7; margin-right:.55rem; }
-    .bullets li:first-child::before{ content:""; margin:0; }
-
+    /* ===== Sections (remain inline for now) ===== */
     .panel{ min-height:100svh; padding: 24px clamp(16px, 5vw, 64px); display:flex; align-items:center; justify-content:center; scroll-snap-align:start; position:relative; z-index:1; }
     .section-wrap{ width:min(1100px, 92vw); margin-inline:auto; }
     .section-wrap h3{ font-family:"Space Grotesk", Inter, system-ui; font-size: clamp(22px, 2.4vw, 36px); letter-spacing:.04em; margin:0 0 12px 0; }
@@ -178,25 +84,10 @@
       font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px;
       opacity:.95; box-shadow: 0 2px 8px rgba(0,0,0,.25); user-select:none; pointer-events:none;
     }
-
-    @media (max-width: 900px){
-      .corner-intro{
-        position:static; margin: 10px 16px 0;
-        width: min(92vw, var(--intro-width));
-        text-align:left; text-align-last:left;
-        background: none; border-radius: 0;
-        padding: 0;
-      }
-      .corner-intro::before, .corner-intro::after{ display:none; }
-      .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
-      .split-50::after, .split-50::before{ display:none; }
-      .edge-left{ left:10px } .edge-right{ right:10px }
-      .bullets{ min-height: 0; }
-    }
   </style>
 </head>
 <body>
-  <div class="debug-badge">v29.1</div>
+  <div class="debug-badge">v29.2</div>
 
   <div class="bg-wrap" aria-hidden="true">
     <img src="assets/mainpagebg.png?v=2815" alt="">
@@ -227,7 +118,7 @@
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
-    console.log('Portfolio build v29.1');
+    console.log('Portfolio build v29.2');
   </script>
 </body>
 </html>
