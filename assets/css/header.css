@@ -1,3 +1,144 @@
-/* Edvin Portfolio — header.css (v29.0 scaffolding)
-   Purpose: styles for the top bar / wordmark / nav if any.
-   Leaving empty for Step 1 (no visual change). */
+/* Edvin Portfolio — header.css (v29.1)
+   Scope: header bar + brand/wordmark + nav container.
+   Visuals: identical to v29.0 (we just moved rules here). */
+
+/* ===== Header bar ===== */
+header.site-header{
+  position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
+  background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
+  backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+  -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+  /* FRACTURE (non-repeating): irregular horizontal mask to avoid band/square artifacts */
+  -webkit-mask-image:
+    linear-gradient(90deg,
+      rgba(0,0,0,1) 0%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
+      rgba(0,0,0,1) 7%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
+      rgba(0,0,0,1) 18%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
+      rgba(0,0,0,1) 33%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
+      rgba(0,0,0,1) 52%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
+      rgba(0,0,0,1) 73%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
+      rgba(0,0,0,1) 100%
+    );
+          mask-image:
+    linear-gradient(90deg,
+      rgba(0,0,0,1) 0%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
+      rgba(0,0,0,1) 7%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
+      rgba(0,0,0,1) 18%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
+      rgba(0,0,0,1) 33%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
+      rgba(0,0,0,1) 52%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
+      rgba(0,0,0,1) 73%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
+      rgba(0,0,0,1) 100%
+    );
+}
+
+/* Seam-guard + short fade as part of the header (kept) */
+header.site-header::after{
+  content:"";
+  position:absolute; left:0; right:0;
+  top:100%;
+  height: calc(var(--fade-depth) + 2px); /* +2px overlap kills line */
+  transform: translateY(-2px);
+  background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-btm)), rgba(2,2,28,0));
+  backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+  -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+  /* Blend the vertical fade with the same **non-repeating** fracture */
+  -webkit-mask-image:
+    linear-gradient(to bottom, rgba(0,0,0,.98), rgba(0,0,0,0)),
+    linear-gradient(90deg,
+      rgba(0,0,0,1) 0%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
+      rgba(0,0,0,1) 7%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
+      rgba(0,0,0,1) 18%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
+      rgba(0,0,0,1) 33%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
+      rgba(0,0,0,1) 52%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
+      rgba(0,0,0,1) 73%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
+      rgba(0,0,0,1) 100%
+    );
+          mask-image:
+    linear-gradient(to bottom, rgba(0,0,0,.98), rgba(0,0,0,0)),
+    linear-gradient(90deg,
+      rgba(0,0,0,1) 0%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
+      rgba(0,0,0,1) 7%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
+      rgba(0,0,0,1) 18%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
+      rgba(0,0,0,1) 33%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
+      rgba(0,0,0,1) 52%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
+      rgba(0,0,0,1) 73%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
+      rgba(0,0,0,1) 100%
+    );
+  pointer-events:none;
+}
+
+/* Nav container height/padding */
+.nav{
+  height:var(--header-h);
+  display:flex; align-items:center; justify-content:center;
+  padding-inline: clamp(16px, 5vw, 64px);
+}
+
+/* Wordmark (spaced) */
+.brand{
+  position:relative;
+  width: clamp(var(--brand-min), var(--brand-fluid), var(--brand-max));
+  display:flex; align-items:center; justify-content:space-between;
+  text-transform:uppercase; white-space:nowrap; user-select:none;
+  filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
+}
+
+/* Brand cool glow spanning the spaced wordmark */
+.brand::after{
+  content:"";
+  position:absolute; left:-14%; right:-14%; top:50%; height:56px;
+  transform:translateY(-50%);
+  background:
+    radial-gradient(60% 140% at 22% 50%, rgba(var(--brand-glow1-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%),
+    radial-gradient(60% 140% at 78% 50%, rgba(var(--brand-glow2-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%);
+  filter: blur(18px);
+  mix-blend-mode: screen;
+  opacity:.95;
+  z-index:-1; pointer-events:none;
+}
+
+/* Remove warm hue from the text; keep a cool subtle halo only */
+.brand span{
+  position:relative; display:inline-block;
+  font-family:"Space Grotesk", Inter, system-ui;
+  font-weight:700; font-size:var(--brand-size); line-height:1;
+  text-shadow:0 0 16px rgba(180,205,255,.12);
+}
+
+/* Per-letter micro glow (round, not square) */
+.brand span:not(.space)::after{
+  content:"";
+  position:absolute; left:50%; top:50%;
+  width:1.05em; height:1.05em; transform:translate(-50%,-50%);
+  background: radial-gradient(closest-side, rgba(200,220,255,.06), rgba(0,0,0,0) 70%);
+  filter: blur(7px);
+  border-radius:50%;
+  z-index:-1; pointer-events:none;
+}
+
+/* Fixed spacing element between the two words */
+.brand .space{ flex:0 0 var(--word-gap); }
