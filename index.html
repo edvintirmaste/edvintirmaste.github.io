@@ -1,14 +1,21 @@
 ---
 ---
 <!doctype html>
-<html lang="et" data-build="v28.15">
+<html lang="et" data-build="v29.0">
 <head>
-  <!-- MODE: PATCH | TARGET: cooler brand glow + non-repeating fracture + seam fix | BASE: v28.14 -->
-  <!-- BUILD v28.15 — cooler wordmark glow; organic (non-repeating) fracture; no seam; modest fade -->
+  <!-- MODE: REFACTOR | TARGET: component split (Option B) | ZERO VISUAL CHANGE | BASE: v28.15 -->
+  <!-- BUILD v29.0 — scaffolding links (base/header/hero/sections.css) + main.js; visuals identical to v28.15 -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v28.15] Edvin Tirmaste — Portfolio</title>
+  <title>[v29.0] Edvin Tirmaste — Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- v29.0 CSS scaffolding (no visual change) -->
+  <link rel="stylesheet" href="assets/css/base.css?v=29.0" />
+  <link rel="stylesheet" href="assets/css/header.css?v=29.0" />
+  <link rel="stylesheet" href="assets/css/hero.css?v=29.0" />
+  <link rel="stylesheet" href="assets/css/sections.css?v=29.0" />
+
   <style>
     :root{
       --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2;
@@ -318,7 +325,7 @@
   </style>
 </head>
 <body>
-  <div class="debug-badge">v28.15</div>
+  <div class="debug-badge">v29.0</div>
 
   <div class="bg-wrap" aria-hidden="true">
     <img src="assets/mainpagebg.png?v=2815" alt="">
@@ -333,6 +340,9 @@
 
   {% include footer.html %}
 
+  <!-- v29.0 JS scaffolding (no visual change) -->
+  <script src="assets/js/main.js?v=29.0" defer></script>
+
   <script>
     (function(){
       const el = document.getElementById('brand');
@@ -346,7 +356,7 @@
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
-    console.log('Portfolio build v28.15');
+    console.log('Portfolio build v29.0');
   </script>
 </body>
 </html>
