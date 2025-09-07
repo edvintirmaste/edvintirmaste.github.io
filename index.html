@@ -1,88 +1,23 @@
 ---
 ---
 <!doctype html>
-<html lang="et" data-build="v29.3">
+<html lang="et" data-build="v29.4">
 <head>
-  <!-- MODE: REFACTOR | TARGET: move sections CSS to assets/sections.css | ZERO VISUAL CHANGE | BASE: v29.2.1 -->
-  <!-- BUILD v29.3 — sections styles migrated; visuals identical -->
+  <!-- MODE: REFACTOR | TARGET: move globals to base.css | ZERO VISUAL CHANGE | BASE: v29.3 -->
+  <!-- BUILD v29.4 — globals in base.css; visuals identical -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>[v29.3] Edvin Tirmaste — Portfolio</title>
+  <title>[v29.4] Edvin Tirmaste — Portfolio</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
 
   <!-- Component CSS (order matters) -->
-  <link rel="stylesheet" href="assets/css/base.css?v=29.3" />
-  <link rel="stylesheet" href="assets/css/header.css?v=29.3" />
-  <link rel="stylesheet" href="assets/css/hero.css?v=29.3" />
-  <link rel="stylesheet" href="assets/css/sections.css?v=29.3" />
-
-  <style>
-    :root{
-      --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2;
-      --header-h: 92px;
-
-      /* Brand */
-      --brand-min: 520px; --brand-fluid: 70vw; --brand-max: 1000px;
-      --brand-size: clamp(14px, 1vw, 20px);
-      --word-gap: clamp(14px, 2vw, 48px);
-
-      /* Cooler brand glow (match the mid divider’s cool tone) */
-      --brand-glow1-rgb: 186,205,255;
-      --brand-glow2-rgb: 186,205,255;
-      --brand-glow-alpha: .18;
-
-      /* Header / fade */
-      --bar-top:.28; --bar-btm:.10;
-      --bar-blur: 10px; 
-      --bar-sat: 110%;
-      --fade-depth: 160px;
-
-      /* FRACTURE (organic, non-repeating) */
-      --fracture-strength: .06;
-
-      /* Divider */
-      --divider-opacity:.35;
-      --divider-glow-width: 34px; --divider-glow-blur: 14px;
-
-      /* Hover frost */
-      --frost-bg: rgba(255,255,255,.06);
-      --frost-blur: 8px; --frost-sat: 115%; --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
-
-      /* Intro blocks */
-      --intro-top: 12.5vh;
-      --intro-width: 48ch;
-      --intro-gap: 96px;
-      --intro-panel: 0;
-
-      /* Rails */
-      --intro-rail-w: 3px;
-      --intro-rail-alpha: .45;
-      --intro-glow-w: 40px;
-      --intro-glow-alpha: .28;
-      --intro-rail-gap: 14px;
-
-      /* equal-length rails centered on the block */
-      --rail-height: 5.8lh;
-      --rail-offset: 0lh;
-    }
-
-    *{box-sizing:border-box}
-    html{ scroll-behavior:smooth; scroll-snap-type:y mandatory; scroll-padding-top: var(--header-h); }
-    body{ margin:0; background:var(--bg); color:var(--fg); font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial; position:relative; }
-
-    .bg-wrap{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden}
-    .bg-wrap img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center}
-
-    /* Debug badge stays inline for now */
-    .debug-badge{
-      position:fixed; left:8px; top:8px; z-index:9999;
-      font:12px/1 Inter, system-ui; color:#111; background:#fff; padding:4px 6px; border-radius:6px;
-      opacity:.95; box-shadow: 0 2px 8px rgba(0,0,0,.25); user-select:none; pointer-events:none;
-    }
-  </style>
+  <link rel="stylesheet" href="assets/css/base.css?v=29.4" />
+  <link rel="stylesheet" href="assets/css/header.css?v=29.4" />
+  <link rel="stylesheet" href="assets/css/hero.css?v=29.4" />
+  <link rel="stylesheet" href="assets/css/sections.css?v=29.4" />
 </head>
 <body>
-  <div class="debug-badge">v29.3</div>
+  <div class="debug-badge">v29.4</div>
 
   <div class="bg-wrap" aria-hidden="true">
     <img src="assets/mainpagebg.png?v=2815" alt="">
@@ -98,7 +33,7 @@
   {% include footer.html %}
 
   <!-- JS -->
-  <script src="assets/js/main.js?v=29.3" defer></script>
+  <script src="assets/js/main.js?v=29.4" defer></script>
 
   <script>
     (function(){
@@ -113,7 +48,7 @@
       }
     })();
     document.getElementById('y').textContent = new Date().getFullYear();
-    console.log('Portfolio build v29.3');
+    console.log('Portfolio build v29.4');
   </script>
 </body>
 </html>
