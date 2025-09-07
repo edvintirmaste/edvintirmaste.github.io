@@ -1,14 +1,14 @@
-/* Edvin Portfolio — hero.css (v29.2)
+/* Edvin Portfolio — hero.css (v29.2.1)
    Scope: hero area (split halves), intro texts + rails, bullets, edge buttons.
-   Visuals: identical to v29.1 (pure move). */
+   Visuals: identical to v29.1 (lock container so absolute elements anchor correctly). */
 
-/* Hero wrapper occupies the viewport under the header */
+/* ---- Layout lock: ensure .hero is the containing block for absolute children ---- */
 .hero{
-  margin-top: var(--header-h);
-  height: calc(100svh - var(--header-h));
-  scroll-snap-align:start;
-  position:relative;
-  z-index:1;
+  position: relative !important;
+  margin-top: var(--header-h) !important;
+  height: calc(100svh - var(--header-h)) !important;
+  scroll-snap-align: start;
+  z-index: 1;
 }
 
 /* Two-column split with glowing divider */
