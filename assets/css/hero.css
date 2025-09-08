@@ -1,7 +1,8 @@
-/* Edvin Portfolio — hero.css (v29.7)
+/* Edvin Portfolio — hero.css (v29.8)
    Scope: hero area (split halves), intro texts + rails, bullets, edge buttons.
-   v29.6 → content-only vertical shift so hover frost stays correct.
-   v29.7 → edge arrows at true viewport center + visual polish (glass, subtle glow).
+   v29.6 → content-only vertical shift (keeps hover frost correct)
+   v29.7 → arrows at viewport center + glass polish
+   v29.8 → contrast halo so arrows read cleanly on light backgrounds
 */
 
 /* ---- Layout lock: ensure .hero is the containing block for absolute children ---- */
@@ -107,35 +108,47 @@
   transform: translateY(-50%);
   z-index:2; width:46px; height:46px; pointer-events:none;
 }
+
+/* contrast halo behind the disc to read on light backgrounds */
+.edge::before{
+  content:""; position:absolute; inset:-10px; border-radius:999px; pointer-events:none;
+  background: radial-gradient(closest-side,
+              rgba(0,0,0,.30) 0%,
+              rgba(0,0,0,.18) 55%,
+              rgba(0,0,0,0) 72%);
+  filter: blur(6px);
+  mix-blend-mode: multiply; /* darkens light areas, subtle on dark */
+}
+
+/* glass disc */
 .edge .disc{
   position:absolute; inset:0; border-radius:999px;
-  background:
-    linear-gradient(180deg, rgba(16,18,36,.62), rgba(16,18,36,.48));
-  border:1px solid rgba(255,255,255,.14);
+  background: linear-gradient(180deg, rgba(16,18,36,.70), rgba(16,18,36,.52));
+  border:1px solid rgba(0,0,0,.25);                /* darker edge for light bg */
   -webkit-backdrop-filter: blur(6px) saturate(120%);
   backdrop-filter: blur(6px) saturate(120%);
-  /* subtle glass depth + soft glow */
   box-shadow:
-    0 6px 18px rgba(0,0,0,.35),
-    inset 0 1px 0 rgba(255,255,255,.08),
+    0 8px 22px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.09),
     inset 0 -10px 22px rgba(255,255,255,.06);
 }
 .edge .disc::after{
-  content:""; position:absolute; inset:-2px; border-radius:inherit; pointer-events:none;
+  content:""; position:absolute; inset:-1px; border-radius:inherit; pointer-events:none;
   box-shadow: 0 0 0 1px rgba(255,255,255,.06);
 }
+
+/* arrow icon */
 .edge svg{
   position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
   width:24px; height:24px; fill:none; stroke-width:2.25; stroke-linecap:round; stroke-linejoin:round;
-  filter: drop-shadow(0 1px 6px rgba(0,0,0,.35));
+  /* two shadows: crisp edge + soft lift */
+  filter: drop-shadow(0 0 1px rgba(0,0,0,.6)) drop-shadow(0 1px 6px rgba(0,0,0,.35));
 }
 .edge-left{ left:12px } .edge-right{ right:12px }
 
-/* brand-tinted arrow + glow */
-.edge-left  svg{ stroke: rgb(141,216,255); }
-.edge-right svg{ stroke: rgb(255,179,225); }
-.edge-left  .disc::after{ box-shadow: 0 0 0 1px rgba(141,216,255,.22), 0 0 20px rgba(141,216,255,.18); }
-.edge-right .disc::after{ box-shadow: 0 0 0 1px rgba(255,179,225,.22), 0 0 20px rgba(255,179,225,.18); }
+/* brand, slightly deeper to hold on light backgrounds */
+.edge-left  svg{ stroke: rgb(100,195,255); }   /* was 141,216,255 */
+.edge-right svg{ stroke: rgb(235,130,205); }   /* was 255,179,225 */
 
 /* Titles and bullets inside halves */
 .half h2{
