@@ -1,6 +1,6 @@
-/* Edvin Portfolio — hero.css (v29.5)
+/* Edvin Portfolio — hero.css (v29.6)
    Scope: hero area (split halves), intro texts + rails, bullets, edge buttons.
-   Change: lower both stacks on desktop via --hero-shift (titles closer to mid-screen).
+   Change (v29.6): Lower only the content (not the .half itself) so hover frost coverage stays correct.
 */
 
 /* ---- Layout lock: ensure .hero is the containing block for absolute children ---- */
@@ -151,15 +151,15 @@
 }
 
 /* =========================================================
-   BUILD v29.5 — Hero vertical shift (desktop-leaning)
-   Goal: lower both left/right stacks (blurb + H2 + bullets)
-   without touching header, background, or rails.
+   BUILD v29.6 — Hero vertical shift (content-only)
+   Goal: lower left/right stacks (blurb + H2 + bullets)
+   while keeping .half (and its hover frost) fixed.
    Single control: --hero-shift
    ========================================================= */
 .hero { --hero-shift: 10vh; }
 
-/* move the two halves (headings + bullets) down together */
-.hero .half { transform: translateY(var(--hero-shift)); }
+/* shift only the content inside .half, not the .half itself */
+.hero .half > * { transform: translateY(var(--hero-shift)); }
 
 /* also move the corner intro blurbs so rails/text follow */
 .hero .corner-intro { transform: translateY(var(--hero-shift)); }
