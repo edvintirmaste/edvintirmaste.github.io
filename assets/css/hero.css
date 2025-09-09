@@ -1,9 +1,10 @@
-/* Edvin Portfolio — hero.css (v29.10)
+/* Edvin Portfolio — hero.css (v29.11)
    v29.6 → content-only vertical shift (keeps hover frost correct)
    v29.7 → arrows centered to viewport
    v29.8 → light-bg contrast halo
    v29.9 → icon-only chevrons
-   v29.10 → arrows use site background color + subtler halo (tunable/disable)
+   v29.10 → arrows use site bg color + softened halo
+   v29.11 → same hue, lighter tone via color-mix (with fallback) + slightly brighter on hover
 */
 
 /* ---- Layout lock ---- */
@@ -101,6 +102,16 @@
 }
 
 /* ===== Icon-only edge controls ===== */
+
+/* tunables */
+.hero{
+  --edge-halo-opacity: .12;        /* set to 0 to remove halo entirely */
+  --edge-glow-opacity: .12;
+  --edge-stroke: var(--bg, #02021c); /* base hue = site background */
+  --edge-lift: 26%;                /* how much white to mix into the hue */
+  --edge-lift-hover: 34%;          /* a bit brighter on hover */
+}
+
 .edge{
   position:absolute;
   top: calc(50% - var(--header-h) / 2);           /* viewport-true center */
@@ -114,22 +125,20 @@
 /* no disc */
 .edge .disc{ display:none; }
 
-/* very subtle dark halo (tunable). Set --edge-halo-opacity: 0 to remove entirely. */
-.hero{ --edge-halo-opacity: .14; --edge-glow-opacity: .16; }
-
+/* subtle dark halo for light areas */
 .edge::before{
   content:""; position:absolute; left:50%; top:50%; transform: translate(-50%,-50%);
   width:68px; height:68px; border-radius:999px; pointer-events:none;
   background: radial-gradient(closest-side,
-              rgba(0,0,0,.18) 0%,
-              rgba(0,0,0,.10) 55%,
+              rgba(0,0,0,.16) 0%,
+              rgba(0,0,0,.08) 55%,
               rgba(0,0,0,0) 72%);
   filter: blur(5px);
   mix-blend-mode: multiply;
   opacity: var(--edge-halo-opacity);
 }
 
-/* super-soft glow */
+/* ultra-soft neutral glow */
 .edge::after{
   content:""; position:absolute; left:50%; top:50%; transform: translate(-50%,-50%);
   width:90px; height:90px; border-radius:999px; pointer-events:none;
@@ -138,18 +147,36 @@
   background: radial-gradient(closest-side, rgba(255,255,255,.06), rgba(255,255,255,0));
 }
 
-/* arrow icon — use the site’s solid background color */
+/* arrow icon — same hue, lifted toward white */
 .edge svg{
   position:absolute; left:50%; top:50%;
   transform: translate(-50%,-50%) scale(var(--edge-scale,1));
   width: clamp(36px, 4.2vw, 64px); height: clamp(36px, 4.2vw, 64px);
   fill:none;
-  stroke: var(--edge-stroke, var(--bg, #02021c));
+  /* fallback: base hue */
+  stroke: var(--edge-stroke);
   stroke-width: var(--edge-stroke-w, 3.6);
   stroke-linecap:round; stroke-linejoin:round;
-  filter: drop-shadow(0 0 1px rgba(0,0,0,.5)) drop-shadow(0 2px 8px rgba(0,0,0,.35));
-  transition: transform .18s ease, filter .18s ease;
+  filter: drop-shadow(0 0 1px rgba(255,255,255,.25)) drop-shadow(0 2px 8px rgba(0,0,0,.35));
+  transition: transform .18s ease, filter .18s ease, stroke .18s ease;
 }
+
+/* use color-mix when available for the lifted tone */
+@supports (color: color-mix(in srgb, white, black)){
+  .edge svg{
+    stroke: color-mix(in srgb,
+              var(--edge-stroke) calc(100% - var(--edge-lift)),
+              white var(--edge-lift)
+            );
+  }
+  .edge:hover svg{
+    stroke: color-mix(in srgb,
+              var(--edge-stroke) calc(100% - var(--edge-lift-hover)),
+              white var(--edge-lift-hover)
+            );
+  }
+}
+
 .edge-left{ left:12px } .edge-right{ right:12px }
 
 /* hover: bigger + deeper shadow */
@@ -157,7 +184,7 @@
 .edge:hover::before{ filter: blur(6px); opacity: calc(var(--edge-halo-opacity) * 1.25); }
 .edge:hover::after{ opacity: calc(var(--edge-glow-opacity) * 1.25); }
 .edge:hover svg{
-  filter: drop-shadow(0 2px 3px rgba(0,0,0,.7)) drop-shadow(0 8px 22px rgba(0,0,0,.35));
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 8px 22px rgba(0,0,0,.35));
 }
 
 /* Titles and bullets */
