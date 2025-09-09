@@ -1,9 +1,9 @@
-/* Edvin Portfolio — hero.css (v29.9)
-   Scope: hero area (split halves), intro texts + rails, bullets, edge controls.
+/* Edvin Portfolio — hero.css (v29.10)
    v29.6 → content-only vertical shift (keeps hover frost correct)
    v29.7 → arrows centered to viewport
    v29.8 → light-bg contrast halo
-   v29.9 → icon-only chevrons (no disc), bigger/fatter + glow + hover scale/shadow
+   v29.9 → icon-only chevrons
+   v29.10 → arrows use site background color + subtler halo (tunable/disable)
 */
 
 /* ---- Layout lock ---- */
@@ -62,7 +62,7 @@
 .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
 .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
 
-/* Rails: equal length and centered on the text block */
+/* Rails */
 .corner-intro::before,
 .corner-intro::after{
   content:""; position:absolute; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
@@ -106,61 +106,61 @@
   top: calc(50% - var(--header-h) / 2);           /* viewport-true center */
   transform: translateY(-50%);
   z-index:2;
-  width:64px; height:64px;                        /* visual sandbox; icon scales inside */
-  pointer-events:auto;                            /* allow hover on arrow */
+  width:64px; height:64px;
+  pointer-events:auto;
+  cursor: pointer;
 }
 
-/* remove old disc */
+/* no disc */
 .edge .disc{ display:none; }
 
-/* dark contrast halo for light backgrounds */
+/* very subtle dark halo (tunable). Set --edge-halo-opacity: 0 to remove entirely. */
+.hero{ --edge-halo-opacity: .14; --edge-glow-opacity: .16; }
+
 .edge::before{
   content:""; position:absolute; left:50%; top:50%; transform: translate(-50%,-50%);
-  width:78px; height:78px; border-radius:999px; pointer-events:none;
+  width:68px; height:68px; border-radius:999px; pointer-events:none;
   background: radial-gradient(closest-side,
-              rgba(0,0,0,.30) 0%,
-              rgba(0,0,0,.18) 58%,
-              rgba(0,0,0,0) 74%);
-  filter: blur(6px);
+              rgba(0,0,0,.18) 0%,
+              rgba(0,0,0,.10) 55%,
+              rgba(0,0,0,0) 72%);
+  filter: blur(5px);
   mix-blend-mode: multiply;
-  opacity:.9;
+  opacity: var(--edge-halo-opacity);
 }
 
-/* soft brand glow */
+/* super-soft glow */
 .edge::after{
   content:""; position:absolute; left:50%; top:50%; transform: translate(-50%,-50%);
-  width:96px; height:96px; border-radius:999px; pointer-events:none;
-  filter: blur(14px);
-  opacity:.28;
+  width:90px; height:90px; border-radius:999px; pointer-events:none;
+  filter: blur(12px);
+  opacity: var(--edge-glow-opacity);
+  background: radial-gradient(closest-side, rgba(255,255,255,.06), rgba(255,255,255,0));
 }
-.edge-left::after  { background: radial-gradient(closest-side, rgba(100,195,255,.55), rgba(100,195,255,0)); }
-.edge-right::after { background: radial-gradient(closest-side, rgba(235,130,205,.55), rgba(235,130,205,0)); }
 
-/* arrow icon */
+/* arrow icon — use the site’s solid background color */
 .edge svg{
   position:absolute; left:50%; top:50%;
   transform: translate(-50%,-50%) scale(var(--edge-scale,1));
   width: clamp(36px, 4.2vw, 64px); height: clamp(36px, 4.2vw, 64px);
-  fill:none; stroke-width:3.25; stroke-linecap:round; stroke-linejoin:round;
-  filter: drop-shadow(0 0 1px rgba(0,0,0,.65)) drop-shadow(0 2px 8px rgba(0,0,0,.35));
+  fill:none;
+  stroke: var(--edge-stroke, var(--bg, #02021c));
+  stroke-width: var(--edge-stroke-w, 3.6);
+  stroke-linecap:round; stroke-linejoin:round;
+  filter: drop-shadow(0 0 1px rgba(0,0,0,.5)) drop-shadow(0 2px 8px rgba(0,0,0,.35));
   transition: transform .18s ease, filter .18s ease;
 }
-.edge-left  svg{ stroke: rgb(100,195,255); }
-.edge-right svg{ stroke: rgb(235,130,205); }
-
 .edge-left{ left:12px } .edge-right{ right:12px }
 
 /* hover: bigger + deeper shadow */
-.edge:hover{
-  --edge-scale: 1.18;
-}
-.edge:hover::before{ filter: blur(7px); opacity:1; }
-.edge:hover::after{ opacity:.38; }
+.edge:hover{ --edge-scale: 1.18; }
+.edge:hover::before{ filter: blur(6px); opacity: calc(var(--edge-halo-opacity) * 1.25); }
+.edge:hover::after{ opacity: calc(var(--edge-glow-opacity) * 1.25); }
 .edge:hover svg{
   filter: drop-shadow(0 2px 3px rgba(0,0,0,.7)) drop-shadow(0 8px 22px rgba(0,0,0,.35));
 }
 
-/* Titles and bullets inside halves */
+/* Titles and bullets */
 .half h2{
   margin:0 0 10px 0;
   font-family:"Space Grotesk", Inter, system-ui;
@@ -196,13 +196,11 @@
 
   /* slightly smaller icons on narrow screens */
   .edge{ width:56px; height:56px; }
-  .edge::before{ width:70px; height:70px; }
-  .edge::after{ width:86px; height:86px; }
+  .edge::before{ width:62px; height:62px; }
+  .edge::after{ width:80px; height:80px; }
 }
 
-/* =========================================================
-   BUILD v29.6 — Hero vertical shift (content-only)
-   ========================================================= */
+/* ===== Hero vertical shift (content-only) ===== */
 .hero { --hero-shift: 10vh; }
 .hero .half > * { transform: translateY(var(--hero-shift)); }
 .hero .corner-intro { transform: translateY(var(--hero-shift)); }
