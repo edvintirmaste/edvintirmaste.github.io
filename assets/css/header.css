@@ -1,120 +1,59 @@
-/* Edvin Portfolio — header.css (v29.7)
-   Base: your v29.1 header (wordmark/brand kept intact).
-   Adds: Faceted “fracture” overlay with true refraction, RGB fringe, and X/Y offset + scale.
+/* Edvin Portfolio — header.css (v29.8)
+   Goal: simple, vibrant refraction in the top bar (single filter), with X/Y offset + slight zoom.
+   Wordmark/brand rules preserved from your baseline.
 */
 
-/* ===== Header bar (baseline kept) ===== */
+/* ===== Header bar (baseline) ===== */
 header.site-header{
   position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
   background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
   backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
   -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-  /* Non-repeating irregular mask to avoid band/square artifacts */
   -webkit-mask-image:
     linear-gradient(90deg,
       rgba(0,0,0,1) 0%, rgba(0,0,0,.94) 7%, rgba(0,0,0,1) 13%, rgba(0,0,0,.9) 21%,
       rgba(0,0,0,1) 29%, rgba(0,0,0,.94) 36%, rgba(0,0,0,1) 44%, rgba(0,0,0,.92) 52%,
       rgba(0,0,0,1) 60%, rgba(0,0,0,.94) 69%, rgba(0,0,0,1) 78%, rgba(0,0,0,.92) 86%,
       rgba(0,0,0,1) 100%);
-  isolation:isolate; /* ensures overlay blends under header content only */
+  isolation:isolate; /* keep blending local to header */
 }
 
-/* ===== Tokens (new, tweak in :root if needed) ===== */
+/* ===== Fracture controls (tweak in :root if desired) ===== */
 :root{
-  --fracture-offset-x: 18px;      /* move the sampled copy sideways */
-  --fracture-offset-y: 14px;      /* slight vertical nudge */
-  --fracture-scale: 1.12;         /* zoom the sampled copy so offsets never leave gaps */
-  --fracture-opacity: 0.70;       /* global strength of the fracture */
-  --fracture-fringe: 0.22;        /* 0..0.4 — RGB edge “glass” hint */
+  --fracture-offset-x: 22px;      /* horizontal shift of the sampled copy */
+  --fracture-offset-y: 14px;      /* vertical shift */
+  --fracture-scale: 1.12;         /* zoom so offsets never expose edges */
+  --fracture-opacity: 0.68;       /* overlay strength (keep vibrance) */
+  --fracture-blend: screen;       /* screen | normal (screen keeps colors lively) */
 }
 
-/* ===== Base refraction copy (fills the entire bar) =====
-   Draws a second copy of the real page BG only inside the header, offset + zoomed,
-   then passes it through an SVG Displacement filter for true refraction. */
+/* ===== Single refraction overlay (no shards, no fringe) =====
+   Draw a second copy of the real page background only inside the bar,
+   offset + slightly zoomed, then displace it with the SVG filter. */
 header.site-header::before{
-  content:""; position:absolute; inset:0; pointer-events:none; opacity:var(--fracture-opacity);
+  content:"";
+  position:absolute; inset:0; pointer-events:none; z-index:0;
+  opacity: var(--fracture-opacity);
+
   background-image: var(--fracture-url, none);
-  /* Zoom to prevent empty edge when we offset horizontally/vertically */
   background-size: calc(100% * var(--fracture-scale)) auto;
-  background-repeat:no-repeat;
-  background-attachment:fixed;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   background-position:
     calc(50% + var(--fracture-offset-x))
     calc(50% + var(--fracture-offset-y));
-  /* True refraction + mild glass pop */
-  filter:
-    url(#et-fracture)
-    contrast(1.06) saturate(1.10) brightness(1.03);
-  mix-blend-mode:overlay; /* blends into header glass without covering text */
-  z-index:0;
+
+  /* True refraction only — no extra contrast/saturation to avoid muddiness */
+  filter: url(#et-refract-simple);
+  mix-blend-mode: var(--fracture-blend);
 }
 
-/* ===== Facet layer (a few clipped shards on top of the refraction) =====
-   JS injects .fracture-layer > .slice elements so each shard can have slightly
-   different displacement/rotation/tint to sell the fracture illusion. */
-header.site-header .fracture-layer{
-  position:absolute; inset:0; pointer-events:none; z-index:1;
-}
-header.site-header .fracture-layer .slice{
-  position:absolute; inset:-1px; /* slight overscan to avoid hairlines */
-  background-image: var(--fracture-url, none);
-  background-size: calc(100% * var(--fracture-scale)) auto;
-  background-repeat:no-repeat;
-  background-attachment:fixed;
-  background-position:
-    calc(50% + var(--fracture-offset-x))
-    calc(50% + var(--fracture-offset-y));
-  filter: url(#et-fracture) saturate(1.12) brightness(1.05);
-  mix-blend-mode:overlay;
-  opacity: calc(var(--fracture-opacity) * 0.55);
-}
-
-/* 7 shard shapes spanning the bar; each gets a tiny hue/transform variance
-   to create “glass edges”. */
-header.site-header .fracture-layer .slice:nth-child(1){
-  clip-path:polygon(0 0, 18% 0, 14% 100%, 0 100%); transform:translateY(-.3px) rotate(-.3deg);
-  filter: url(#et-fracture) hue-rotate(-6deg) saturate(1.18);
-}
-header.site-header .fracture-layer .slice:nth-child(2){
-  clip-path:polygon(18% 0, 34% 0, 31% 100%, 14% 100%); transform:translateY(.2px) rotate(.2deg);
-  filter: url(#et-fracture) hue-rotate(4deg) saturate(1.10);
-}
-header.site-header .fracture-layer .slice:nth-child(3){
-  clip-path:polygon(34% 0, 48% 0, 45% 100%, 31% 100%); transform:rotate(-.2deg);
-  filter: url(#et-fracture) hue-rotate(-2deg) saturate(1.14);
-}
-header.site-header .fracture-layer .slice:nth-child(4){
-  clip-path:polygon(48% 0, 60% 0, 58% 100%, 45% 100%); transform:rotate(.15deg);
-  filter: url(#et-fracture) hue-rotate(2deg) saturate(1.10);
-}
-header.site-header .fracture-layer .slice:nth-child(5){
-  clip-path:polygon(60% 0, 72% 0, 70% 100%, 58% 100%); transform:rotate(-.15deg);
-  filter: url(#et-fracture) hue-rotate(-4deg) saturate(1.16);
-}
-header.site-header .fracture-layer .slice:nth-child(6){
-  clip-path:polygon(72% 0, 86% 0, 83% 100%, 70% 100%); transform:translateY(.2px) rotate(.2deg);
-  filter: url(#et-fracture) hue-rotate(3deg) saturate(1.10);
-}
-header.site-header .fracture-layer .slice:nth-child(7){
-  clip-path:polygon(86% 0, 100% 0, 100% 100%, 83% 100%); transform:translateY(-.2px) rotate(-.25deg);
-  filter: url(#et-fracture) hue-rotate(-5deg) saturate(1.18);
-}
-
-/* ===== Subtle chromatic fringe at the bar edges (glass hint) ===== */
-header.site-header .fracture-fringe{
-  position:absolute; inset:0; pointer-events:none; z-index:2; opacity:var(--fracture-fringe);
-  background:
-    linear-gradient(90deg, rgba(255,50,80,.6), transparent 18%, transparent 82%, rgba(50,150,255,.65)) top/100% 1px no-repeat,
-    linear-gradient(90deg, rgba(50,150,255,.65), transparent 18%, transparent 82%, rgba(255,50,80,.6)) bottom/100% 1px no-repeat;
-  mix-blend-mode:screen;
-}
-
-/* ===== Seam fade below the header (kept) ===== */
+/* ===== Seam fade below header (baseline) ===== */
 header.site-header::after{
   content:"";
   position:absolute; left:0; right:0; top:100%;
-  height:calc(var(--fade-depth) + 2px);
-  transform:translateY(-2px);
+  height: calc(var(--fade-depth) + 2px);
+  transform: translateY(-2px);
   background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-btm)), rgba(2,2,28,0));
   backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
   -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
@@ -126,7 +65,7 @@ header.site-header::after{
   height:var(--header-h);
   display:flex; align-items:center; justify-content:center;
   padding-inline: clamp(16px, 5vw, 64px);
-  position:relative; z-index:3; /* ensure text sits above overlays */
+  position:relative; z-index:2; /* above ::before overlay */
 }
 
 /* ===== Brand / wordmark (baseline — unchanged) ===== */
@@ -138,7 +77,9 @@ header.site-header::after{
   filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
 }
 .brand::after{
-  content:""; position:absolute; left:-14%; right:-14%; top:50%; height:56px; transform:translateY(-50%);
+  content:"";
+  position:absolute; left:-14%; right:-14%; top:50%; height:56px;
+  transform:translateY(-50%);
   background:
     radial-gradient(60% 140% at 22% 50%, rgba(var(--brand-glow1-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%),
     radial-gradient(60% 140% at 78% 50%, rgba(var(--brand-glow2-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%);
@@ -150,7 +91,8 @@ header.site-header::after{
   text-shadow:0 0 16px rgba(180,205,255,.12);
 }
 .brand span:not(.space)::after{
-  content:""; position:absolute; left:50%; top:50%; width:1.05em; height:1.05em; transform:translate(-50%,-50%);
+  content:""; position:absolute; left:50%; top:50%;
+  width:1.05em; height:1.05em; transform:translate(-50%,-50%);
   background: radial-gradient(closest-side, rgba(200,220,255,.06), rgba(0,0,0,0) 70%);
   filter: blur(7px); border-radius:50%; z-index:-1; pointer-events:none;
 }
