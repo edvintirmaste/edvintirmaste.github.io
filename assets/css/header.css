@@ -1,95 +1,158 @@
-/* Edvin Portfolio — header.css (v29.5)
-   Scope: fixed top bar + identity; adds Fracture v1 overlay (shards-like refraction).
-   Visual baseline identical to v29.1 unless fracture vars are present.
-*/
+/* Edvin Portfolio — header.css (v29.6)
+   Base: v29.1 from playbook (keeps wordmark/brand intact), plus a new ::before overlay
+   that fractures the page background only inside the top bar. */
 
-/* ===== Tokens (expected from base.css) =====
-   --header-h, --bar-top, --bar-btm, --bar-blur, --bar-sat exist in your project.
-   Fracture-specific tokens below are safe defaults.
-*/
+/* ===== Header bar ===== */
+header.site-header{
+  position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
+  background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
+  backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+  -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+  /* FRACTURE (organic, non-repeating) carrier on the bar itself */
+  -webkit-mask-image:
+    linear-gradient(90deg,
+      rgba(0,0,0,1) 0%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
+      rgba(0,0,0,1) 7%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
+      rgba(0,0,0,1) 18%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
+      rgba(0,0,0,1) 33%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
+      rgba(0,0,0,1) 52%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
+      rgba(0,0,0,1) 73%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
+      rgba(0,0,0,1) 100%
+    );
+  isolation:isolate;
+}
+
+/* ===== NEW: Fracture overlay (only inside top bar) =====
+   Draws a second copy of the page’s BG, offset vertically, then blends/masks to read as glass/prism.
+   JS sets --fracture-url from .bg-wrap img (or body bg as fallback). */
 :root{
-  /* Fracture controls */
-  --fracture-offset-y: 14px;      /* vertical offset of sampled layer */
-  --fracture-opacity: 0.75;       /* overall strength */
+  --fracture-offset-y: 14px;     /* vertical offset of sampled layer */
+  --fracture-opacity: .75;       /* overall strength */
   --fracture-contrast: 1.06;
   --fracture-saturate: 1.10;
   --fracture-bright: 1.03;
 }
-
-/* ===== Header bar ===== */
-header.site-header{
-  position: fixed;
-  inset: 0 0 auto 0;
-  height: var(--header-h);
-  z-index: 20;
-  background: linear-gradient(
-    to bottom,
-    rgba(2,2,28,var(--bar-top)),
-    rgba(2,2,28,var(--bar-btm))
-  );
-  backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-  -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-  /* FRACTURE (non-repeating): irregular horizontal mask to avoid band/square artifacts */
-  -webkit-mask-image:
-    linear-gradient(90deg,
-      rgba(0,0,0,1) 0%, rgba(0,0,0,.94) 7%, rgba(0,0,0,1) 13%, rgba(0,0,0,.9) 21%,
-      rgba(0,0,0,1) 29%, rgba(0,0,0,.94) 36%, rgba(0,0,0,1) 44%, rgba(0,0,0,.92) 52%,
-      rgba(0,0,0,1) 60%, rgba(0,0,0,.94) 69%, rgba(0,0,0,1) 78%, rgba(0,0,0,.92) 86%,
-      rgba(0,0,0,1) 100%);
-  isolation: isolate; /* keep overlay blending contained */
-}
-
-/* ===== Fracture overlay =====
-   This draws a second copy of the page background only inside the top bar,
-   offsets it, and blends it to read as fractured/refraction.
-   JS (main.js) sets the --fracture-bg-* variables at runtime from the actual page BG.
-*/
-header.site-header::after{
-  content: "";
-  position: absolute; inset: 0; pointer-events: none;
+header.site-header::before{
+  content:"";
+  position:absolute; inset:0; pointer-events:none;
   opacity: var(--fracture-opacity);
 
-  /* Re-draw background (populated by JS) */
-  background-image: var(--fracture-bg-image, none);
-  background-size: var(--fracture-bg-size, cover);
+  /* re-draw the actual page background (set by JS) */
+  background-image: var(--fracture-url, none);
+  background-size: cover;
   background-repeat: no-repeat;
-  background-attachment: var(--fracture-bg-attach, scroll);
-  background-position:
-    var(--fracture-bg-pos-x, 50%)
-    calc(var(--fracture-bg-pos-y, 50%) + var(--fracture-offset-y));
+  /* keep aligned with viewport like your fixed bg; then nudge by offset */
+  background-attachment: fixed;
+  background-position: center calc(50% + var(--fracture-offset-y));
 
-  /* “Fracture” look via blend + subtle irregular edging */
+  /* fracture look: blend + gentle facet-like masking */
   mix-blend-mode: overlay;
   filter:
     contrast(var(--fracture-contrast))
     saturate(var(--fracture-saturate))
     brightness(var(--fracture-bright));
 
-  /* Mask to create irregular shard-ish edges across the bar */
+  /* simple multi-shard mask so it feels “fractured”, not just blurred */
   -webkit-mask-image:
-    radial-gradient(120% 200% at 20% -20%, rgba(0,0,0,.75), transparent 70%),
-    radial-gradient(140% 220% at 80% 120%, rgba(0,0,0,.9), transparent 80%),
-    linear-gradient(105deg, black 48%, transparent 52%),
-    linear-gradient(-75deg, black 49%, transparent 53%),
-    linear-gradient(0deg, black, black); /* base fill */
+    radial-gradient(130% 220% at -10% 0%, rgba(0,0,0,.95), transparent 70%),
+    radial-gradient(120% 220% at 110% 100%, rgba(0,0,0,.85), transparent 78%),
+    linear-gradient(102deg, black 49%, transparent 52%),
+    linear-gradient(-78deg, black 50%, transparent 53%),
+    linear-gradient(0deg, black, black);
   -webkit-mask-composite: source-over, source-over, source-over, source-over;
           mask-composite: add;
 }
 
-/* ===== Wordmark / content inside header (kept minimal; your existing markup will style as before) ===== */
-header.site-header .wordmark{
-  font-family: "Space Grotesk", Inter, system-ui, sans-serif;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  filter: drop-shadow(0 0 8px rgba(180,200,255,.16));
+/* Seam-guard + vertical fade (kept from v29.1) */
+header.site-header::after{
+  content:"";
+  position:absolute; left:0; right:0;
+  top:100%;
+  height: calc(var(--fade-depth) + 2px); /* +2px overlap kills line */
+  transform: translateY(-2px);
+  background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-btm)), rgba(2,2,28,0));
+  backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+  -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
+  -webkit-mask-image:
+    linear-gradient(to bottom, rgba(0,0,0,98), rgba(0,0,0,0)),
+    linear-gradient(90deg,
+      rgba(0,0,0,1) 0%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
+      rgba(0,0,0,1) 7%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
+      rgba(0,0,0,1) 18%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
+      rgba(0,0,0,1) 33%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
+      rgba(0,0,0,1) 52%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
+      rgba(0,0,0,1) 73%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
+      rgba(0,0,0,1) 100%
+    );
+          mask-image:
+    linear-gradient(to bottom, rgba(0,0,0,98), rgba(0,0,0,0)),
+    linear-gradient(90deg,
+      rgba(0,0,0,1) 0%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 3%,
+      rgba(0,0,0,1) 7%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 12%,
+      rgba(0,0,0,1) 18%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 25%,
+      rgba(0,0,0,1) 33%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 42%,
+      rgba(0,0,0,1) 52%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 63%,
+      rgba(0,0,0,1) 73%,
+      rgba(0,0,0,calc(1 - var(--fracture-strength))) 84%,
+      rgba(0,0,0,1) 100%
+    );
+  pointer-events:none;
 }
 
-/* Optional helper (if you have a container class inside header) */
-header.site-header .inner{
-  height: 100%;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 0 16px;
+/* Nav container height/padding (from v29.1) */
+.nav{
+  height:var(--header-h);
+  display:flex; align-items:center; justify-content:center;
+  padding-inline: clamp(16px, 5vw, 64px);
 }
+
+/* Wordmark / brand (from v29.1 — unchanged) */
+.brand{
+  position:relative;
+  width: clamp(var(--brand-min), var(--brand-fluid), var(--brand-max));
+  display:flex; align-items:center; justify-content:space-between;
+  text-transform:uppercase; white-space:nowrap; user-select:none;
+  filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
+}
+.brand::after{
+  content:"";
+  position:absolute; left:-14%; right:-14%; top:50%; height:56px;
+  transform:translateY(-50%);
+  background:
+    radial-gradient(60% 140% at 22% 50%, rgba(var(--brand-glow1-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%),
+    radial-gradient(60% 140% at 78% 50%, rgba(var(--brand-glow2-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%);
+  filter: blur(18px);
+  mix-blend-mode: screen;
+  opacity:.95; z-index:-1; pointer-events:none;
+}
+.brand span{
+  position:relative; display:inline-block;
+  font-family:"Space Grotesk", Inter, system-ui;
+  font-weight:700; font-size:var(--brand-size); line-height:1;
+  text-shadow:0 0 16px rgba(180,205,255,.12);
+}
+.brand span:not(.space)::after{
+  content:""; position:absolute; left:50%; top:50%;
+  width:1.05em; height:1.05em; transform:translate(-50%,-50%);
+  background: radial-gradient(closest-side, rgba(200,220,255,.06), rgba(0,0,0,0) 70%);
+  filter: blur(7px);
+  border-radius:50%; z-index:-1; pointer-events:none;
+}
+.brand .space{ flex:0 0 var(--word-gap); }
