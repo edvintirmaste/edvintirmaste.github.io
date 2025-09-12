@@ -1,8 +1,8 @@
-/* Edvin Portfolio — assets/js/main.js (v29.7)
-   Goals:
-   1) Sample the real page background (your fixed .bg-wrap img) → --fracture-url
-   2) Install an inline SVG Displacement filter (#et-fracture) for true refraction
-   3) Inject a few shard slices into the header for a faceted look
+/* Edvin Portfolio — assets/js/main.js (v29.8)
+   Simple refraction only:
+   - Sample the real background (.bg-wrap img → --fracture-url)
+   - Install a single SVG displacement filter (#et-refract-simple)
+   - Remove any old facet/fringe nodes from earlier builds
 */
 
 (function(){
@@ -22,25 +22,26 @@
     header.style.setProperty('--fracture-url', url ? url : 'none');
   }
 
-  function installFilterOnce(){
-    if (document.getElementById('et-fracture-defs')) return;
+  function installSimpleFilter(){
+    if (document.getElementById('et-refract-simple-defs')) return;
     var svgNS = 'http://www.w3.org/2000/svg';
     var svg = document.createElementNS(svgNS, 'svg');
-    svg.setAttribute('id','et-fracture-defs');
+    svg.setAttribute('id','et-refract-simple-defs');
     svg.setAttribute('width','0'); svg.setAttribute('height','0');
     svg.setAttribute('style','position:fixed');
 
     var filter = document.createElementNS(svgNS,'filter');
-    filter.setAttribute('id','et-fracture');
+    filter.setAttribute('id','et-refract-simple');
     filter.setAttribute('x','-20%'); filter.setAttribute('y','-20%');
     filter.setAttribute('width','140%'); filter.setAttribute('height','140%');
     filter.setAttribute('color-interpolation-filters','sRGB');
 
+    // Use turbulence (sharper than fractalNoise) for clearer “glass” bends
     var turb = document.createElementNS(svgNS,'feTurbulence');
-    turb.setAttribute('type','fractalNoise');
-    turb.setAttribute('baseFrequency','0.0065'); // stronger than before so it reads
-    turb.setAttribute('numOctaves','2');
-    turb.setAttribute('seed','7');
+    turb.setAttribute('type','turbulence');
+    turb.setAttribute('baseFrequency','0.008'); // increase for more facets; lower for smoother
+    turb.setAttribute('numOctaves','1');
+    turb.setAttribute('seed','11');
     turb.setAttribute('result','noise');
 
     var disp = document.createElementNS(svgNS,'feDisplacementMap');
@@ -48,7 +49,7 @@
     disp.setAttribute('in2','noise');
     disp.setAttribute('xChannelSelector','R');
     disp.setAttribute('yChannelSelector','G');
-    disp.setAttribute('scale','16'); // <— refraction punch
+    disp.setAttribute('scale','14'); // refraction strength
 
     filter.appendChild(turb);
     filter.appendChild(disp);
@@ -56,30 +57,14 @@
     document.body.appendChild(svg);
   }
 
-  function ensureFacetSlices(){
-    var header = $('header.site-header');
-    if (!header) return;
-    if (header.querySelector('.fracture-layer')) return;
-
-    var layer = document.createElement('div');
-    layer.className = 'fracture-layer';
-    // Create 7 slices (CSS shapes via :nth-child)
-    for (var i=0;i<7;i++){
-      var s = document.createElement('div');
-      s.className = 'slice';
-      layer.appendChild(s);
-    }
-    // Add subtle fringe lines container
-    var fringe = document.createElement('div');
-    fringe.className = 'fracture-fringe';
-
-    header.appendChild(layer);
-    header.appendChild(fringe);
+  function removeOldFacetFringe(){
+    document.querySelectorAll('header.site-header .fracture-layer, header.site-header .fracture-fringe')
+      .forEach(function(n){ n.remove(); });
   }
 
   function init(){
-    installFilterOnce();
-    ensureFacetSlices();
+    removeOldFacetFringe();
+    installSimpleFilter();
     applyFractureVars();
   }
 
@@ -89,9 +74,8 @@
     init();
   }
 
-  // keep variables honest on resize/orientation (in case bg sizes/positions shift)
   window.addEventListener('resize', applyFractureVars, { passive:true });
   window.addEventListener('orientationchange', applyFractureVars, { passive:true });
 
-  console.log('[ET] fracture v29.7 ready');
+  console.log('[ET] simple refraction ready (v29.8)');
 })();
