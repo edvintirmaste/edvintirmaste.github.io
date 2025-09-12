@@ -1,66 +1,37 @@
-/* Edvin Portfolio — assets/js/main.js (v29.5)
-   Purpose: Fracture v1 — sample real page background → set CSS vars on header.
-   Safe: no external deps; runs after DOM is ready; does nothing if no BG is found.
-*/
+/* Edvin Portfolio — main.js (v29.6)
+   Adds fracture support for the header by sampling the real background image.
+   Does not touch the wordmark split (that still runs inline in index.html v29.4). */
 
-(function(){
+(function () {
   function $(sel){ return document.querySelector(sel); }
 
-  function getBgSource(){
-    // Priority: any hero-like element with a background, else body
-    var candidates = [
-      $('.hero'),
-      $('#hero'),
-      $('.section-hero'),
-      $('main'),
-      document.body
-    ].filter(Boolean);
-
-    for (var i=0;i<candidates.length;i++){
-      var cs = getComputedStyle(candidates[i]);
-      if (cs.backgroundImage && cs.backgroundImage !== 'none') {
-        return { el: candidates[i], cs: cs };
-      }
+  function findBackgroundURL(){
+    // Prefer your fixed <img> background in .bg-wrap (per playbook/index.html)
+    // Fallback: a CSS background-image on body.
+    var img = $('.bg-wrap img');
+    if (img && (img.currentSrc || img.src)) {
+      return 'url("' + (img.currentSrc || img.src) + '")';
     }
+    var bodyBG = getComputedStyle(document.body).backgroundImage;
+    if (bodyBG && bodyBG !== 'none') return bodyBG;
     return null;
   }
 
-  function applyFractureVars(){
+  function applyFracture(){
     var header = $('header.site-header');
-    if(!header) return;
-
-    var src = getBgSource();
-    if(!src) {
-      // No background image on page — hide overlay by clearing image var
-      header.style.setProperty('--fracture-bg-image', 'none');
-      return;
-    }
-
-    var cs = src.cs;
-    // Copy computed background props to header-scoped CSS vars
-    header.style.setProperty('--fracture-bg-image', cs.backgroundImage);
-    header.style.setProperty('--fracture-bg-size', cs.backgroundSize || 'cover');
-
-    // Parse position into X/Y tokens
-    var pos = (cs.backgroundPosition || '50% 50%').split(' ');
-    header.style.setProperty('--fracture-bg-pos-x', pos[0] || '50%');
-    header.style.setProperty('--fracture-bg-pos-y', pos[1] || '50%');
-
-    header.style.setProperty('--fracture-bg-attach', cs.backgroundAttachment || 'scroll');
+    if (!header) return;
+    var url = findBackgroundURL();
+    header.style.setProperty('--fracture-url', url ? url : 'none');
   }
 
-  function onReady(fn){
-    if(document.readyState === 'complete' || document.readyState === 'interactive'){
-      setTimeout(fn, 0);
-    } else {
-      document.addEventListener('DOMContentLoaded', fn, { once:true });
-    }
+  if (document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', applyFracture, { once:true });
+  } else {
+    applyFracture();
   }
+  // Keep it honest on resize/orientation
+  window.addEventListener('resize', applyFracture, { passive:true });
+  window.addEventListener('orientationchange', applyFracture, { passive:true });
 
-  onReady(function(){
-    applyFractureVars();
-    // Re-apply on resize/orientationchange to keep positioning honest
-    window.addEventListener('resize', applyFractureVars, { passive:true });
-    window.addEventListener('orientationchange', applyFractureVars, { passive:true });
-  });
+  console.log('[ET] main.js fracture ready (v29.6)');
 })();
