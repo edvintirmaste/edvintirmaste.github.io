@@ -1,6 +1,6 @@
-/* Edvin Portfolio — header.css (v29.8)
-   Goal: simple, vibrant refraction in the top bar (single filter), with X/Y offset + slight zoom.
-   Wordmark/brand rules preserved from your baseline.
+/* Edvin Portfolio — header.css (v29.9)
+   Simple, vibrant refraction in the top bar (single SVG filter) with stronger default strength.
+   Wordmark/brand rules preserved.
 */
 
 /* ===== Header bar (baseline) ===== */
@@ -18,18 +18,23 @@ header.site-header{
   isolation:isolate; /* keep blending local to header */
 }
 
-/* ===== Fracture controls (tweak in :root if desired) ===== */
+/* ===== Refraction tokens (tweak live in DevTools :root) ===== */
 :root{
-  --fracture-offset-x: 22px;      /* horizontal shift of the sampled copy */
-  --fracture-offset-y: 14px;      /* vertical shift */
-  --fracture-scale: 1.12;         /* zoom so offsets never expose edges */
-  --fracture-opacity: 0.68;       /* overlay strength (keep vibrance) */
-  --fracture-blend: screen;       /* screen | normal (screen keeps colors lively) */
+  /* position/scale of the sampled copy (covers bar even when shifted) */
+  --fracture-offset-x: 26px;      /* ← stronger horizontal shift */
+  --fracture-offset-y: 16px;
+  --fracture-scale: 1.16;
+
+  /* visual strength + blend */
+  --fracture-opacity: 0.82;
+  --fracture-blend: screen;       /* screen keeps vibrance; try `normal` for pure displacement */
+
+  /* filter params (read by JS and applied to the SVG filter) */
+  --fracture-strength: 22;        /* ← displacement scale (was 14) */
+  --fracture-frequency: 0.010;    /* ← turbulence frequency (was 0.008) */
 }
 
-/* ===== Single refraction overlay (no shards, no fringe) =====
-   Draw a second copy of the real page background only inside the bar,
-   offset + slightly zoomed, then displace it with the SVG filter. */
+/* ===== Single refraction overlay ===== */
 header.site-header::before{
   content:"";
   position:absolute; inset:0; pointer-events:none; z-index:0;
@@ -43,7 +48,7 @@ header.site-header::before{
     calc(50% + var(--fracture-offset-x))
     calc(50% + var(--fracture-offset-y));
 
-  /* True refraction only — no extra contrast/saturation to avoid muddiness */
+  /* True refraction only — color stays punchy via blend choice */
   filter: url(#et-refract-simple);
   mix-blend-mode: var(--fracture-blend);
 }
