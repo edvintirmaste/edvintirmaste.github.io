@@ -1,8 +1,8 @@
-/* Edvin Portfolio — assets/js/main.js (v30.1)
-   Edge-safe simple refraction:
-   - Sample the real background (.bg-wrap img → --fracture-url)
-   - Install a single SVG displacement filter (#et-refract-edgeSafe)
-   - Read strength/frequency from CSS vars so you can tune without code edits
+/* Edvin Portfolio — assets/js/main.js (v30.2)
+   Edge-locked simple refraction (no zoom):
+   - Sample .bg-wrap img → --fracture-url
+   - Install a single SVG displacement filter (#et-refract-edgeSafe) with a large region
+   - Read strength/frequency from CSS vars
 */
 
 (function(){
@@ -24,8 +24,7 @@
   function applyFractureVars(){
     var header = $('header.site-header');
     if (!header) return;
-    var url = findBackgroundURL();
-    header.style.setProperty('--fracture-url', url ? url : 'none');
+    header.style.setProperty('--fracture-url', findBackgroundURL() || 'none');
   }
 
   function installOrUpdateFilter(){
@@ -39,15 +38,16 @@
 
       var filter = document.createElementNS(svgNS,'filter');
       filter.setAttribute('id','et-refract-edgeSafe');
-      filter.setAttribute('x','-20%'); filter.setAttribute('y','-20%');
-      filter.setAttribute('width','140%'); filter.setAttribute('height','140%');
+      /* very large filter region so displaced pixels have room */
+      filter.setAttribute('x','-50%'); filter.setAttribute('y','-50%');
+      filter.setAttribute('width','200%'); filter.setAttribute('height','200%');
       filter.setAttribute('color-interpolation-filters','sRGB');
 
       var turb = document.createElementNS(svgNS,'feTurbulence');
       turb.setAttribute('id','et-turb');
-      turb.setAttribute('type','turbulence'); // clearer “glass” feel
+      turb.setAttribute('type','turbulence'); /* clearer “glass” feel */
       turb.setAttribute('numOctaves','1');
-      turb.setAttribute('seed','13');
+      turb.setAttribute('seed','17');
       turb.setAttribute('result','noise');
 
       var disp = document.createElementNS(svgNS,'feDisplacementMap');
@@ -86,5 +86,5 @@
   window.addEventListener('resize', applyFractureVars, { passive:true });
   window.addEventListener('orientationchange', applyFractureVars, { passive:true });
 
-  console.log('[ET] edge-safe refraction ready (v30.1)');
+  console.log('[ET] refraction v30.2 (edge-locked, no-zoom) ready');
 })();
