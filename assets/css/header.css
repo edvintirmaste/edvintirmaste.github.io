@@ -1,58 +1,53 @@
-/* Edvin Portfolio — header.css (v30.1)
-   Edge-safe refraction:
-   - crisp, straight bar edges
-   - refracted copy overscans beyond the bar and is clipped to the bar rect
-   - single clean displacement filter (keeps vibrance)
-   Wordmark/brand rules preserved.
+/* Edvin Portfolio — header.css (v30.2)
+   Edge-locked refraction: no zoom, crisp straight edges, large overscan.
+   Wordmark/brand rules preserved from your baseline.
 */
 
-/* ===== Header bar (baseline, with crisp edges) ===== */
+/* ===== Header bar (baseline, crisp edges) ===== */
 header.site-header{
   position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
   background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
   backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
   -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
   isolation:isolate;
-  overflow:hidden;            /* <-- clip overscanned refracted layer to the bar */
-  /* remove any old header-level masks that bent edges */
-  -webkit-mask-image:none; mask-image:none;
+  overflow:hidden;                  /* clip the refracted layer to a perfect rect */
+  -webkit-mask-image:none; mask-image:none; /* remove any old wavy masks */
 }
 
-/* ===== Refraction tokens (tweak in :root without code edits) ===== */
+/* ===== Refraction tokens (tweak freely in :root) ===== */
 :root{
-  /* shift/scale of the sampled copy */
-  --fracture-offset-x: 26px;
+  --fracture-offset-x: 26px;        /* horizontal shift you liked */
   --fracture-offset-y: 16px;
-  --fracture-scale: 1.28;          /* bigger zoom so offsets never expose gaps */
-  --fracture-overscan: 48px;       /* how far beyond the bar the layer extends */
-
-  /* look/strength */
-  --fracture-opacity: 0.82;
-  --fracture-blend: screen;         /* screen keeps vibrance; use `normal` for pure */
+  --fracture-overscan: 72px;        /* how far the layer extends behind the bar */
+  --fracture-opacity: 0.80;
+  --fracture-blend: normal;         /* normal = pure color; screen would brighten */
 
   /* SVG filter params (read by JS) */
-  --fracture-strength: 24;          /* displacement scale */
-  --fracture-frequency: 0.010;      /* lower=smoother, higher=more facets */
+  --fracture-strength: 24;          /* displacement scale (20–30) */
+  --fracture-frequency: 0.010;      /* 0.008 smoother ←→ 0.012 more facets */
 }
 
-/* ===== Single refraction overlay (overscanned + clipped) ===== */
+/* ===== Single refraction overlay (no zoom) =====
+   - Overscans well beyond the bar (so displaced pixels never leave gaps)
+   - Uses fixed attachment so it aligns to the viewport scene (like your bg image)
+   - No background zooming: background-size: cover keeps alignment natural */
 header.site-header::before{
   content:"";
   position:absolute;
-  /* overscan beyond bar so displaced pixels always exist “behind” the edges */
   inset: calc(var(--fracture-overscan) * -1);
   pointer-events:none; z-index:0;
   opacity: var(--fracture-opacity);
+  will-change: filter;
 
   background-image: var(--fracture-url, none);
-  background-size: calc(100% * var(--fracture-scale)) auto;
+  background-size: cover;                 /* ⟸ no zoom, matches the page */
   background-repeat: no-repeat;
-  background-attachment: fixed;  /* tracks viewport scene */
+  background-attachment: fixed;           /* lock to viewport */
   background-position:
     calc(50% + var(--fracture-offset-x))
     calc(50% + var(--fracture-offset-y));
 
-  filter: url(#et-refract-edgeSafe); /* clean refraction only */
+  filter: url(#et-refract-edgeSafe);      /* clean refraction only */
   mix-blend-mode: var(--fracture-blend);
 }
 
@@ -77,9 +72,6 @@ header.site-header::after{
 }
 
 /* ===== Brand / wordmark (baseline — unchanged) ===== */
-{
-  /* keeping your existing brand rules exactly as before */
-}
 .brand{
   position:relative;
   width: clamp(var(--brand-min), var(--brand-fluid), var(--brand-max));
