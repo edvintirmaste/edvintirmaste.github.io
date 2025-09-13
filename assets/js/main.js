@@ -1,4 +1,4 @@
-/* Edvin Portfolio — assets/js/main.js (v30.0)
+/* Edvin Portfolio — assets/js/main.js (v30.1)
    Edge-safe simple refraction:
    - Sample the real background (.bg-wrap img → --fracture-url)
    - Install a single SVG displacement filter (#et-refract-edgeSafe)
@@ -45,7 +45,7 @@
 
       var turb = document.createElementNS(svgNS,'feTurbulence');
       turb.setAttribute('id','et-turb');
-      turb.setAttribute('type','turbulence'); // clearer than fractalNoise for “glass”
+      turb.setAttribute('type','turbulence'); // clearer “glass” feel
       turb.setAttribute('numOctaves','1');
       turb.setAttribute('seed','13');
       turb.setAttribute('result','noise');
@@ -86,5 +86,5 @@
   window.addEventListener('resize', applyFractureVars, { passive:true });
   window.addEventListener('orientationchange', applyFractureVars, { passive:true });
 
-  console.log('[ET] edge-safe refraction ready (v30.0)');
+  console.log('[ET] edge-safe refraction ready (v30.1)');
 })();
