@@ -1,8 +1,8 @@
-/* Edvin Portfolio — assets/js/main.js (v29.9)
-   Stronger simple refraction:
+/* Edvin Portfolio — assets/js/main.js (v30.0)
+   Edge-safe simple refraction:
    - Sample the real background (.bg-wrap img → --fracture-url)
-   - Install a single SVG displacement filter (#et-refract-simple)
-   - Read strength/frequency from CSS vars so you can tune without JS edits
+   - Install a single SVG displacement filter (#et-refract-edgeSafe)
+   - Read strength/frequency from CSS vars so you can tune without code edits
 */
 
 (function(){
@@ -29,25 +29,25 @@
   }
 
   function installOrUpdateFilter(){
-    var svg = document.getElementById('et-refract-simple-defs');
+    var svg = document.getElementById('et-refract-edgeSafe-defs');
     if (!svg){
       var svgNS = 'http://www.w3.org/2000/svg';
       svg = document.createElementNS(svgNS, 'svg');
-      svg.setAttribute('id','et-refract-simple-defs');
+      svg.setAttribute('id','et-refract-edgeSafe-defs');
       svg.setAttribute('width','0'); svg.setAttribute('height','0');
       svg.setAttribute('style','position:fixed');
 
       var filter = document.createElementNS(svgNS,'filter');
-      filter.setAttribute('id','et-refract-simple');
+      filter.setAttribute('id','et-refract-edgeSafe');
       filter.setAttribute('x','-20%'); filter.setAttribute('y','-20%');
       filter.setAttribute('width','140%'); filter.setAttribute('height','140%');
       filter.setAttribute('color-interpolation-filters','sRGB');
 
       var turb = document.createElementNS(svgNS,'feTurbulence');
       turb.setAttribute('id','et-turb');
-      turb.setAttribute('type','turbulence');    // clearer facets than fractalNoise
+      turb.setAttribute('type','turbulence'); // clearer than fractalNoise for “glass”
       turb.setAttribute('numOctaves','1');
-      turb.setAttribute('seed','11');
+      turb.setAttribute('seed','13');
       turb.setAttribute('result','noise');
 
       var disp = document.createElementNS(svgNS,'feDisplacementMap');
@@ -62,10 +62,10 @@
       svg.appendChild(filter);
       document.body.appendChild(svg);
     }
+
     // Apply strength/frequency from CSS tokens
     var freq = cssVarNum('--fracture-frequency', 0.010);
-    var scale = cssVarNum('--fracture-strength', 22);
-
+    var scale = cssVarNum('--fracture-strength', 24);
     var turbEl = document.getElementById('et-turb');
     var dispEl = document.getElementById('et-disp');
     if (turbEl) turbEl.setAttribute('baseFrequency', String(freq));
@@ -83,9 +83,8 @@
     init();
   }
 
-  // Keep background var honest on resize/orientation
   window.addEventListener('resize', applyFractureVars, { passive:true });
   window.addEventListener('orientationchange', applyFractureVars, { passive:true });
 
-  console.log('[ET] stronger refraction ready (v29.9)');
+  console.log('[ET] edge-safe refraction ready (v30.0)');
 })();
