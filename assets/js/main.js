@@ -1,8 +1,8 @@
-/* Edvin Portfolio — assets/js/main.js (v30.2)
-   Edge-locked simple refraction (no zoom):
+/* Edvin Portfolio — assets/js/main.js (v30.3)
+   Edge-locked refraction:
    - Sample .bg-wrap img → --fracture-url
-   - Install a single SVG displacement filter (#et-refract-edgeSafe) with a large region
-   - Read strength/frequency from CSS vars
+   - Install a single SVG displacement filter (#et-refract-edgeSafe) with a huge region
+   - Read strength/frequency from CSS vars so you can tune without code edits
 */
 
 (function(){
@@ -38,16 +38,16 @@
 
       var filter = document.createElementNS(svgNS,'filter');
       filter.setAttribute('id','et-refract-edgeSafe');
-      /* very large filter region so displaced pixels have room */
-      filter.setAttribute('x','-50%'); filter.setAttribute('y','-50%');
-      filter.setAttribute('width','200%'); filter.setAttribute('height','200%');
+      /* huge filter region so displacement never clips */
+      filter.setAttribute('x','-60%'); filter.setAttribute('y','-60%');
+      filter.setAttribute('width','220%'); filter.setAttribute('height','220%');
       filter.setAttribute('color-interpolation-filters','sRGB');
 
       var turb = document.createElementNS(svgNS,'feTurbulence');
       turb.setAttribute('id','et-turb');
-      turb.setAttribute('type','turbulence'); /* clearer “glass” feel */
+      turb.setAttribute('type','turbulence');
       turb.setAttribute('numOctaves','1');
-      turb.setAttribute('seed','17');
+      turb.setAttribute('seed','19');
       turb.setAttribute('result','noise');
 
       var disp = document.createElementNS(svgNS,'feDisplacementMap');
@@ -63,9 +63,9 @@
       document.body.appendChild(svg);
     }
 
-    // Apply strength/frequency from CSS tokens
-    var freq = cssVarNum('--fracture-frequency', 0.010);
-    var scale = cssVarNum('--fracture-strength', 24);
+    // pull params from CSS vars
+    var freq = cssVarNum('--fracture-frequency', 0.008);
+    var scale = cssVarNum('--fracture-strength', 26);
     var turbEl = document.getElementById('et-turb');
     var dispEl = document.getElementById('et-disp');
     if (turbEl) turbEl.setAttribute('baseFrequency', String(freq));
@@ -86,5 +86,5 @@
   window.addEventListener('resize', applyFractureVars, { passive:true });
   window.addEventListener('orientationchange', applyFractureVars, { passive:true });
 
-  console.log('[ET] refraction v30.2 (edge-locked, no-zoom) ready');
+  console.log('[ET] refraction v30.3 (edge-locked, huge overscan) ready');
 })();
