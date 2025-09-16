@@ -1,61 +1,97 @@
-/* Edvin Portfolio — header.css (v30.3)
-   Edge-locked refraction: huge overscan + clip, smaller offsets, no zoom.
-   Wordmark/brand rules preserved.
+/* Edvin Portfolio — header.css (v30.4)
+   Strong, edge-locked refraction:
+   - viewport-locked sampling (no zoom vibe)
+   - huge overscan behind the bar + edge fade → perfectly straight edges
+   - single clean displacement (keeps vibrance)
+   Wordmark/brand rules stay intact.
 */
 
-/* ===== Header bar (crisp edges) ===== */
+/* ===== Header bar (baseline, crisp edges) ===== */
 header.site-header{
   position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
   background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
   backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
   -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
   isolation:isolate;
-  overflow:hidden;                  /* clip overscanned layer to a perfect rect */
-  -webkit-mask-image:none; mask-image:none; /* no wavy masks on the bar itself */
+  overflow:hidden;                 /* clip overscanned layer to a perfect rect */
+  -webkit-mask-image:none; mask-image:none;
 }
 
 /* ===== Refraction tokens (tweak freely in :root) ===== */
 :root{
-  /* smaller, cleaner parallax */
-  --fracture-offset-x: 16px;
-  --fracture-offset-y: 10px;
+  /* offset of the sampled copy (parallax) */
+  --fracture-offset-x: 18px;
+  --fracture-offset-y: 12px;
 
   /* BIG overscan so displaced pixels never expose edges */
   --fracture-overscan: 128px;
 
   /* look/strength */
-  --fracture-opacity: 0.80;
-  --fracture-blend: normal;         /* normal = pure color (no brightening) */
+  --fracture-opacity: 0.82;
+  --fracture-blend: normal;        /* normal = pure color; try `screen` to brighten */
 
   /* SVG filter params (read by JS) */
-  --fracture-strength: 26;          /* 20–30 typical; higher = stronger bend */
-  --fracture-frequency: 0.008;      /* lower = smoother, higher = more facets */
+  --fracture-strength: 28;         /* 20–34 typical: higher = stronger bend */
+  --fracture-frequency: 0.010;     /* 0.007 smoother ←→ 0.013 more faceted */
 
-  /* If you see a thin line under the bar, set this to 0px */
+  /* Edge fade thickness so silhouette stays perfectly straight */
+  --fracture-edge-fade-y: 8px;     /* top/bottom */
+  --fracture-edge-fade-x: 10px;    /* left/right */
+
+  /* If you ever see a line under the bar, set this to 0px */
   --fade-depth: 0px;
 }
 
-/* ===== Single refraction overlay (no zoom; viewport-aligned) ===== */
+/* ===== Single refraction overlay (viewport-locked, no zoom) =====
+   - Overscans beyond the bar
+   - Background is sized to 100vw x 100vh so scale matches the viewport image
+   - Hard edge fade prevents any wavy outline */
 header.site-header::before{
   content:"";
   position:absolute;
-  inset: calc(var(--fracture-overscan) * -1); /* overscan behind the bar */
+  inset: calc(var(--fracture-overscan) * -1);
   pointer-events:none; z-index:0;
   opacity: var(--fracture-opacity);
 
   background-image: var(--fracture-url, none);
-  background-size: cover;                 /* no zoom — matches the page */
   background-repeat: no-repeat;
-  background-attachment: fixed;           /* lock to viewport scene */
+  background-attachment: fixed;                 /* lock to viewport scene */
+  background-size: 100vw 100vh;                 /* ⟸ viewport-locked scale */
   background-position:
     calc(50% + var(--fracture-offset-x))
     calc(50% + var(--fracture-offset-y));
 
-  filter: url(#et-refract-edgeSafe);      /* clean refraction only */
+  filter: url(#et-refract-edgeSafe);            /* clean refraction only */
   mix-blend-mode: var(--fracture-blend);
+
+  /* Soft edge fade so the bar outline stays ruler-straight */
+  -webkit-mask-image:
+    linear-gradient(to bottom,
+      transparent 0,
+      #000 var(--fracture-edge-fade-y),
+      #000 calc(100% - var(--fracture-edge-fade-y)),
+      transparent 100%),
+    linear-gradient(to right,
+      transparent 0,
+      #000 var(--fracture-edge-fade-x),
+      #000 calc(100% - var(--fracture-edge-fade-x)),
+      transparent 100%);
+  -webkit-mask-composite: source-in;
+          mask-image:
+    linear-gradient(to bottom,
+      transparent 0,
+      #000 var(--fracture-edge-fade-y),
+      #000 calc(100% - var(--fracture-edge-fade-y)),
+      transparent 100%),
+    linear-gradient(to right,
+      transparent 0,
+      #000 var(--fracture-edge-fade-x),
+      #000 calc(100% - var(--fracture-edge-fade-x)),
+      transparent 100%);
+  mask-composite: intersect;
 }
 
-/* ===== Seam fade below header (can be disabled via --fade-depth: 0px) ===== */
+/* ===== Optional seam fade (off by default) ===== */
 header.site-header::after{
   content:"";
   position:absolute; left:0; right:0; top:100%;
