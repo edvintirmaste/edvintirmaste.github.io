@@ -1,13 +1,11 @@
-/* Edvin Portfolio — assets/js/main.js (v30.3)
-   Edge-locked refraction:
+/* Edvin Portfolio — assets/js/main.js (v30.4)
+   Edge-locked refraction (viewport-locked sampling):
    - Sample .bg-wrap img → --fracture-url
-   - Install a single SVG displacement filter (#et-refract-edgeSafe) with a huge region
-   - Read strength/frequency from CSS vars so you can tune without code edits
+   - Install #et-refract-edgeSafe with a huge filter region
+   - Read strength/frequency from CSS vars (tune in DevTools, no JS edits)
 */
 
 (function(){
-  function $(sel){ return document.querySelector(sel); }
-
   function findBackgroundURL(){
     var img = document.querySelector('.bg-wrap img');
     if (img && (img.currentSrc || img.src)) return 'url("' + (img.currentSrc || img.src) + '")';
@@ -15,14 +13,14 @@
     return (bodyBG && bodyBG !== 'none') ? bodyBG : null;
   }
 
-  function cssVarNum(name, fallback){
-    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  function cssNum(varName, fallback){
+    var v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
     var n = parseFloat(v);
-    return isFinite(n) ? n : fallback;
+    return Number.isFinite(n) ? n : fallback;
   }
 
-  function applyFractureVars(){
-    var header = $('header.site-header');
+  function applyVars(){
+    var header = document.querySelector('header.site-header');
     if (!header) return;
     header.style.setProperty('--fracture-url', findBackgroundURL() || 'none');
   }
@@ -32,26 +30,26 @@
     if (!svg){
       var svgNS = 'http://www.w3.org/2000/svg';
       svg = document.createElementNS(svgNS, 'svg');
-      svg.setAttribute('id','et-refract-edgeSafe-defs');
+      svg.id = 'et-refract-edgeSafe-defs';
       svg.setAttribute('width','0'); svg.setAttribute('height','0');
-      svg.setAttribute('style','position:fixed');
+      svg.style.position = 'fixed';
 
       var filter = document.createElementNS(svgNS,'filter');
-      filter.setAttribute('id','et-refract-edgeSafe');
-      /* huge filter region so displacement never clips */
+      filter.id = 'et-refract-edgeSafe';
+      /* massive region so displacement never clips */
       filter.setAttribute('x','-60%'); filter.setAttribute('y','-60%');
       filter.setAttribute('width','220%'); filter.setAttribute('height','220%');
       filter.setAttribute('color-interpolation-filters','sRGB');
 
       var turb = document.createElementNS(svgNS,'feTurbulence');
-      turb.setAttribute('id','et-turb');
+      turb.id = 'et-turb';
       turb.setAttribute('type','turbulence');
       turb.setAttribute('numOctaves','1');
-      turb.setAttribute('seed','19');
+      turb.setAttribute('seed','23');
       turb.setAttribute('result','noise');
 
       var disp = document.createElementNS(svgNS,'feDisplacementMap');
-      disp.setAttribute('id','et-disp');
+      disp.id = 'et-disp';
       disp.setAttribute('in','SourceGraphic');
       disp.setAttribute('in2','noise');
       disp.setAttribute('xChannelSelector','R');
@@ -62,10 +60,8 @@
       svg.appendChild(filter);
       document.body.appendChild(svg);
     }
-
-    // pull params from CSS vars
-    var freq = cssVarNum('--fracture-frequency', 0.008);
-    var scale = cssVarNum('--fracture-strength', 26);
+    var freq = cssNum('--fracture-frequency', 0.010);
+    var scale = cssNum('--fracture-strength', 28);
     var turbEl = document.getElementById('et-turb');
     var dispEl = document.getElementById('et-disp');
     if (turbEl) turbEl.setAttribute('baseFrequency', String(freq));
@@ -74,7 +70,7 @@
 
   function init(){
     installOrUpdateFilter();
-    applyFractureVars();
+    applyVars();
   }
 
   if (document.readyState === 'loading'){
@@ -83,8 +79,8 @@
     init();
   }
 
-  window.addEventListener('resize', applyFractureVars, { passive:true });
-  window.addEventListener('orientationchange', applyFractureVars, { passive:true });
+  window.addEventListener('resize', applyVars, { passive:true });
+  window.addEventListener('orientationchange', applyVars, { passive:true });
 
-  console.log('[ET] refraction v30.3 (edge-locked, huge overscan) ready');
+  console.log('[ET] refraction v30.4 (viewport-locked) ready');
 })();
