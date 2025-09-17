@@ -1,6 +1,6 @@
-/* Edvin Portfolio — header.css (v31.0)
-   SVG overlay refraction: crisp, straight edges, clear bend, no zoom vibe.
-   Wordmark/brand rules preserved.
+/* Edvin Portfolio — header.css (v31.1)
+   SVG overlay refraction with crisp, straight edges.
+   Changes vs v31.0: stronger default, clearer parallax, adjustable edge-fade tokens.
 */
 
 /* ===== Header bar (baseline) ===== */
@@ -10,53 +10,64 @@ header.site-header{
   backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
   -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
   isolation:isolate;
-  overflow:hidden;                 /* clip the SVG to a perfect rectangle */
+  overflow:hidden; /* clip the SVG to a perfect rectangle */
 }
 
-/* ===== Refraction tokens (tweak in :root without code) ===== */
+/* ===== Refraction tokens ===== */
 :root{
-  --fracture-offset-x: 18px;      /* parallax: horizontal shift */
-  --fracture-offset-y: 12px;      /* parallax: vertical shift */
-  --fracture-overscan: 160;       /* px beyond viewport in all directions */
-  --fracture-opacity: 0.88;       /* overall strength of layer */
-  --fracture-blend: normal;       /* normal = pure color; screen = brighter */
-  --fracture-strength: 30;        /* 20–36: displacement power */
-  --fracture-frequency: 0.010;    /* 0.007 smoother ←→ 0.013 more faceted */
+  /* parallax offsets (feel free to tweak) */
+  --fracture-offset-x: 22px;
+  --fracture-offset-y: 12px;
 
-  /* if you ever see a seam under the bar, set this to 0px */
+  /* render far past the bar; the SVG will clip it */
+  --fracture-overscan: 160;
+
+  /* look/strength */
+  --fracture-opacity: 0.90;       /* a touch stronger so it reads in a short bar */
+  --fracture-blend: normal;       /* normal = pure color; try `screen` to brighten */
+
+  /* filter params (JS reads these) */
+  --fracture-strength: 32;        /* 20–36 typical */
+  --fracture-frequency: 0.0115;   /* 0.007 smoother ←→ 0.013 more faceted */
+
+  /* NEW: edge fade thickness so silhouette stays ruler-straight */
+  --fracture-edge-fade-y: 6px;    /* top/bottom */
+  --fracture-edge-fade-x: 8px;    /* left/right */
+
+  /* if you ever see a seam under the bar, keep this 0px */
   --fade-depth: 0px;
 }
 
-/* ===== The SVG overlay we inject via JS ===== */
+/* ===== The SVG overlay we inject via JS (keeps edges crisp) ===== */
 header.site-header > svg.refract-svg{
   position:absolute; inset:0; width:100%; height:100%;
   display:block; pointer-events:none; z-index:0;
   opacity: var(--fracture-opacity);
   mix-blend-mode: var(--fracture-blend);
 
-  /* soft interior fade so outline stays ruler-straight even with strong bends */
+  /* soft interior fade so edges stay perfectly straight */
   -webkit-mask-image:
     linear-gradient(to bottom,
       transparent 0,
-      #000 8px,
-      #000 calc(100% - 8px),
+      #000 var(--fracture-edge-fade-y),
+      #000 calc(100% - var(--fracture-edge-fade-y)),
       transparent 100%),
     linear-gradient(to right,
       transparent 0,
-      #000 10px,
-      #000 calc(100% - 10px),
+      #000 var(--fracture-edge-fade-x),
+      #000 calc(100% - var(--fracture-edge-fade-x)),
       transparent 100%);
   -webkit-mask-composite: source-in;
           mask-image:
     linear-gradient(to bottom,
       transparent 0,
-      #000 8px,
-      #000 calc(100% - 8px),
+      #000 var(--fracture-edge-fade-y),
+      #000 calc(100% - var(--fracture-edge-fade-y)),
       transparent 100%),
     linear-gradient(to right,
       transparent 0,
-      #000 10px,
-      #000 calc(100% - 10px),
+      #000 var(--fracture-edge-fade-x),
+      #000 calc(100% - var(--fracture-edge-fade-x)),
       transparent 100%);
   mask-composite: intersect;
 }
