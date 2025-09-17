@@ -93,4 +93,19 @@ header.site-header::after{
   position:absolute; left:-14%; right:-14%; top:50%; height:56px;
   transform:translateY(-50%);
   background:
-    radial-gradient(60% 140% at 22% 50%, rgba(var(--brand-
+    radial-gradient(60% 140% at 22% 50%, rgba(var(--brand-glow1-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%),
+    radial-gradient(60% 140% at 78% 50%, rgba(var(--brand-glow2-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%);
+  filter: blur(18px); mix-blend-mode: screen; opacity:.95; z-index:-1; pointer-events:none;
+}
+.brand span{
+  position:relative; display:inline-block;
+  font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1;
+  text-shadow:0 0 16px rgba(180,205,255,.12);
+}
+.brand span:not(.space)::after{
+  content:""; position:absolute; left:50%; top:50%;
+  width:1.05em; height:1.05em; transform:translate(-50%,-50%);
+  background: radial-gradient(closest-side, rgba(200,220,255,.06), rgba(0,0,0,0) 70%);
+  filter: blur(7px); border-radius:50%; z-index:-1; pointer-events:none;
+}
+.brand .space{ flex:0 0 var(--word-gap); }
