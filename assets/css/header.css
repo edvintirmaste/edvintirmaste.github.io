@@ -1,92 +1,62 @@
-/* Edvin Portfolio — header.css (v30.4)
-   Strong, edge-locked refraction:
-   - viewport-locked sampling (no zoom vibe)
-   - huge overscan behind the bar + edge fade → perfectly straight edges
-   - single clean displacement (keeps vibrance)
-   Wordmark/brand rules stay intact.
+/* Edvin Portfolio — header.css (v31.0)
+   SVG overlay refraction: crisp, straight edges, clear bend, no zoom vibe.
+   Wordmark/brand rules preserved.
 */
 
-/* ===== Header bar (baseline, crisp edges) ===== */
+/* ===== Header bar (baseline) ===== */
 header.site-header{
   position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
   background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
   backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
   -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
   isolation:isolate;
-  overflow:hidden;                 /* clip overscanned layer to a perfect rect */
-  -webkit-mask-image:none; mask-image:none;
+  overflow:hidden;                 /* clip the SVG to a perfect rectangle */
 }
 
-/* ===== Refraction tokens (tweak freely in :root) ===== */
+/* ===== Refraction tokens (tweak in :root without code) ===== */
 :root{
-  /* offset of the sampled copy (parallax) */
-  --fracture-offset-x: 18px;
-  --fracture-offset-y: 12px;
+  --fracture-offset-x: 18px;      /* parallax: horizontal shift */
+  --fracture-offset-y: 12px;      /* parallax: vertical shift */
+  --fracture-overscan: 160;       /* px beyond viewport in all directions */
+  --fracture-opacity: 0.88;       /* overall strength of layer */
+  --fracture-blend: normal;       /* normal = pure color; screen = brighter */
+  --fracture-strength: 30;        /* 20–36: displacement power */
+  --fracture-frequency: 0.010;    /* 0.007 smoother ←→ 0.013 more faceted */
 
-  /* BIG overscan so displaced pixels never expose edges */
-  --fracture-overscan: 128px;
-
-  /* look/strength */
-  --fracture-opacity: 0.82;
-  --fracture-blend: normal;        /* normal = pure color; try `screen` to brighten */
-
-  /* SVG filter params (read by JS) */
-  --fracture-strength: 28;         /* 20–34 typical: higher = stronger bend */
-  --fracture-frequency: 0.010;     /* 0.007 smoother ←→ 0.013 more faceted */
-
-  /* Edge fade thickness so silhouette stays perfectly straight */
-  --fracture-edge-fade-y: 8px;     /* top/bottom */
-  --fracture-edge-fade-x: 10px;    /* left/right */
-
-  /* If you ever see a line under the bar, set this to 0px */
+  /* if you ever see a seam under the bar, set this to 0px */
   --fade-depth: 0px;
 }
 
-/* ===== Single refraction overlay (viewport-locked, no zoom) =====
-   - Overscans beyond the bar
-   - Background is sized to 100vw x 100vh so scale matches the viewport image
-   - Hard edge fade prevents any wavy outline */
-header.site-header::before{
-  content:"";
-  position:absolute;
-  inset: calc(var(--fracture-overscan) * -1);
-  pointer-events:none; z-index:0;
+/* ===== The SVG overlay we inject via JS ===== */
+header.site-header > svg.refract-svg{
+  position:absolute; inset:0; width:100%; height:100%;
+  display:block; pointer-events:none; z-index:0;
   opacity: var(--fracture-opacity);
-
-  background-image: var(--fracture-url, none);
-  background-repeat: no-repeat;
-  background-attachment: fixed;                 /* lock to viewport scene */
-  background-size: 100vw 100vh;                 /* ⟸ viewport-locked scale */
-  background-position:
-    calc(50% + var(--fracture-offset-x))
-    calc(50% + var(--fracture-offset-y));
-
-  filter: url(#et-refract-edgeSafe);            /* clean refraction only */
   mix-blend-mode: var(--fracture-blend);
 
-  /* Soft edge fade so the bar outline stays ruler-straight */
+  /* soft interior fade so outline stays ruler-straight even with strong bends */
   -webkit-mask-image:
     linear-gradient(to bottom,
       transparent 0,
-      #000 var(--fracture-edge-fade-y),
-      #000 calc(100% - var(--fracture-edge-fade-y)),
+      #000 8px,
+      #000 calc(100% - 8px),
       transparent 100%),
     linear-gradient(to right,
       transparent 0,
-      #000 var(--fracture-edge-fade-x),
-      #000 calc(100% - var(--fracture-edge-fade-x)),
+      #000 10px,
+      #000 calc(100% - 10px),
       transparent 100%);
   -webkit-mask-composite: source-in;
           mask-image:
     linear-gradient(to bottom,
       transparent 0,
-      #000 var(--fracture-edge-fade-y),
-      #000 calc(100% - var(--fracture-edge-fade-y)),
+      #000 8px,
+      #000 calc(100% - 8px),
       transparent 100%),
     linear-gradient(to right,
       transparent 0,
-      #000 var(--fracture-edge-fade-x),
-      #000 calc(100% - var(--fracture-edge-fade-x)),
+      #000 10px,
+      #000 calc(100% - 10px),
       transparent 100%);
   mask-composite: intersect;
 }
@@ -107,7 +77,7 @@ header.site-header::after{
   height:var(--header-h);
   display:flex; align-items:center; justify-content:center;
   padding-inline: clamp(16px, 5vw, 64px);
-  position:relative; z-index:2; /* above ::before overlay */
+  position:relative; z-index:2; /* above the SVG */
 }
 
 /* ===== Brand / wordmark (baseline — unchanged) ===== */
@@ -123,19 +93,4 @@ header.site-header::after{
   position:absolute; left:-14%; right:-14%; top:50%; height:56px;
   transform:translateY(-50%);
   background:
-    radial-gradient(60% 140% at 22% 50%, rgba(var(--brand-glow1-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%),
-    radial-gradient(60% 140% at 78% 50%, rgba(var(--brand-glow2-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%);
-  filter: blur(18px); mix-blend-mode: screen; opacity:.95; z-index:-1; pointer-events:none;
-}
-.brand span{
-  position:relative; display:inline-block;
-  font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1;
-  text-shadow:0 0 16px rgba(180,205,255,.12);
-}
-.brand span:not(.space)::after{
-  content:""; position:absolute; left:50%; top:50%;
-  width:1.05em; height:1.05em; transform:translate(-50%,-50%);
-  background: radial-gradient(closest-side, rgba(200,220,255,.06), rgba(0,0,0,0) 70%);
-  filter: blur(7px); border-radius:50%; z-index:-1; pointer-events:none;
-}
-.brand .space{ flex:0 0 var(--word-gap); }
+    radial-gradient(60% 140% at 22% 50%, rgba(var(--brand-
