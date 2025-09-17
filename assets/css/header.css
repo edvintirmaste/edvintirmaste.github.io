@@ -1,6 +1,6 @@
-/* Edvin Portfolio — header.css (v31.1)
-   SVG overlay refraction with crisp, straight edges.
-   Changes vs v31.0: stronger default, clearer parallax, adjustable edge-fade tokens.
+/* Edvin Portfolio — header.css (v31.2)
+   SVG overlay refraction with crisp edges.
+   Fix: per-edge mask → TOP FADE = 0 to fully cover the top edge.
 */
 
 /* ===== Header bar (baseline) ===== */
@@ -15,7 +15,7 @@ header.site-header{
 
 /* ===== Refraction tokens ===== */
 :root{
-  /* parallax offsets (feel free to tweak) */
+  /* parallax offsets */
   --fracture-offset-x: 22px;
   --fracture-offset-y: 12px;
 
@@ -23,51 +23,54 @@ header.site-header{
   --fracture-overscan: 160;
 
   /* look/strength */
-  --fracture-opacity: 0.90;       /* a touch stronger so it reads in a short bar */
+  --fracture-opacity: 0.90;
   --fracture-blend: normal;       /* normal = pure color; try `screen` to brighten */
 
   /* filter params (JS reads these) */
-  --fracture-strength: 32;        /* 20–36 typical */
-  --fracture-frequency: 0.0115;   /* 0.007 smoother ←→ 0.013 more faceted */
+  --fracture-strength: 32;
+  --fracture-frequency: 0.0115;
 
-  /* NEW: edge fade thickness so silhouette stays ruler-straight */
-  --fracture-edge-fade-y: 6px;    /* top/bottom */
-  --fracture-edge-fade-x: 8px;    /* left/right */
+  /* >>> Per-edge fade thickness (TOP=0 to fix the uncovered strip) <<< */
+  --fracture-edge-top: 0px;       /* top edge = no fade */
+  --fracture-edge-bottom: 6px;    /* small fade to avoid bottom wobble */
+  --fracture-edge-left: 8px;      /* small left/right fades for safety */
+  --fracture-edge-right: 8px;
 
-  /* if you ever see a seam under the bar, keep this 0px */
+  /* keep seam under bar off */
   --fade-depth: 0px;
 }
 
-/* ===== The SVG overlay we inject via JS (keeps edges crisp) ===== */
+/* ===== The SVG overlay we inject via JS ===== */
 header.site-header > svg.refract-svg{
   position:absolute; inset:0; width:100%; height:100%;
   display:block; pointer-events:none; z-index:0;
   opacity: var(--fracture-opacity);
   mix-blend-mode: var(--fracture-blend);
 
-  /* soft interior fade so edges stay perfectly straight */
+  /* Per-edge mask: TOP=0 so the top is fully covered and perfectly straight */
   -webkit-mask-image:
     linear-gradient(to bottom,
       transparent 0,
-      #000 var(--fracture-edge-fade-y),
-      #000 calc(100% - var(--fracture-edge-fade-y)),
+      #000 var(--fracture-edge-top),
+      #000 calc(100% - var(--fracture-edge-bottom)),
       transparent 100%),
     linear-gradient(to right,
       transparent 0,
-      #000 var(--fracture-edge-fade-x),
-      #000 calc(100% - var(--fracture-edge-fade-x)),
+      #000 var(--fracture-edge-left),
+      #000 calc(100% - var(--fracture-edge-right)),
       transparent 100%);
   -webkit-mask-composite: source-in;
+
           mask-image:
     linear-gradient(to bottom,
       transparent 0,
-      #000 var(--fracture-edge-fade-y),
-      #000 calc(100% - var(--fracture-edge-fade-y)),
+      #000 var(--fracture-edge-top),
+      #000 calc(100% - var(--fracture-edge-bottom)),
       transparent 100%),
     linear-gradient(to right,
       transparent 0,
-      #000 var(--fracture-edge-fade-x),
-      #000 calc(100% - var(--fracture-edge-fade-x)),
+      #000 var(--fracture-edge-left),
+      #000 calc(100% - var(--fracture-edge-right)),
       transparent 100%);
   mask-composite: intersect;
 }
