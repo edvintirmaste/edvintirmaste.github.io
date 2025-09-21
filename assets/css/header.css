@@ -1,19 +1,30 @@
-/* Edvin Portfolio — header.css (v31.2)
-   SVG overlay refraction with crisp edges.
-   Fix: per-edge mask → TOP FADE = 0 to fully cover the top edge.
+/* Edvin Portfolio — header.css (v31.3)
+   - Keeps v31.2 SVG refraction overlay (crisp edges, overscan, top edge fully covered).
+   - NEW: Wordmark "Duotone offset" emphasis (3px) — cyan/yellow, no neon glow.
+
+   Notes:
+   - Requires assets/js/main.js v31.0 (unchanged).
+   - The duotone applies to .brand and .wordmark automatically; you can also add class="wm-duo".
 */
 
 /* ===== Header bar (baseline) ===== */
 header.site-header{
-  position:fixed; inset:0 0 auto 0; height:var(--header-h); z-index:20;
-  background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-top)), rgba(2,2,28,var(--bar-btm)));
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: var(--header-h);
+  z-index: 20;
+  background: linear-gradient(
+    to bottom,
+    rgba(2, 2, 28, var(--bar-top)),
+    rgba(2, 2, 28, var(--bar-btm))
+  );
   backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
   -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-  isolation:isolate;
-  overflow:hidden; /* clip the SVG to a perfect rectangle */
+  isolation: isolate;
+  overflow: hidden; /* clip the SVG to a perfect rectangle */
 }
 
-/* ===== Refraction tokens ===== */
+/* ===== Refraction tokens (unchanged from v31.2) ===== */
 :root{
   /* parallax offsets */
   --fracture-offset-x: 22px;
@@ -38,12 +49,23 @@ header.site-header{
 
   /* keep seam under bar off */
   --fade-depth: 0px;
+
+  /* ===== Wordmark Duotone tokens ===== */
+  --wm-duo-offset: 3px;                    /* you chose 3px */
+  --wm-duo-cyan:   rgba(160,200,255,.80);  /* cool light blue from header */
+  --wm-duo-yellow: rgba(247,236,120,.78);  /* header yellow */
+  --wm-duo-crisp:  rgba(0,0,0,.30);        /* micro edge for sharpness */
 }
 
-/* ===== The SVG overlay we inject via JS ===== */
+/* ===== The SVG overlay we inject via JS (v31.2) ===== */
 header.site-header > svg.refract-svg{
-  position:absolute; inset:0; width:100%; height:100%;
-  display:block; pointer-events:none; z-index:0;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+  z-index: 0;
   opacity: var(--fracture-opacity);
   mix-blend-mode: var(--fracture-blend);
 
@@ -77,49 +99,71 @@ header.site-header > svg.refract-svg{
 
 /* ===== Optional seam fade (off by default) ===== */
 header.site-header::after{
-  content:"";
-  position:absolute; left:0; right:0; top:100%;
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 100%;
   height: var(--fade-depth);
   background: linear-gradient(to bottom, rgba(2,2,28,var(--bar-btm)), rgba(2,2,28,0));
   backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
   -webkit-backdrop-filter: blur(var(--bar-blur)) saturate(var(--bar-sat));
-  pointer-events:none; z-index:0;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ===== Nav container (baseline) ===== */
 .nav{
-  height:var(--header-h);
-  display:flex; align-items:center; justify-content:center;
+  height: var(--header-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding-inline: clamp(16px, 5vw, 64px);
-  position:relative; z-index:2; /* above the SVG */
+  position: relative;
+  z-index: 2; /* above the SVG */
 }
 
-/* ===== Brand / wordmark (baseline — unchanged) ===== */
-.brand{
-  position:relative;
-  width: clamp(var(--brand-min), var(--brand-fluid), var(--brand-max));
-  display:flex; align-items:center; justify-content:space-between;
-  text-transform:uppercase; white-space:nowrap; user-select:none;
-  filter: drop-shadow(0 0 10px rgba(0,0,0,.45));
+/* ===== Brand / wordmark =====
+   We remove the old hazy glow and swap in a clean duotone offset.
+   Applies to .brand, .wordmark, or add class="wm-duo" to any element.
+*/
+.brand,
+.wordmark,
+.wm-duo{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--word-gap, 0.6em);
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+  color: #e8ecf6;
+  /* Duotone emphasis (3px): cool cyan up/left + yellow down/right + crisp edge */
+  text-shadow:
+    calc(var(--wm-duo-offset) * -1) calc(var(--wm-duo-offset) * -1) 0 var(--wm-duo-cyan),
+    var(--wm-duo-offset) var(--wm-duo-offset) 0 var(--wm-duo-yellow),
+    0 0 0.5px var(--wm-duo-crisp);
 }
-.brand::after{
-  content:"";
-  position:absolute; left:-14%; right:-14%; top:50%; height:56px;
-  transform:translateY(-50%);
-  background:
-    radial-gradient(60% 140% at 22% 50%, rgba(var(--brand-glow1-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%),
-    radial-gradient(60% 140% at 78% 50%, rgba(var(--brand-glow2-rgb), var(--brand-glow-alpha)), rgba(0,0,0,0) 70%);
-  filter: blur(18px); mix-blend-mode: screen; opacity:.95; z-index:-1; pointer-events:none;
-}
+
+/* Optional: if your markup uses per-letter spans inside .brand, keep them simple */
 .brand span{
-  position:relative; display:inline-block;
-  font-family:"Space Grotesk", Inter, system-ui; font-weight:700; font-size:var(--brand-size); line-height:1;
-  text-shadow:0 0 16px rgba(180,205,255,.12);
+  position: relative;
+  display: inline-block;
+  font-family: "Space Grotesk", Inter, system-ui;
+  font-weight: 700;
+  font-size: var(--brand-size, clamp(14px, 1.8vw, 20px));
+  line-height: 1;
 }
-.brand span:not(.space)::after{
-  content:""; position:absolute; left:50%; top:50%;
-  width:1.05em; height:1.05em; transform:translate(-50%,-50%);
-  background: radial-gradient(closest-side, rgba(200,220,255,.06), rgba(0,0,0,0) 70%);
-  filter: blur(7px); border-radius:50%; z-index:-1; pointer-events:none;
+
+/* If your previous build had a background glow under the wordmark,
+   ensure it is off now (we prefer the duotone for emphasis). */
+.brand::after{ content: none !important; }
+
+/* Keeps a fixed gap element if your markup uses <span class="space"></span> */
+.brand .space{ flex: 0 0 var(--word-gap, 0.6em); }
+
+/* ===== Small screens — tighten spacing slightly if desired ===== */
+@media (max-width: 639.98px){
+  :root{
+    /* keep 3px unless you want 2px on phones; set to 2px if needed */
+    /* --wm-duo-offset: 2px; */
+  }
 }
-.brand .space{ flex:0 0 var(--word-gap); }
