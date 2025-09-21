@@ -1,10 +1,10 @@
-/* Edvin Portfolio — header.css (v31.3)
-   - Keeps v31.2 SVG refraction overlay (crisp edges, overscan, top edge fully covered).
-   - NEW: Wordmark "Duotone offset" emphasis (3px) — cyan/yellow, no neon glow.
+/* Edvin Portfolio — header.css (v31.4)
+   - Same as v31.3 (refraction overlay unchanged).
+   - CHANGE: Wordmark Duotone offset set to 2px (was 3px).
 
    Notes:
-   - Requires assets/js/main.js v31.0 (unchanged).
-   - The duotone applies to .brand and .wordmark automatically; you can also add class="wm-duo".
+   - No HTML/JS edits needed.
+   - Applies to .brand, .wordmark, or any element with class="wm-duo".
 */
 
 /* ===== Header bar (baseline) ===== */
@@ -24,7 +24,7 @@ header.site-header{
   overflow: hidden; /* clip the SVG to a perfect rectangle */
 }
 
-/* ===== Refraction tokens (unchanged from v31.2) ===== */
+/* ===== Refraction tokens (unchanged) ===== */
 :root{
   /* parallax offsets */
   --fracture-offset-x: 22px;
@@ -35,29 +35,29 @@ header.site-header{
 
   /* look/strength */
   --fracture-opacity: 0.90;
-  --fracture-blend: normal;       /* normal = pure color; try `screen` to brighten */
+  --fracture-blend: normal;
 
   /* filter params (JS reads these) */
   --fracture-strength: 32;
   --fracture-frequency: 0.0115;
 
-  /* >>> Per-edge fade thickness (TOP=0 to fix the uncovered strip) <<< */
-  --fracture-edge-top: 0px;       /* top edge = no fade */
-  --fracture-edge-bottom: 6px;    /* small fade to avoid bottom wobble */
-  --fracture-edge-left: 8px;      /* small left/right fades for safety */
+  /* Per-edge fade thickness (TOP=0 to keep top edge fully covered) */
+  --fracture-edge-top: 0px;
+  --fracture-edge-bottom: 6px;
+  --fracture-edge-left: 8px;
   --fracture-edge-right: 8px;
 
-  /* keep seam under bar off */
+  /* seam fade under bar (off) */
   --fade-depth: 0px;
 
   /* ===== Wordmark Duotone tokens ===== */
-  --wm-duo-offset: 3px;                    /* you chose 3px */
-  --wm-duo-cyan:   rgba(160,200,255,.80);  /* cool light blue from header */
-  --wm-duo-yellow: rgba(247,236,120,.78);  /* header yellow */
-  --wm-duo-crisp:  rgba(0,0,0,.30);        /* micro edge for sharpness */
+  --wm-duo-offset: 2px;                    /* ← you asked for 2px */
+  --wm-duo-cyan:   rgba(160,200,255,.80);
+  --wm-duo-yellow: rgba(247,236,120,.78);
+  --wm-duo-crisp:  rgba(0,0,0,.30);
 }
 
-/* ===== The SVG overlay we inject via JS (v31.2) ===== */
+/* ===== Refraction SVG overlay (from v31.2) ===== */
 header.site-header > svg.refract-svg{
   position: absolute;
   inset: 0;
@@ -110,7 +110,7 @@ header.site-header::after{
   z-index: 0;
 }
 
-/* ===== Nav container (baseline) ===== */
+/* ===== Nav container ===== */
 .nav{
   height: var(--header-h);
   display: flex;
@@ -122,8 +122,7 @@ header.site-header::after{
 }
 
 /* ===== Brand / wordmark =====
-   We remove the old hazy glow and swap in a clean duotone offset.
-   Applies to .brand, .wordmark, or add class="wm-duo" to any element.
+   Clean duotone offset — cyan up/left + yellow down/right + crisp edge.
 */
 .brand,
 .wordmark,
@@ -136,14 +135,13 @@ header.site-header::after{
   white-space: nowrap;
   user-select: none;
   color: #e8ecf6;
-  /* Duotone emphasis (3px): cool cyan up/left + yellow down/right + crisp edge */
   text-shadow:
     calc(var(--wm-duo-offset) * -1) calc(var(--wm-duo-offset) * -1) 0 var(--wm-duo-cyan),
     var(--wm-duo-offset) var(--wm-duo-offset) 0 var(--wm-duo-yellow),
     0 0 0.5px var(--wm-duo-crisp);
 }
 
-/* Optional: if your markup uses per-letter spans inside .brand, keep them simple */
+/* Optional per-letter spans */
 .brand span{
   position: relative;
   display: inline-block;
@@ -153,17 +151,16 @@ header.site-header::after{
   line-height: 1;
 }
 
-/* If your previous build had a background glow under the wordmark,
-   ensure it is off now (we prefer the duotone for emphasis). */
+/* Disable any old blur/glow pseudo under the wordmark */
 .brand::after{ content: none !important; }
 
-/* Keeps a fixed gap element if your markup uses <span class="space"></span> */
+/* Fixed spacer if markup uses <span class="space"></span> */
 .brand .space{ flex: 0 0 var(--word-gap, 0.6em); }
 
-/* ===== Small screens — tighten spacing slightly if desired ===== */
+/* ===== Small screens (optional tweak) ===== */
 @media (max-width: 639.98px){
   :root{
-    /* keep 3px unless you want 2px on phones; set to 2px if needed */
-    /* --wm-duo-offset: 2px; */
+    /* keep 2px unless you want 1px on phones */
+    /* --wm-duo-offset: 1px; */
   }
 }
