@@ -1,10 +1,7 @@
-/* Edvin Portfolio — header.css (v31.4)
-   - Same as v31.3 (refraction overlay unchanged).
-   - CHANGE: Wordmark Duotone offset set to 2px (was 3px).
-
-   Notes:
-   - No HTML/JS edits needed.
-   - Applies to .brand, .wordmark, or any element with class="wm-duo".
+/* Edvin Portfolio — header.css (v31.5)
+   - Same refraction overlay as v31.2.
+   - CHANGE 1: Wordmark Duotone offset = 2.5px (fractional OK in text-shadow).
+   - CHANGE 2: Larger wordmark via --brand-size (≈ +18%).
 */
 
 /* ===== Header bar (baseline) ===== */
@@ -24,40 +21,31 @@ header.site-header{
   overflow: hidden; /* clip the SVG to a perfect rectangle */
 }
 
-/* ===== Refraction tokens (unchanged) ===== */
+/* ===== Tokens ===== */
 :root{
-  /* parallax offsets */
+  /* Refraction (unchanged) */
   --fracture-offset-x: 22px;
   --fracture-offset-y: 12px;
-
-  /* render far past the bar; the SVG will clip it */
   --fracture-overscan: 160;
-
-  /* look/strength */
   --fracture-opacity: 0.90;
   --fracture-blend: normal;
-
-  /* filter params (JS reads these) */
   --fracture-strength: 32;
   --fracture-frequency: 0.0115;
-
-  /* Per-edge fade thickness (TOP=0 to keep top edge fully covered) */
-  --fracture-edge-top: 0px;
+  --fracture-edge-top: 0px;   /* keep top fully covered */
   --fracture-edge-bottom: 6px;
   --fracture-edge-left: 8px;
   --fracture-edge-right: 8px;
-
-  /* seam fade under bar (off) */
   --fade-depth: 0px;
 
-  /* ===== Wordmark Duotone tokens ===== */
-  --wm-duo-offset: 2px;                    /* ← you asked for 2px */
+  /* Wordmark — Duotone + size */
+  --wm-duo-offset: 2.5px;                 /* ← you asked for 2.5px */
   --wm-duo-cyan:   rgba(160,200,255,.80);
   --wm-duo-yellow: rgba(247,236,120,.78);
   --wm-duo-crisp:  rgba(0,0,0,.30);
+  --brand-size:    clamp(16px, 2.2vw, 24px); /* ↑ bigger; change here if needed */
 }
 
-/* ===== Refraction SVG overlay (from v31.2) ===== */
+/* ===== Refraction SVG overlay (v31.2) ===== */
 header.site-header > svg.refract-svg{
   position: absolute;
   inset: 0;
@@ -97,7 +85,7 @@ header.site-header > svg.refract-svg{
   mask-composite: intersect;
 }
 
-/* ===== Optional seam fade (off by default) ===== */
+/* ===== Optional seam fade (off) ===== */
 header.site-header::after{
   content: "";
   position: absolute;
@@ -123,6 +111,7 @@ header.site-header::after{
 
 /* ===== Brand / wordmark =====
    Clean duotone offset — cyan up/left + yellow down/right + crisp edge.
+   Applies to .brand, .wordmark, or any element with class="wm-duo".
 */
 .brand,
 .wordmark,
@@ -141,7 +130,7 @@ header.site-header::after{
     0 0 0.5px var(--wm-duo-crisp);
 }
 
-/* Optional per-letter spans */
+/* Per-letter spans (if your markup uses them) */
 .brand span{
   position: relative;
   display: inline-block;
@@ -160,7 +149,7 @@ header.site-header::after{
 /* ===== Small screens (optional tweak) ===== */
 @media (max-width: 639.98px){
   :root{
-    /* keep 2px unless you want 1px on phones */
-    /* --wm-duo-offset: 1px; */
+    /* If you want phones a touch tighter: uncomment to 2px or 2.0px
+       --wm-duo-offset: 2px; */
   }
 }
