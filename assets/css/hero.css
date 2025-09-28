@@ -1,13 +1,8 @@
-/* Edvin Portfolio — hero.css (v29.13)
-   History:
-   v29.6  content-only vertical shift (keeps hover frost correct)
-   v29.7  arrows centered to viewport
-   v29.8  light-bg contrast halo
-   v29.9  icon-only chevrons
-   v29.10 arrows use site bg color + softened halo
-   v29.11 same hue, lighter tone via color-mix
-   v29.12 chevrons recolored to indigo/blue-purple + matching glow (very subtle halo)
-   v29.13 bottom-center comet HEAD (white core + dual-color outline), static; no layout shift
+/* Edvin Portfolio — hero.css (v29.14)
+   Changes in this version:
+   - Removed .edge (arrow) overrides entirely (restores your original arrows)
+   - Bottom-center comet head: white interior, yellow inner ring, cyan outer ring
+   - Kept the split divider and intro layout exactly as before
 */
 
 /* ---- Layout lock ---- */
@@ -19,7 +14,7 @@
   z-index: 1;
 }
 
-/* Two-column split with glowing divider */
+/* Two-column split with glowing divider (unchanged) */
 .split-50{
   position:relative;
   display:grid;
@@ -45,7 +40,7 @@
   opacity:.42; pointer-events:none;
 }
 
-/* Corner intro paragraphs + equal-length rails */
+/* Corner intro paragraphs + equal-length rails (unchanged) */
 .corner-intro{
   position:absolute; z-index:2; top: var(--intro-top);
   width: var(--intro-width);
@@ -60,14 +55,12 @@
   -webkit-hyphens:auto; hyphens:auto;
   overflow-wrap:anywhere; text-wrap: pretty;
 
-  /* keep text off the rails on both sides */
   padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
   padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w));
 }
 .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
 .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
 
-/* Rails: equal length and centered on the text block */
 .corner-intro::before,
 .corner-intro::after{
   content:""; position:absolute; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
@@ -90,7 +83,7 @@
     radial-gradient(100% 60% at right center, rgba(var(--brand-glow2-rgb), .22) 0, rgba(0,0,0,0) 65%);
 }
 
-/* Clickable halves */
+/* Clickable halves (unchanged) */
 .half{
   display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
   inline-size:100%; block-size:100%; text-decoration:none; color:var(--fg);
@@ -105,50 +98,6 @@
   box-shadow: var(--frost-shadow);
 }
 
-/* ===== Icon-only edge controls ===== */
-
-/* tunables (indigo/blue-purple) */
-.hero{
-  --edge-halo-opacity: .10;                    /* set to 0 to remove halo entirely */
-  --edge-glow-opacity: .14;
-  --edge-stroke: #6a6af7;                      /* base indigo/violet hue */
-  --edge-lift: 22%;                            /* lift toward white */
-  --edge-lift-hover: 30%;                      /* a bit brighter on hover */
-  --edge-stroke-w: 3.6;
-}
-
-.edge{
-  position:absolute;
-  top: calc(50% - var(--header-h) / 2);        /* viewport-true center */
-  transform: translateY(-50%);
-  z-index:2;
-  width:64px; height:64px;
-  pointer-events:auto; cursor: pointer;
-}
-/* no disc */
-.edge .disc{ display:none; }
-
-/* lifted stroke tone */
-@supports (color: color-mix(in srgb, white, black)){
-  .edge svg{
-    stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift)), white var(--edge-lift));
-  }
-  .edge:hover svg{
-    stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift-hover)), white var(--edge-lift-hover));
-  }
-}
-
-.edge-left{ left:12px } .edge-right{ right:12px }
-
-/* hover: bigger + deeper shadow */
-.edge:hover{ --edge-scale: 1.18; }
-.edge:hover::before{ filter: blur(6px); opacity: calc(var(--edge-halo-opacity) * 1.25); }
-.edge:hover::after{ opacity: calc(var(--edge-glow-opacity) * 1.25); }
-.edge:hover svg{
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 8px 22px rgba(0,0,0,.35));
-}
-
-/* Titles and bullets */
 .half h2{
   margin:0 0 10px 0;
   font-family:"Space Grotesk", Inter, system-ui;
@@ -179,16 +128,10 @@
   .corner-intro::before, .corner-intro::after{ display:none; }
   .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
   .split-50::after, .split-50::before{ display:none; }
-  .edge-left{ left:10px } .edge-right{ right:10px }
   .bullets{ min-height: 0; }
-
-  /* slightly smaller icons on narrow screens */
-  .edge{ width:56px; height:56px; }
-  .edge::before{ width:62px; height:62px; }
-  .edge::after{ width:84px; height:84px; }
 }
 
-/* ===== Hero vertical shift (content-only) ===== */
+/* ===== Content vertical shift (kept) ===== */
 .hero { --hero-shift: 10vh; }
 .hero .half > * { transform: translateY(var(--hero-shift)); }
 .hero .corner-intro { transform: translateY(var(--hero-shift)); }
@@ -197,21 +140,20 @@
 @media (max-width: 700px){  .hero { --hero-shift: 0; } }
 
 /* =========================================================
-   v29.13 — Bottom-center comet HEAD (static ornament)
-   - Inside = pure white via mask from assets/comet.svg
-   - Outline = 1px yellow ring + 2px cyan ring using stacked drop-shadows
-   - No HTML edits; no layout shift; pointer-events:none
+   Bottom-center COMET HEAD (white interior, dual outline)
+   - Uses assets/comet.svg as a background image (not a mask)
+   - We recolor to pure white with CSS filter (cheap)
+   - Outline via very small ring shadows (low-cost)
    ========================================================= */
 .hero::after{
-  /* Tokens */
-  --comet-size: 56px;                   /* icon size (px) */
-  --comet-bottom: clamp(10px, 2vw, 28px);
-  --comet-rot: 180deg;                  /* “looking down” */
-  --comet-opacity: 0.98;
+  /* Tokens you can tweak */
+  --comet-size: clamp(72px, 8vw, 104px); /* bigger, as requested */
+  --comet-bottom: clamp(12px, 2.2vw, 28px);
+  --comet-rot: 192deg;                   /* angled downward */
+  --comet-opacity: 1;
 
-  /* dual-outline colors (yellow inner, cyan outer) */
-  --comet-stroke1: #ffd24a;             /* warm yellow */
-  --comet-stroke2: #86d6ff;             /* cyan/blue */
+  --ring-yellow: #ffd24a;                /* inner ring */
+  --ring-cyan:   #86d6ff;                /* outer ring */
 
   content:"";
   position:absolute;
@@ -222,41 +164,27 @@
   transform: translateX(-50%) rotate(var(--comet-rot));
   pointer-events:none;
   opacity: var(--comet-opacity);
+  will-change: filter; /* hint for smoothness */
 
-  /* White fill via mask */
-  background: #fff; /* inside of the comet */
-  -webkit-mask-image: url('../comet.svg');
-  mask-image: url('../comet.svg');
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: 50% 50%;
-  mask-position: 50% 50%;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-
-  /* Stroke approximation: stacked zero-blur drop-shadows
-     1px yellow ring + 2px cyan ring + a soft glow */
+  /* White interior: the source icon is dark; invert+brightness -> pure white */
+  background-image: url('../comet.svg');
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: contain;
   filter:
-    /* 1px ring (yellow) */
-    drop-shadow( 1px  0    0 var(--comet-stroke1))
-    drop-shadow(-1px  0    0 var(--comet-stroke1))
-    drop-shadow( 0    1px  0 var(--comet-stroke1))
-    drop-shadow( 0   -1px  0 var(--comet-stroke1))
-    drop-shadow( 1px  1px  0 var(--comet-stroke1))
-    drop-shadow(-1px  1px  0 var(--comet-stroke1))
-    drop-shadow( 1px -1px  0 var(--comet-stroke1))
-    drop-shadow(-1px -1px  0 var(--comet-stroke1))
-
-    /* 2px ring (cyan/blue) */
-    drop-shadow( 2px  0    0 var(--comet-stroke2))
-    drop-shadow(-2px  0    0 var(--comet-stroke2))
-    drop-shadow( 0    2px  0 var(--comet-stroke2))
-    drop-shadow( 0   -2px  0 var(--comet-stroke2))
-    drop-shadow( 2px  2px  0 var(--comet-stroke2))
-    drop-shadow(-2px  2px  0 var(--comet-stroke2))
-    drop-shadow( 2px -2px  0 var(--comet-stroke2))
-    drop-shadow(-2px -2px  0 var(--comet-stroke2))
-
-    /* Soft ambient bloom */
-    drop-shadow(0 4px 6px rgba(134,214,255,.25));
+    invert(1) brightness(1.2) contrast(1.2)
+    /* crisp 1px yellow inner ring (cardinal + diagonals) */
+    drop-shadow( 1px  0    0 var(--ring-yellow))
+    drop-shadow(-1px  0    0 var(--ring-yellow))
+    drop-shadow( 0    1px  0 var(--ring-yellow))
+    drop-shadow( 0   -1px  0 var(--ring-yellow))
+    drop-shadow( 1px  1px  0 var(--ring-yellow))
+    drop-shadow(-1px  1px  0 var(--ring-yellow))
+    drop-shadow( 1px -1px  0 var(--ring-yellow))
+    drop-shadow(-1px -1px  0 var(--ring-yellow))
+    /* soft 2px cyan outer ring (cardinals only to keep it light) */
+    drop-shadow( 0    2px  0 var(--ring-cyan))
+    drop-shadow( 0   -2px  0 var(--ring-cyan))
+    drop-shadow( 2px  0    0 var(--ring-cyan))
+    drop-shadow(-2px  0    0 var(--ring-cyan));
 }
