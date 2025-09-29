@@ -13,16 +13,19 @@
 .hero{
   position: relative !important;
   margin-top: var(--header-h) !important;
-  height: calc(100svh - var(--header-h)) !important;
-  scroll-snap-align: start;
-  z-index: 1;
+  min-height: clamp(540px, 100svh, 980px);
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  place-items: stretch;
+  overflow: clip;
+  --divider-opacity: .7;
 }
 
-/* Two-column split with glowing divider */
+/* Maintain 50/50 split and the mid divider */
 .split-50{
   position:relative;
   display:grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns:1fr 1fr;
   gap:0;
   inline-size:100%;
   block-size:100%;
@@ -38,127 +41,95 @@
 .split-50::before{
   content:"";
   position:absolute; inset-block:0; inset-inline-start:50%;
-  width: var(--divider-glow-width); transform:translateX(-50%);
-  background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
-  filter: blur(var(--divider-glow-blur));
-  opacity:.42; pointer-events:none;
-}
-
-/* Corner intro paragraphs + equal-length rails */
-.corner-intro{
-  position:absolute; z-index:2; top: var(--intro-top);
-  width: var(--intro-width);
-  line-height:1.48;
-  font-size: clamp(14px, 1.05vw, 16px);
-  color: rgba(233,233,238,.96);
-  text-shadow: 0 0 10px rgba(0,0,0,.45);
+  width: 44px; transform: translateX(-50%);
+  background:
+    radial-gradient(40px 280px at 50% 50%,
+      rgba(120,120,200,.22), transparent 60%);
+  filter: blur(.5px);
   pointer-events:none;
-
-  text-align: justify;
-  text-justify: inter-word;
-  -webkit-hyphens:auto; hyphens:auto;
-  overflow-wrap:anywhere; text-wrap: pretty;
-
-  /* keep text off the rails on both sides */
-  padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
-  padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w));
-}
-.corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
-.corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
-
-/* Rails: equal length and centered on the text block */
-.corner-intro::before,
-.corner-intro::after{
-  content:""; position:absolute; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
-  height: var(--rail-height);
-  top: calc(50% + var(--rail-offset)); transform: translateY(-50%);
-  pointer-events:none; background-repeat:no-repeat;
-}
-.corner-intro::before{
-  left:0;
-  background:
-    linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
-      left center / var(--intro-rail-w) 100% no-repeat,
-    radial-gradient(100% 60% at left center, rgba(var(--brand-glow1-rgb), .22) 0, rgba(0,0,0,0) 65%);
-}
-.corner-intro::after{
-  right:0;
-  background:
-    linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha)), rgba(255,255,255,0))
-      right center / var(--intro-rail-w) 100% no-repeat,
-    radial-gradient(100% 60% at right center, rgba(var(--brand-glow2-rgb), .22) 0, rgba(0,0,0,0) 65%);
 }
 
-/* Clickable halves */
+/* Two halves */
 .half{
-  display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
-  inline-size:100%; block-size:100%; text-decoration:none; color:var(--fg);
-  background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none;
-  transition: background-color .25s ease, backdrop-filter .25s ease, transform .25s ease, box-shadow .25s ease, opacity .25s ease;
-  position:relative; isolation:isolate; padding: 0 clamp(18px, 3.5vw, 48px);
-}
-.half:hover{
-  background: var(--frost-bg);
-  -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(115%);
-  backdrop-filter: blur(var(--frost-blur)) saturate(115%);
-  box-shadow: var(--frost-shadow);
+  position:relative;
+  display:grid;
+  grid-template-rows: auto 1fr auto;
+  padding: clamp(16px, 3.2vw, 36px);
+  align-content: center;
+  gap: clamp(10px, 2vw, 22px);
+  overflow:hidden;
 }
 
-/* ===== Icon-only edge controls (chevrons) ===== */
-
-/* tunables (indigo/blue-purple) */
-.hero{
-  --edge-halo-opacity: .10;                    /* set to 0 to remove halo entirely */
-  --edge-glow-opacity: .14;
-  --edge-stroke: #6a6af7;                      /* base indigo/violet hue */
-  --edge-lift: 22%;                            /* lift toward white */
-  --edge-lift-hover: 30%;                      /* a bit brighter on hover */
-  --edge-stroke-w: 3.6;
+/* Titles "Photography" / "Videography" stay aligned */
+.half .title{
+  font-family: var(--font-display, "Space Grotesk", system-ui, sans-serif);
+  font-weight:700;
+  letter-spacing:.02em;
+  font-size: clamp(28px, 6vw, 72px);
+  line-height: 1;
+  text-transform: none;
 }
 
+/* Bulleted lists (features) */
+.half .list{
+  display:grid; gap: .55em;
+  font: 500 clamp(14px, 1.6vw, 18px)/1.45 var(--font-sans, Inter, system-ui, sans-serif);
+  opacity:.92;
+}
+
+/* Rails / chevrons */
 .edge{
   position:absolute;
-  top: calc(50% - var(--header-h) / 2);        /* viewport-true center */
-  transform: translateY(-50%);
-  z-index:2;
-  width:64px; height:64px;
-  pointer-events:auto; cursor: pointer;
+  top:50%; transform: translateY(-50%);
+  inline-size: clamp(52px, 6vw, 84px);
+  block-size: clamp(52px, 6vw, 84px);
+  display:grid; place-items:center;
+  border-radius: 999px;
+  background:
+    radial-gradient(40% 40% at 50% 50%, rgba(50,60,160,.20), transparent 70%),
+    radial-gradient(70% 100% at 50% 50%, rgba(40,50,140,.10), transparent 60%);
+  box-shadow:
+    inset 0 0 0 1px rgba(100,120,250,.10),
+    0 10px 30px rgba(0,0,0,.20);
+  cursor:pointer;
+  transition: background .2s ease, transform .2s ease;
+}
+.edge:hover{
+  transform: translateY(-50%) scale(1.03);
+  background:
+    radial-gradient(42% 42% at 50% 50%, rgba(80,90,220,.26), transparent 70%),
+    radial-gradient(70% 100% at 50% 50%, rgba(60,70,200,.16), transparent 60%);
 }
 
-/* halo + glow */
-.edge::before,
-.edge::after{
-  content:"";
-  position:absolute; inset:50% auto auto 50%;
-  transform: translate(-50%,-50%);
-  border-radius:50%;
-  pointer-events:none;
-}
-.edge::before{
-  width:72px; height:72px;
-  background: radial-gradient(closest-side, rgba(255,255,255,.6), rgba(255,255,255,0) 75%);
-  filter: blur(8px);
-  opacity: var(--edge-halo-opacity);
-}
-.edge::after{
-  width:96px; height:96px;
-  background: radial-gradient(closest-side, rgba(102,120,255,.22), rgba(0,0,0,0) 70%);
-  filter: blur(10px);
-  opacity: var(--edge-glow-opacity);
-}
-
-/* svg chevrons */
+/* Edge icons */
 .edge svg{
-  width:100%; height:100%;
-  display:block;
-  stroke: var(--edge-stroke);
-  stroke-width: var(--edge-stroke-w);
-  fill:none; stroke-linecap:round; stroke-linejoin:round;
+  width: 54%;
+  height: 54%;
+  stroke: #a6b1ff;              /* indigo/blue-purple */
+  stroke-width: 2.2;
+  fill: none;
+  filter:
+    drop-shadow(0 1px 1px rgba(0,0,0,.45))
+    drop-shadow(0 8px 18px rgba(90,100,220,.20));
   transition: transform .2s ease, filter .2s ease, opacity .2s ease;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)) drop-shadow(0 6px 15px rgba(0,0,0,.30));
+}
+.edge:hover svg{
+  transform: translateZ(0) scale(1.04);
+  filter:
+    drop-shadow(0 1px 1px rgba(0,0,0,.55))
+    drop-shadow(0 10px 22px rgba(90,100,220,.28));
 }
 
-/* use color-mix when available for the lifted tone */
+/* Edge positions (left/right) */
+.edge.left{ inset-inline-start: clamp(8px, 2.2vw, 18px); }
+.edge.right{ inset-inline-end: clamp(8px, 2.2vw, 18px); }
+
+/* Color lift for contrast on light bg */
+:root{
+  --edge-stroke: #9aa5ff;
+  --edge-lift: 18%;
+  --edge-lift-hover: 26%;
+}
 @supports (color: color-mix(in srgb, white, black)){
   .edge svg{
     stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift)), white var(--edge-lift));
@@ -168,58 +139,8 @@
   }
 }
 
-.edge-left{ left:12px } .edge-right{ right:12px }
-
-/* hover: bigger + deeper shadow */
-.edge:hover{ --edge-scale: 1.18; }
-.edge:hover::before{ filter: blur(6px); opacity: calc(var(--edge-halo-opacity) * 1.25); }
-.edge:hover::after{ opacity: calc(var(--edge-glow-opacity) * 1.25); }
-.edge:hover svg{
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 8px 22px rgba(0,0,0,.35));
-}
-
-/* Titles and bullets */
-.half h2{
-  margin:0 0 10px 0;
-  font-family:"Space Grotesk", Inter, system-ui;
-  font-size: clamp(28px, 3.6vw, 56px);
-  letter-spacing:.10em; text-transform:uppercase;
-  text-shadow:0 2px 18px rgba(0,0,0,.45);
-  pointer-events:none; text-align:center;
-}
-.bullets{
-  margin:0; padding:0; list-style:none;
-  display:flex; flex-wrap:wrap; justify-content:center; gap:.35rem .9rem;
-  color:var(--muted); font-size: clamp(12px, 1vw, 15px); line-height:1.35;
-  min-height: calc(1.35em * 2 + 6px); text-align:center; opacity:.95;
-}
-.bullets li{ display:inline-flex; align-items:center; white-space:nowrap; }
-.bullets li::before{ content:"•"; opacity:.7; margin-right:.55rem; }
-.bullets li:first-child::before{ content:""; margin:0; }
-
-/* ===== Responsive (hero only) ===== */
-@media (max-width: 900px){
-  .corner-intro{
-    position:static; margin: 10px 16px 0;
-    width: min(92vw, var(--intro-width));
-    text-align:left; text-align-last:left;
-    background: none; border-radius: 0;
-    padding: 0;
-  }
-  .corner-intro::before, .corner-intro::after{ display:none; }
-  .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
-  .split-50::after, .split-50::before{ display:none; }
-  .edge-left{ left:10px } .edge-right{ right:10px }
-  .bullets{ min-height: 0; }
-
-  /* slightly smaller icons on narrow screens */
-  .edge{ width:56px; height:56px; }
-  .edge::before{ width:62px; height:62px; }
-  .edge::after{ width:84px; height:84px; }
-}
-
-/* ===== Hero vertical shift (content-only) ===== */
-.hero { --hero-shift: 10vh; }
+/* Vertical content shift (keeps frost correct on hover) */
+.hero { --hero-shift: 6vh; }
 .hero .half > * { transform: translateY(var(--hero-shift)); }
 .hero .corner-intro { transform: translateY(var(--hero-shift)); }
 @media (max-width: 1200px){ .hero { --hero-shift: 8vh; } }
@@ -231,12 +152,12 @@
   /* tweak these if needed */
   --comet-size: clamp(80px, 8vw, 120px);
   --comet-bottom: clamp(14px, 2.2vw, 30px);
-  --comet-rot: 200deg; /* pointing downward */
+  --comet-rot: 0deg; /* vector already points down */
 
   content:"";
   position:absolute; left:50%; bottom:var(--comet-bottom);
-  width:var(--comet-size); aspect-ratio:1/1;
+  width:var(--comet-size); aspect-ratio: 160 / 200; /* match comet.svg viewBox */
   transform: translateX(-50%) rotate(var(--comet-rot));
-  background: center / contain no-repeat url('../comet.svg'); /* your yellow icon */
+  background: center / contain no-repeat url('../comet.svg'); /* yellow icon */
   pointer-events:none;
 }
