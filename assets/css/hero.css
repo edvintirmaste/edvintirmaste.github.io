@@ -1,4 +1,4 @@
-/* Edvin Portfolio — hero.css (v29.12)
+/* Edvin Portfolio — hero.css (v29.12 + comet placement)
    v29.6  content-only vertical shift (keeps hover frost correct)
    v29.7  arrows centered to viewport
    v29.8  light-bg contrast halo
@@ -6,6 +6,7 @@
    v29.10 arrows use site bg color + softened halo
    v29.11 same hue, lighter tone via color-mix
    v29.12 chevrons recolored to indigo/blue-purple + matching glow
+   + comet: static bottom-center ornament (uses assets/comet.svg), no filters
 */
 
 /* ---- Layout lock ---- */
@@ -224,3 +225,18 @@
 @media (max-width: 1200px){ .hero { --hero-shift: 8vh; } }
 @media (max-width: 900px){  .hero { --hero-shift: 0; } }
 @media (max-width: 700px){  .hero { --hero-shift: 0; } }
+
+/* ===== Comet placement (static, no filters) ===== */
+.hero::after{
+  /* tweak these if needed */
+  --comet-size: clamp(80px, 8vw, 120px);
+  --comet-bottom: clamp(14px, 2.2vw, 30px);
+  --comet-rot: 200deg; /* pointing downward */
+
+  content:"";
+  position:absolute; left:50%; bottom:var(--comet-bottom);
+  width:var(--comet-size); aspect-ratio:1/1;
+  transform: translateX(-50%) rotate(var(--comet-rot));
+  background: center / contain no-repeat url('../comet.svg'); /* your yellow icon */
+  pointer-events:none;
+}
