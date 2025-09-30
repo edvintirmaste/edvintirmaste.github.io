@@ -10,11 +10,8 @@
    + FIX: scroll-snap respects fixed header; restore min-height instead of hard height
 */
 
-/* ---------- SCROLL SNAP FIX (container-level) ----------
-   We have a fixed header. Without scroll-padding-top the browser snaps to the wrong target,
-   making it "rubber band" back to the Photography section. */
+/* ---------- SCROLL SNAP FIX (container-level) ---------- */
 html{
-  /* If base.css sets a different type, this later rule wins in cascade order. */
   scroll-snap-type: y proximity;
   scroll-padding-top: var(--header-h);
 }
@@ -23,17 +20,12 @@ html{
 .hero{
   position: relative !important;
   margin-top: var(--header-h) !important;
-
-  /* Restore original behavior: full viewport feel but not a hard lock that can fight snapping */
   min-height: clamp(540px, 100svh, 980px);
-
   display:grid;
   grid-template-columns: 1fr 1fr;
   place-items: stretch;
   overflow: clip;
   --divider-opacity: .7;
-
-  /* Keep snapping available, now offset by scroll-padding-top above */
   scroll-snap-align: start;
   z-index: 1;
 }
@@ -76,17 +68,16 @@ html{
   overflow:hidden;
 }
 
-/* Titles "Photography" / "Videography" stay aligned */
+/* Titles */
 .half .title{
   font-family: var(--font-display, "Space Grotesk", system-ui, sans-serif);
   font-weight:700;
   letter-spacing:.02em;
   font-size: clamp(28px, 6vw, 72px);
   line-height: 1;
-  text-transform: none;
 }
 
-/* Bulleted lists (features) */
+/* Bulleted lists */
 .half .list{
   display:grid; gap: .55em;
   font: 500 clamp(14px, 1.6vw, 18px)/1.45 var(--font-sans, Inter, system-ui, sans-serif);
@@ -116,31 +107,20 @@ html{
     radial-gradient(42% 42% at 50% 50%, rgba(80,90,220,.26), transparent 70%),
     radial-gradient(70% 100% at 50% 50%, rgba(60,70,200,.16), transparent 60%);
 }
-
-/* Edge icons */
 .edge svg{
-  width: 54%;
-  height: 54%;
-  stroke: #a6b1ff;              /* indigo/blue-purple */
-  stroke-width: 2.2;
-  fill: none;
-  filter:
-    drop-shadow(0 1px 1px rgba(0,0,0,.45))
-    drop-shadow(0 8px 18px rgba(90,100,220,.20));
+  width: 54%; height: 54%;
+  stroke: #a6b1ff; stroke-width: 2.2; fill: none;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.45)) drop-shadow(0 8px 18px rgba(90,100,220,.20));
   transition: transform .2s ease, filter .2s ease, opacity .2s ease;
 }
 .edge:hover svg{
   transform: translateZ(0) scale(1.04);
-  filter:
-    drop-shadow(0 1px 1px rgba(0,0,0,.55))
-    drop-shadow(0 10px 22px rgba(90,100,220,.28));
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.55)) drop-shadow(0 10px 22px rgba(90,100,220,.28));
 }
-
-/* Edge positions (left/right) */
 .edge.left{ inset-inline-start: clamp(8px, 2.2vw, 18px); }
 .edge.right{ inset-inline-end: clamp(8px, 2.2vw, 18px); }
 
-/* Color lift for contrast on light bg */
+/* Color lift */
 :root{
   --edge-stroke: #9aa5ff;
   --edge-lift: 18%;
@@ -155,7 +135,7 @@ html{
   }
 }
 
-/* Vertical content shift (keeps frost correct on hover) */
+/* Vertical content shift */
 .hero { --hero-shift: 6vh; }
 .hero .half > * { transform: translateY(var(--hero-shift)); }
 .hero .corner-intro { transform: translateY(var(--hero-shift)); }
@@ -163,7 +143,7 @@ html{
 @media (max-width: 900px){  .hero { --hero-shift: 0; } }
 @media (max-width: 700px){  .hero { --hero-shift: 0; } }
 
-/* ===== Icon-only edge controls (alternate set) ===== */
+/* ===== Icon-only edge controls (alt set) ===== */
 .hero{
   --edge-halo-opacity: .10;
   --edge-glow-opacity: .14;
@@ -205,9 +185,7 @@ html{
   stroke-width: var(--edge-stroke-w);
   fill:none; stroke-linecap:round; stroke-linejoin:round;
   transition: transform .2s ease, filter .2s ease, opacity .2s ease;
-  filter:
-    drop-shadow(0 1px 2px rgba(0,0,0,.6))
-    drop-shadow(0 6px 15px rgba(0,0,0,.30));
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)) drop-shadow(0 6px 15px rgba(0,0,0,.30));
 }
 @supports (color: color-mix(in srgb, white, black)){
   .edge svg{
@@ -243,19 +221,10 @@ html{
 
 /* ===== Responsive (hero only) ===== */
 @media (max-width: 900px){
-  .corner-intro{
-    position:static; margin: 10px 16px 0;
-    width: min(92vw, var(--intro-width));
-    text-align:left; text-align-last:left;
-    background: none; border-radius: 0;
-    padding: 0;
-  }
-  .corner-intro::before, .corner-intro::after{ display:none; }
   .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
   .split-50::after, .split-50::before{ display:none; }
   .edge-left{ left:10px } .edge-right{ right:10px }
   .bullets{ min-height: 0; }
-
   .edge{ width:56px; height:56px; }
   .edge::before{ width:62px; height:62px; }
   .edge::after{ width:84px; height:84px; }
@@ -269,15 +238,15 @@ html{
 @media (max-width: 900px){  .hero { --hero-shift: 0; } }
 @media (max-width: 700px){  .hero { --hero-shift: 0; } }
 
-/* ===== Comet placement (static, no filters) ===== */
+/* ===== Comet placement (bigger) ===== */
 .hero::after{
-  --comet-size: clamp(80px, 8vw, 120px);
+  --comet-size: clamp(96px, 10vw, 150px); /* was: clamp(80px, 8vw, 120px) */
   --comet-bottom: clamp(14px, 2.2vw, 30px);
-  --comet-rot: 0deg; /* asset itself points down; don't rotate the box */
+  --comet-rot: 0deg; /* asset points down */
 
   content:"";
   position:absolute; left:50%; bottom:var(--comet-bottom);
-  width:var(--comet-size); aspect-ratio: 160 / 200; /* match comet.svg viewBox */
+  width:var(--comet-size); aspect-ratio: 160 / 200;
   transform: translateX(-50%) rotate(var(--comet-rot));
   background: center / contain no-repeat url('../comet.svg');
   pointer-events:none;
