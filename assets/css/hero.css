@@ -1,24 +1,28 @@
-/* Edvin Portfolio — hero.css (v29.12 — restored titles + rails + comet)
-   Scope: split hero + divider + corner intros + chevrons + comet (bottom-center).
-   Visual parity with the playbook baseline. */
+/* Edvin Portfolio — hero.css (v29.12 + comet placement)
+   v29.6  content-only vertical shift (keeps hover frost correct)
+   v29.7  arrows centered to viewport
+   v29.8  light-bg contrast halo
+   v29.9  icon-only chevrons
+   v29.10 arrows use site bg color + softened halo
+   v29.11 same hue, lighter tone via color-mix
+   v29.12 chevrons recolored to indigo/blue-purple + matching glow
+   + comet: static bottom-center ornament (uses assets/comet.svg), no filters
+*/
 
 /* ---- Layout lock ---- */
 .hero{
   position: relative !important;
   margin-top: var(--header-h) !important;
-  min-height: clamp(540px, 100svh, 980px);
-  display:grid;
-  grid-template-columns: 1fr 1fr;
-  place-items: stretch;
-  overflow: clip;
-  --divider-opacity: .7;
+  height: calc(100svh - var(--header-h)) !important;
+  scroll-snap-align: start;
+  z-index: 1;
 }
 
-/* 50/50 split with glowing divider */
+/* Two-column split with glowing divider */
 .split-50{
   position:relative;
   display:grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap:0;
   inline-size:100%;
   block-size:100%;
@@ -28,7 +32,7 @@
   position:absolute; inset-block:0; inset-inline-start:50%;
   width:1px; transform:translateX(-.5px);
   background: linear-gradient(to bottom, transparent, rgba(255,255,255,.18), transparent);
-  opacity:var(--divider-opacity);
+  opacity:var(--divider-opacity, .7);
   pointer-events:none;
 }
 .split-50::before{
@@ -55,38 +59,38 @@
   -webkit-hyphens:auto; hyphens:auto;
   overflow-wrap:anywhere; text-wrap: pretty;
 
-  padding-left:  calc(var(--intro-rail-gap, 14px) + var(--intro-rail-w, 3px));
-  padding-right: calc(var(--intro-rail-gap, 14px) + var(--intro-rail-w, 3px));
+  padding-left:  calc(14px + 3px);
+  padding-right: calc(14px + 3px);
 }
-.corner-intro.left  { left:  calc(50% - var(--intro-gap, 96px) - var(--intro-width, 48ch));  text-align-last:left; }
-.corner-intro.right { right: calc(50% - var(--intro-gap, 96px) - var(--intro-width, 48ch));  text-align-last:right; }
+.corner-intro.left  { left:  calc(50% - 96px - var(--intro-width, 48ch));  text-align-last:left; }
+.corner-intro.right { right: calc(50% - 96px - var(--intro-width, 48ch));  text-align-last:right; }
 
-/* Rails: equal length, centered on the block */
+/* Rails */
 .corner-intro::before,
 .corner-intro::after{
   content:""; position:absolute;
-  width: calc(var(--intro-glow-w, 40px) + var(--intro-rail-w, 3px));
-  height: var(--rail-height, 5.8lh);
-  top: calc(50% + var(--rail-offset, 0lh));
+  width: calc(40px + 3px);
+  height: 5.8lh;
+  top: 50%;
   transform: translateY(-50%);
   pointer-events:none; background-repeat:no-repeat;
 }
 .corner-intro::before{
   left:0;
   background:
-    linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha, .45)), rgba(255,255,255,0))
-      left center / var(--intro-rail-w, 3px) 100% no-repeat,
-    radial-gradient(100% 60% at left center, rgba(120,160,255, var(--intro-glow-alpha, .28)) 0, rgba(0,0,0,0) 65%);
+    linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0))
+      left center / 3px 100% no-repeat,
+    radial-gradient(100% 60% at left center, rgba(120,160,255, .28) 0, rgba(0,0,0,0) 65%);
 }
 .corner-intro::after{
   right:0;
   background:
-    linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha, .45)), rgba(255,255,255,0))
-      right center / var(--intro-rail-w, 3px) 100% no-repeat,
-    radial-gradient(100% 60% at right center, rgba(120,160,255, var(--intro-glow-alpha, .28)) 0, rgba(0,0,0,0) 65%);
+    linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0))
+      right center / 3px 100% no-repeat,
+    radial-gradient(100% 60% at right center, rgba(120,160,255, .28) 0, rgba(0,0,0,0) 65%);
 }
 
-/* Two clickable halves */
+/* Halves */
 .half{
   position:relative;
   display:grid;
@@ -97,7 +101,7 @@
   overflow:hidden;
 }
 
-/* ===== TITLES (restore uppercase look) ===== */
+/* TITLES (uppercase) */
 .half .title,
 .half .title a{
   font-family: var(--font-display, "Space Grotesk", system-ui, sans-serif);
@@ -112,17 +116,17 @@
   pointer-events:auto;
 }
 
-/* Bulleted lists under titles */
+/* Bullets */
 .half .list{
   display:grid; gap: .55em;
   font: 500 clamp(12px, 1.2vw, 15px)/1.35 var(--font-sans, Inter, system-ui, sans-serif);
   opacity:.95;
 }
 
-/* Edge chevrons (icon-only) */
+/* Chevrons (icon-only) */
 .edge{
   position:absolute;
-  top: calc(50% - var(--header-h) / 2);        /* viewport middle */
+  top: calc(50% - var(--header-h) / 2);
   transform: translateY(-50%);
   z-index:2;
   width:64px; height:64px;
@@ -138,7 +142,7 @@
 }
 .edge-left{ left:12px } .edge-right{ right:12px }
 
-/* Content-only vertical shift (keeps frost coverage) */
+/* Content-only vertical shift */
 .hero { --hero-shift: 10vh; }
 .hero .half > * { transform: translateY(var(--hero-shift)); }
 .hero .corner-intro { transform: translateY(var(--hero-shift)); }
@@ -155,19 +159,17 @@
   .edge{ width:56px; height:56px; }
 }
 
-/* ===== Comet (bottom-center) — original size ===== */
+/* ===== Comet placement (static, no filters) ===== */
 .hero::after{
-  --comet-size: clamp(80px, 8vw, 120px);   /* original */
+  --comet-size: clamp(80px, 8vw, 120px);
   --comet-bottom: clamp(14px, 2.2vw, 30px);
-  --comet-rot: 0deg; /* asset points down */
+  --comet-rot: 200deg; /* pointing downward in original artwork */
 
   content:"";
   position:absolute; left:50%; bottom:var(--comet-bottom);
   width:var(--comet-size);
-  aspect-ratio: 160 / 200; /* match comet.svg viewBox */
+  aspect-ratio: 1 / 1;
   transform: translateX(-50%) rotate(var(--comet-rot));
-  background: center / contain no-repeat url('../comet.svg');
+  background: center / contain no-repeat url('../comet.svg'); /* yellow icon */
   pointer-events:none;
-  z-index: 6;
-  -webkit-mask-image: linear-gradient(#000 0 0);
 }
