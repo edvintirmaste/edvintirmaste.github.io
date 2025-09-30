@@ -1,15 +1,15 @@
-/* Edvin Portfolio — hero.css (stabilized)
-   - Restores uppercase, centered titles with strong specificity (won’t be overridden)
-   - Hero-only link reset so headings never go purple/underlined
-   - Comet shows reliably: explicit height (no aspect-ratio dependency on pseudo-elements)
-   - Keep layout/divider/glows as before
+/* Edvin Portfolio — hero.css (v29.12 — stabilized)
+   What’s different from your baseline:
+   • Stronger selectors so headings/links can’t get overridden
+   • Hero-only link reset (no purple/underlines)
+   • Comet kept bottom-center; size = original (you can bump later by editing --comet-size)
 */
 
 /* ---- Layout lock ---- */
 .hero{
   position: relative !important;
   margin-top: var(--header-h) !important;
-  height: calc(100svh - var(--header-h)) !important;
+  height: calc(100svh - var(--header-h)) !important; /* baseline behavior */
   scroll-snap-align: start;
   z-index: 1;
 }
@@ -97,7 +97,6 @@
 /* Hero-only link reset so headings never become purple/underlined */
 .half, .half a{ color:inherit !important; text-decoration:none !important; }
 
-/* Hover frost */
 .half:hover{
   background: var(--frost-bg);
   -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(115%);
@@ -105,42 +104,61 @@
   box-shadow: var(--frost-shadow);
 }
 
-/* ===== Chevrons (icon-only) ===== */
+/* ===== Icon-only edge controls (chevrons) ===== */
 .hero{
   --edge-halo-opacity: .10;
   --edge-glow-opacity: .14;
   --edge-stroke: #6a6af7;
+  --edge-lift: 22%;
+  --edge-lift-hover: 30%;
   --edge-stroke-w: 3.6;
 }
+
 .edge{
   position:absolute;
-  top: calc(50% - var(--header-h) / 2);
+  top: calc(50% - var(--header-h) / 2);        /* viewport-true center */
   transform: translateY(-50%);
   z-index:2;
   width:64px; height:64px;
   pointer-events:auto; cursor: pointer;
 }
 .edge-left{ left:12px } .edge-right{ right:12px }
-.edge::before, .edge::after{
-  content:""; position:absolute; inset:50% auto auto 50%;
-  transform: translate(-50%,-50%); border-radius:50%; pointer-events:none;
+
+/* halo + glow */
+.edge::before,
+.edge::after{
+  content:"";
+  position:absolute; inset:50% auto auto 50%;
+  transform: translate(-50%,-50%);
+  border-radius:50%;
+  pointer-events:none;
 }
 .edge::before{
   width:72px; height:72px;
   background: radial-gradient(closest-side, rgba(255,255,255,.6), rgba(255,255,255,0) 75%);
-  filter: blur(8px); opacity: var(--edge-halo-opacity);
+  filter: blur(8px);
+  opacity: var(--edge-halo-opacity);
 }
 .edge::after{
   width:96px; height:96px;
   background: radial-gradient(closest-side, rgba(102,120,255,.22), rgba(0,0,0,0) 70%);
-  filter: blur(10px); opacity: var(--edge-glow-opacity);
+  filter: blur(10px);
+  opacity: var(--edge-glow-opacity);
 }
+
+/* svg chevrons */
 .edge svg{
   width:100%; height:100%; display:block;
   stroke: var(--edge-stroke); stroke-width: var(--edge-stroke-w);
   fill:none; stroke-linecap:round; stroke-linejoin:round;
   transition: transform .2s ease, filter .2s ease, opacity .2s ease;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)) drop-shadow(0 6px 15px rgba(0,0,0,.30));
+}
+.edge:hover{ --edge-scale: 1.18; }
+.edge:hover::before{ filter: blur(6px); opacity: calc(var(--edge-halo-opacity) * 1.25); }
+.edge:hover::after{ opacity: calc(var(--edge-glow-opacity) * 1.25); }
+.edge:hover svg{
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 8px 22px rgba(0,0,0,.35));
 }
 
 /* ===== TITLES (strong specificity so nothing overrides) ===== */
@@ -161,7 +179,7 @@
   text-align:center !important;
 }
 
-/* Bulleted lists under titles */
+/* Bullets */
 .half .list{
   display:grid; gap: .55em;
   font: 500 clamp(12px, 1.2vw, 15px)/1.35 var(--font-sans, Inter, system-ui, sans-serif);
@@ -192,40 +210,22 @@
 @media (max-width: 900px){  .hero { --hero-shift: 0; } }
 @media (max-width: 700px){  .hero { --hero-shift: 0; } }
 
-/* ===== Comet (bottom-center) — robust sizing =====
-   Choose ONE of the two orientation blocks below.
-   A) ORIGINAL artwork (sideways → needs 200deg rotate, square box)
-   B) ROTATED artwork (already pointing down → 0deg + 160:200 box)
-*/
-
-/* --- A) If assets/comet.svg is the ORIGINAL (needs rotation) --- */
+/* ===== Comet (bottom-center) ===== */
 .hero::after{
-  --comet-w: clamp(92px, 9.5vw, 144px);       /* tweak size here */
+  --comet-size: clamp(80px, 8vw, 120px); /* bump later if you want (e.g., 92/9.5vw/144) */
   --comet-bottom: clamp(14px, 2.2vw, 30px);
 
+  /* Pick ONE of these two depending on your asset orientation:
+     1) If assets/comet.svg is the ORIGINAL (sideways) artwork:      use 200deg + 1/1
+     2) If assets/comet.svg was ROTATED earlier (already points down): use 0deg + 160/200
+  */
+  --comet-rot: 200deg;
   content:"";
   position:absolute; left:50%; bottom:var(--comet-bottom);
-  width: var(--comet-w);
-  height: var(--comet-w);                       /* explicit height so it renders */
-  transform: translateX(-50%) rotate(200deg);
+  width:var(--comet-size);
+  aspect-ratio: 1 / 1;
+  transform: translateX(-50%) rotate(var(--comet-rot));
   background: center / contain no-repeat url('../comet.svg');
-  pointer-events:none; z-index:6; opacity:1;
+  pointer-events:none;
+  z-index:6;
 }
-
-/* --- B) If assets/comet.svg is ALREADY ROTATED (points down) ---
-   Uncomment this block and delete the A block above.
-*/
-/*
-.hero::after{
-  --comet-w: clamp(92px, 9.5vw, 144px);
-  --comet-bottom: clamp(14px, 2.2vw, 30px);
-
-  content:"";
-  position:absolute; left:50%; bottom:var(--comet-bottom);
-  width: var(--comet-w);
-  height: calc(var(--comet-w) * 200 / 160);    /* 160:200 viewBox — reliable on pseudo-element */
-  transform: translateX(-50%) rotate(0deg);
-  background: center / contain no-repeat url('../comet.svg');
-  pointer-events:none; z-index:6; opacity:1;
-}
-*/
