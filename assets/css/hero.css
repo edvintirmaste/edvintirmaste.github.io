@@ -1,14 +1,6 @@
-/* Edvin Portfolio — hero.css (v29.12 — REVERT + SNAP OFF HOTFIX)
-   Purpose: restore working hero and stop rubber-banding caused by root scroll-snap.
-*/
-
-/* ===== SNAP OFF HOTFIX (global) =====
-   Remove if/when we re-enable snapping properly.
-*/
-html, body, main, #page {
-  scroll-snap-type: none !important;
-  scroll-padding-top: 0 !important;
-}
+/* Edvin Portfolio — hero.css (v29.12 — restored titles + rails + comet)
+   Scope: split hero + divider + corner intros + chevrons + comet (bottom-center).
+   Visual parity with the playbook baseline. */
 
 /* ---- Layout lock ---- */
 .hero{
@@ -20,10 +12,9 @@ html, body, main, #page {
   place-items: stretch;
   overflow: clip;
   --divider-opacity: .7;
-  /* (snap removed) */
 }
 
-/* Maintain 50/50 split and the mid divider */
+/* 50/50 split with glowing divider */
 .split-50{
   position:relative;
   display:grid;
@@ -44,13 +35,58 @@ html, body, main, #page {
   content:"";
   position:absolute; inset-block:0; inset-inline-start:50%;
   width: 44px; transform: translateX(-50%);
-  background:
-    radial-gradient(40px 280px at 50% 50%, rgba(120,120,200,.22), transparent 60%);
+  background: radial-gradient(40px 280px at 50% 50%, rgba(120,120,200,.22), transparent 60%);
   filter: blur(.5px);
   pointer-events:none;
 }
 
-/* Two halves */
+/* Corner intro paragraphs + equal-length rails */
+.corner-intro{
+  position:absolute; z-index:2; top: var(--intro-top, 12.5vh);
+  width: var(--intro-width, 48ch);
+  line-height:1.48;
+  font-size: clamp(14px, 1.05vw, 16px);
+  color: rgba(233,233,238,.96);
+  text-shadow: 0 0 10px rgba(0,0,0,.45);
+  pointer-events:none;
+
+  text-align: justify;
+  text-justify: inter-word;
+  -webkit-hyphens:auto; hyphens:auto;
+  overflow-wrap:anywhere; text-wrap: pretty;
+
+  padding-left:  calc(var(--intro-rail-gap, 14px) + var(--intro-rail-w, 3px));
+  padding-right: calc(var(--intro-rail-gap, 14px) + var(--intro-rail-w, 3px));
+}
+.corner-intro.left  { left:  calc(50% - var(--intro-gap, 96px) - var(--intro-width, 48ch));  text-align-last:left; }
+.corner-intro.right { right: calc(50% - var(--intro-gap, 96px) - var(--intro-width, 48ch));  text-align-last:right; }
+
+/* Rails: equal length, centered on the block */
+.corner-intro::before,
+.corner-intro::after{
+  content:""; position:absolute;
+  width: calc(var(--intro-glow-w, 40px) + var(--intro-rail-w, 3px));
+  height: var(--rail-height, 5.8lh);
+  top: calc(50% + var(--rail-offset, 0lh));
+  transform: translateY(-50%);
+  pointer-events:none; background-repeat:no-repeat;
+}
+.corner-intro::before{
+  left:0;
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha, .45)), rgba(255,255,255,0))
+      left center / var(--intro-rail-w, 3px) 100% no-repeat,
+    radial-gradient(100% 60% at left center, rgba(120,160,255, var(--intro-glow-alpha, .28)) 0, rgba(0,0,0,0) 65%);
+}
+.corner-intro::after{
+  right:0;
+  background:
+    linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--intro-rail-alpha, .45)), rgba(255,255,255,0))
+      right center / var(--intro-rail-w, 3px) 100% no-repeat,
+    radial-gradient(100% 60% at right center, rgba(120,160,255, var(--intro-glow-alpha, .28)) 0, rgba(0,0,0,0) 65%);
+}
+
+/* Two clickable halves */
 .half{
   position:relative;
   display:grid;
@@ -61,101 +97,74 @@ html, body, main, #page {
   overflow:hidden;
 }
 
-/* Titles "Photography" / "Videography" */
-.half .title{
+/* ===== TITLES (restore uppercase look) ===== */
+.half .title,
+.half .title a{
   font-family: var(--font-display, "Space Grotesk", system-ui, sans-serif);
   font-weight:700;
-  letter-spacing:.02em;
-  font-size: clamp(28px, 6vw, 72px);
+  letter-spacing:.10em;
+  font-size: clamp(28px, 3.6vw, 56px);
   line-height: 1;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: inherit;
+  text-shadow:0 2px 18px rgba(0,0,0,.45);
+  pointer-events:auto;
 }
 
-/* Bulleted lists */
+/* Bulleted lists under titles */
 .half .list{
   display:grid; gap: .55em;
-  font: 500 clamp(14px, 1.6vw, 18px)/1.45 var(--font-sans, Inter, system-ui, sans-serif);
-  opacity:.92;
+  font: 500 clamp(12px, 1.2vw, 15px)/1.35 var(--font-sans, Inter, system-ui, sans-serif);
+  opacity:.95;
 }
 
-/* Edge buttons (chevrons) */
+/* Edge chevrons (icon-only) */
 .edge{
   position:absolute;
-  top:50%; transform: translateY(-50%);
-  inline-size: clamp(52px, 6vw, 84px);
-  block-size: clamp(52px, 6vw, 84px);
-  display:grid; place-items:center;
-  border-radius: 999px;
-  background:
-    radial-gradient(40% 40% at 50% 50%, rgba(50,60,160,.20), transparent 70%),
-    radial-gradient(70% 100% at 50% 50%, rgba(40,50,140,.10), transparent 60%);
-  box-shadow:
-    inset 0 0 0 1px rgba(100,120,250,.10),
-    0 10px 30px rgba(0,0,0,.20);
-  cursor:pointer;
-  transition: background .2s ease, transform .2s ease;
-}
-.edge:hover{
-  transform: translateY(-50%) scale(1.03);
-  background:
-    radial-gradient(42% 42% at 50% 50%, rgba(80,90,220,.26), transparent 70%),
-    radial-gradient(70% 100% at 50% 50%, rgba(60,70,200,.16), transparent 60%);
+  top: calc(50% - var(--header-h) / 2);        /* viewport middle */
+  transform: translateY(-50%);
+  z-index:2;
+  width:64px; height:64px;
+  cursor: pointer;
 }
 .edge svg{
-  width: 54%;
-  height: 54%;
-  stroke: #a6b1ff; stroke-width: 2.2; fill: none;
-  filter: drop-shadow(0 1px 1px rgba(0,0,0,.45)) drop-shadow(0 8px 18px rgba(90,100,220,.20));
+  width:100%; height:100%;
+  stroke: #6a6af7;
+  stroke-width: 3.6;
+  fill:none; stroke-linecap:round; stroke-linejoin:round;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)) drop-shadow(0 6px 15px rgba(0,0,0,.30));
   transition: transform .2s ease, filter .2s ease, opacity .2s ease;
 }
-.edge:hover svg{
-  transform: translateZ(0) scale(1.04);
-  filter: drop-shadow(0 1px 1px rgba(0,0,0,.55)) drop-shadow(0 10px 22px rgba(90,100,220,.28));
-}
-.edge.left{ inset-inline-start: clamp(8px, 2.2vw, 18px); }
-.edge.right{ inset-inline-end: clamp(8px, 2.2vw, 18px); }
+.edge-left{ left:12px } .edge-right{ right:12px }
 
-/* Indigo tone lift */
-:root{
-  --edge-stroke: #9aa5ff;
-  --edge-lift: 18%;
-  --edge-lift-hover: 26%;
-}
-@supports (color: color-mix(in srgb, white, black)){
-  .edge svg{
-    stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift)), white var(--edge-lift));
-  }
-  .edge:hover svg{
-    stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift-hover)), white var(--edge-lift-hover));
-  }
-}
-
-/* Vertical content shift (keeps frost correct on hover) */
-.hero { --hero-shift: 6vh; }
+/* Content-only vertical shift (keeps frost coverage) */
+.hero { --hero-shift: 10vh; }
 .hero .half > * { transform: translateY(var(--hero-shift)); }
 .hero .corner-intro { transform: translateY(var(--hero-shift)); }
 @media (max-width: 1200px){ .hero { --hero-shift: 8vh; } }
 @media (max-width: 900px){  .hero { --hero-shift: 0; } }
 @media (max-width: 700px){  .hero { --hero-shift: 0; } }
 
-/* ===== Responsive (hero only) ===== */
+/* Mobile */
 @media (max-width: 900px){
+  .corner-intro{ position:static; margin: 10px 16px 0; width:min(92vw, var(--intro-width, 48ch)); text-align:left; text-align-last:left; padding:0; }
+  .corner-intro::before, .corner-intro::after{ display:none; }
   .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
   .split-50::after, .split-50::before{ display:none; }
-  .edge-left{ left:10px } .edge-right{ right:10px }
-  .edge{ inline-size:56px; block-size:56px; }
-  .edge::before{ width:62px; height:62px; }
-  .edge::after{ width:84px; height:84px; }
+  .edge{ width:56px; height:56px; }
 }
 
-/* ===== Comet placement (bottom-center) — original) ===== */
+/* ===== Comet (bottom-center) — original size ===== */
 .hero::after{
-  --comet-size: clamp(80px, 8vw, 120px);
+  --comet-size: clamp(80px, 8vw, 120px);   /* original */
   --comet-bottom: clamp(14px, 2.2vw, 30px);
-  --comet-rot: 0deg;
+  --comet-rot: 0deg; /* asset points down */
 
   content:"";
   position:absolute; left:50%; bottom:var(--comet-bottom);
-  width:var(--comet-size); aspect-ratio: 160 / 200;
+  width:var(--comet-size);
+  aspect-ratio: 160 / 200; /* match comet.svg viewBox */
   transform: translateX(-50%) rotate(var(--comet-rot));
   background: center / contain no-repeat url('../comet.svg');
   pointer-events:none;
