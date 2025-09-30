@@ -1,41 +1,26 @@
-/* Edvin Portfolio — hero.css (v29.12 + comet placement, snap fix)
-   v29.6  content-only vertical shift (keeps hover frost correct)
-   v29.7  arrows centered to viewport
-   v29.8  light-bg contrast halo
-   v29.9  icon-only chevrons
-   v29.10 arrows use site bg color + softened halo
-   v29.11 same hue, lighter tone via color-mix
-   v29.12 chevrons recolored to indigo/blue-purple + matching glow
-   + comet: static bottom-center ornament (uses assets/comet.svg), no filters
-   + FIX: scroll-snap respects fixed header; restore min-height instead of hard height
+/* Edvin Portfolio — hero.css (v29.12 — REVERT + SNAP OFF HOTFIX)
+   Purpose: restore working hero and stop rubber-banding caused by root scroll-snap.
 */
 
-/* ---------- SCROLL SNAP FIX (container-level) ----------
-   We have a fixed header. Without scroll-padding-top the browser snaps to the wrong target,
-   making it "rubber band" back to the Photography section. */
-html{
-  /* If base.css sets a different type, this later rule wins in cascade order. */
-  scroll-snap-type: y proximity;
-  scroll-padding-top: var(--header-h);
+/* ===== SNAP OFF HOTFIX (global) =====
+   Remove if/when we re-enable snapping properly.
+*/
+html, body, main, #page {
+  scroll-snap-type: none !important;
+  scroll-padding-top: 0 !important;
 }
 
 /* ---- Layout lock ---- */
 .hero{
   position: relative !important;
   margin-top: var(--header-h) !important;
-
-  /* Restore original behavior: full viewport feel but not a hard lock that can fight snapping */
   min-height: clamp(540px, 100svh, 980px);
-
   display:grid;
   grid-template-columns: 1fr 1fr;
   place-items: stretch;
   overflow: clip;
   --divider-opacity: .7;
-
-  /* Keep snapping available, now offset by scroll-padding-top above */
-  scroll-snap-align: start;
-  z-index: 1;
+  /* (snap removed) */
 }
 
 /* Maintain 50/50 split and the mid divider */
@@ -76,24 +61,23 @@ html{
   overflow:hidden;
 }
 
-/* Titles "Photography" / "Videography" stay aligned */
+/* Titles "Photography" / "Videography" */
 .half .title{
   font-family: var(--font-display, "Space Grotesk", system-ui, sans-serif);
   font-weight:700;
   letter-spacing:.02em;
   font-size: clamp(28px, 6vw, 72px);
   line-height: 1;
-  text-transform: none;
 }
 
-/* Bulleted lists (features) */
+/* Bulleted lists */
 .half .list{
   display:grid; gap: .55em;
   font: 500 clamp(14px, 1.6vw, 18px)/1.45 var(--font-sans, Inter, system-ui, sans-serif);
   opacity:.92;
 }
 
-/* Rails / chevrons */
+/* Edge buttons (chevrons) */
 .edge{
   position:absolute;
   top:50%; transform: translateY(-50%);
@@ -116,31 +100,21 @@ html{
     radial-gradient(42% 42% at 50% 50%, rgba(80,90,220,.26), transparent 70%),
     radial-gradient(70% 100% at 50% 50%, rgba(60,70,200,.16), transparent 60%);
 }
-
-/* Edge icons */
 .edge svg{
   width: 54%;
   height: 54%;
-  stroke: #a6b1ff;              /* indigo/blue-purple */
-  stroke-width: 2.2;
-  fill: none;
-  filter:
-    drop-shadow(0 1px 1px rgba(0,0,0,.45))
-    drop-shadow(0 8px 18px rgba(90,100,220,.20));
+  stroke: #a6b1ff; stroke-width: 2.2; fill: none;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.45)) drop-shadow(0 8px 18px rgba(90,100,220,.20));
   transition: transform .2s ease, filter .2s ease, opacity .2s ease;
 }
 .edge:hover svg{
   transform: translateZ(0) scale(1.04);
-  filter:
-    drop-shadow(0 1px 1px rgba(0,0,0,.55))
-    drop-shadow(0 10px 22px rgba(90,100,220,.28));
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,.55)) drop-shadow(0 10px 22px rgba(90,100,220,.28));
 }
-
-/* Edge positions (left/right) */
 .edge.left{ inset-inline-start: clamp(8px, 2.2vw, 18px); }
 .edge.right{ inset-inline-end: clamp(8px, 2.2vw, 18px); }
 
-/* Color lift for contrast on light bg */
+/* Indigo tone lift */
 :root{
   --edge-stroke: #9aa5ff;
   --edge-lift: 18%;
@@ -163,122 +137,28 @@ html{
 @media (max-width: 900px){  .hero { --hero-shift: 0; } }
 @media (max-width: 700px){  .hero { --hero-shift: 0; } }
 
-/* ===== Icon-only edge controls (alternate set) ===== */
-.hero{
-  --edge-halo-opacity: .10;
-  --edge-glow-opacity: .14;
-  --edge-stroke: #6a6af7;
-  --edge-lift: 22%;
-  --edge-lift-hover: 30%;
-  --edge-stroke-w: 3.6;
-}
-.edge{
-  top: calc(50% - var(--header-h) / 2);
-  transform: translateY(-50%);
-  z-index:2;
-  width:64px; height:64px;
-}
-.edge::before,
-.edge::after{
-  content:"";
-  position:absolute; inset:50% auto auto 50%;
-  transform: translate(-50%,-50%);
-  border-radius:50%;
-  pointer-events:none;
-}
-.edge::before{
-  width:72px; height:72px;
-  background: radial-gradient(closest-side, rgba(255,255,255,.6), rgba(255,255,255,0) 75%);
-  filter: blur(8px);
-  opacity: var(--edge-halo-opacity);
-}
-.edge::after{
-  width:96px; height:96px;
-  background: radial-gradient(closest-side, rgba(102,120,255,.22), rgba(0,0,0,0) 70%);
-  filter: blur(10px);
-  opacity: var(--edge-glow-opacity);
-}
-.edge svg{
-  width:100%; height:100%;
-  display:block;
-  stroke: var(--edge-stroke);
-  stroke-width: var(--edge-stroke-w);
-  fill:none; stroke-linecap:round; stroke-linejoin:round;
-  transition: transform .2s ease, filter .2s ease, opacity .2s ease;
-  filter:
-    drop-shadow(0 1px 2px rgba(0,0,0,.6))
-    drop-shadow(0 6px 15px rgba(0,0,0,.30));
-}
-@supports (color: color-mix(in srgb, white, black)){
-  .edge svg{
-    stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift)), white var(--edge-lift));
-  }
-  .edge:hover svg{
-    stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift-hover)), white var(--edge-lift-hover));
-  }
-}
-.edge-left{ left:12px } .edge-right{ right:12px }
-.edge:hover{ --edge-scale: 1.18; }
-.edge:hover::before{ filter: blur(6px); opacity: calc(var(--edge-halo-opacity) * 1.25); }
-.edge:hover::after{ opacity: calc(var(--edge-glow-opacity) * 1.25); }
-
-/* Titles and bullets */
-.half h2{
-  margin:0 0 10px 0;
-  font-family:"Space Grotesk", Inter, system-ui;
-  font-size: clamp(28px, 3.6vw, 56px);
-  letter-spacing:.10em; text-transform:uppercase;
-  text-shadow:0 2px 18px rgba(0,0,0,.45);
-  pointer-events:none; text-align:center;
-}
-.bullets{
-  margin:0; padding:0; list-style:none;
-  display:flex; flex-wrap:wrap; justify-content:center; gap:.35rem .9rem;
-  color:var(--muted); font-size: clamp(12px, 1vw, 15px); line-height:1.35;
-  min-height: calc(1.35em * 2 + 6px); text-align:center; opacity:.95;
-}
-.bullets li{ display:inline-flex; align-items:center; white-space:nowrap; }
-.bullets li::before{ content:"•"; opacity:.7; margin-right:.55rem; }
-.bullets li:first-child::before{ content:""; margin:0; }
-
 /* ===== Responsive (hero only) ===== */
 @media (max-width: 900px){
-  .corner-intro{
-    position:static; margin: 10px 16px 0;
-    width: min(92vw, var(--intro-width));
-    text-align:left; text-align-last:left;
-    background: none; border-radius: 0;
-    padding: 0;
-  }
-  .corner-intro::before, .corner-intro::after{ display:none; }
   .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
   .split-50::after, .split-50::before{ display:none; }
   .edge-left{ left:10px } .edge-right{ right:10px }
-  .bullets{ min-height: 0; }
-
-  .edge{ width:56px; height:56px; }
+  .edge{ inline-size:56px; block-size:56px; }
   .edge::before{ width:62px; height:62px; }
   .edge::after{ width:84px; height:84px; }
 }
 
-/* ===== Hero vertical shift (content-only) ===== */
-.hero { --hero-shift: 10vh; }
-.hero .half > * { transform: translateY(var(--hero-shift)); }
-.hero .corner-intro { transform: translateY(var(--hero-shift)); }
-@media (max-width: 1200px){ .hero { --hero-shift: 8vh; } }
-@media (max-width: 900px){  .hero { --hero-shift: 0; } }
-@media (max-width: 700px){  .hero { --hero-shift: 0; } }
-
-/* ===== Comet placement (static, no filters) ===== */
+/* ===== Comet placement (bottom-center) — original) ===== */
 .hero::after{
   --comet-size: clamp(80px, 8vw, 120px);
   --comet-bottom: clamp(14px, 2.2vw, 30px);
-  --comet-rot: 0deg; /* asset itself points down; don't rotate the box */
+  --comet-rot: 0deg;
 
   content:"";
   position:absolute; left:50%; bottom:var(--comet-bottom);
-  width:var(--comet-size); aspect-ratio: 160 / 200; /* match comet.svg viewBox */
+  width:var(--comet-size); aspect-ratio: 160 / 200;
   transform: translateX(-50%) rotate(var(--comet-rot));
   background: center / contain no-repeat url('../comet.svg');
   pointer-events:none;
+  z-index: 6;
+  -webkit-mask-image: linear-gradient(#000 0 0);
 }
