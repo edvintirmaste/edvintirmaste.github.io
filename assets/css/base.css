@@ -1,6 +1,7 @@
-/* Edvin Portfolio — base.css (v29.6)
+/* Edvin Portfolio — base.css (v29.8)
    Scope: global variables, resets, base layout, background image, debug badge.
-   Change: widen brand wordmark spread by enlarging width clamp tokens again.
+   Changes in v29.8:
+   - Add hero intro equal-height alignment (single grid row; stretch children).
 */
 
 /* ===== Variables ===== */
@@ -38,10 +39,10 @@
   --frost-blur: 8px; --frost-sat: 115%; --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
 
   /* Intro blocks */
-  --intro-top: 12.5vh;
-  --intro-width: 48ch;
-  --intro-gap: 96px;
-  --intro-panel: 0;
+  --intro-top: 12.5vh;       /* vertical offset from top of hero */
+  --intro-width: 48ch;       /* max text measure inside each card */
+  --intro-gap: 96px;         /* gap between the two cards */
+  --intro-panel: 0;          /* reserved; 0 = both, 1 = left only, 2 = right only */
 
   /* Rails */
   --intro-rail-w: 3px;
@@ -88,4 +89,50 @@ body{
   padding:4px 6px; border-radius:6px;
   opacity:.95; box-shadow: 0 2px 8px rgba(0,0,0,.25);
   user-select:none; pointer-events:none;
+}
+
+/* ===== Hero intro equal-height alignment =====
+   Goal: ensure the two frosted text cards in the hero align top and bottom.
+   Approach: force their parent row into a single grid line and stretch items.
+   Notes:
+   - We intentionally use :is() with alternate class names to be robust to markup.
+   - If hero.css already sets a layout, this wins via !important on display only.
+*/
+#hero :is(.intro, .intro-wrap, .intro-grid){
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;                 /* make both cards equal height */
+  column-gap: var(--intro-gap);
+  row-gap: 0;
+  margin-top: var(--intro-top);
+}
+
+/* Make the immediate children stretch to the row height */
+#hero :is(.intro, .intro-wrap, .intro-grid) > *{
+  height: 100%;
+  display: grid;                        /* lets inner card center/pad as before */
+}
+
+/* Constrain text width inside each card to keep measures identical */
+#hero :is(.intro, .intro-wrap, .intro-grid) > * :is(.card, .frost, .intro-panel, .panel, .content){
+  max-width: var(--intro-width);
+  height: 100%;
+}
+
+/* Safety: remove accidental extra margins that would cause misalignment */
+#hero :is(.intro, .intro-wrap, .intro-grid) > * :is(p, ul, ol){
+  margin-block-start: 0.75em;
+  margin-block-end: 0.75em;
+}
+#hero :is(.intro, .intro-wrap, .intro-grid) > * :is(h1,h2,h3){
+  margin-block-start: 0;
+  margin-block-end: .4em;
+}
+
+/* Mobile fallback: stack panels (keeps text readable) */
+@media (max-width: 980px){
+  #hero :is(.intro, .intro-wrap, .intro-grid){
+    grid-template-columns: 1fr;
+    row-gap: 28px;
+  }
 }
