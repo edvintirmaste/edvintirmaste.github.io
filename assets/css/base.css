@@ -1,6 +1,8 @@
-/* Edvin Portfolio — base.css (v29.6)
+/* Edvin Portfolio — base.css (v29.7)
    Scope: global variables, resets, base layout, background image, debug badge.
-   Change: widen brand wordmark spread by enlarging width clamp tokens again.
+   Changes:
+   - Exaggerated wordmark spacing (TEMP diagnostic): switch brand layout to fixed "gap"
+     instead of relying on space-between width tricks.
 */
 
 /* ===== Variables ===== */
@@ -8,11 +10,14 @@
   --bg:#02021c; --fg:#e9e9ee; --muted:#b7b7c2;
   --header-h: 92px;
 
-  /* Brand (wider letter spread via container width) */
-  --brand-min: 520px; 
-  --brand-fluid: 85vw; 
-  --brand-max: 1320px;
+  /* Brand sizing (wider so the gap can breathe) */
+  --brand-min: 520px;
+  --brand-fluid: 95vw;            /* was 85vw */
+  --brand-max: 1800px;            /* was 1320px */
   --brand-size: clamp(14px, 1vw, 20px);
+
+  /* TEMP: exaggerated per-letter gap for diagnostic */
+  --letter-gap: clamp(40px, 10vw, 200px);  /* HUGE on purpose */
   --word-gap: clamp(14px, 2vw, 48px);
 
   /* Cooler brand glow (match the mid divider’s cool tone) */
@@ -88,4 +93,35 @@ body{
   padding:4px 6px; border-radius:6px;
   opacity:.95; box-shadow: 0 2px 8px rgba(0,0,0,.25);
   user-select:none; pointer-events:none;
+}
+
+/* ===== TEMP: Exaggerated wordmark spacing (diagnostic) =====
+   Notes:
+   - Applies a huge fixed "gap" between letter spans inside the wordmark container.
+   - Forces flex-start so gap is visible and not re-distributed by space-between.
+   - Width is clamped wide so it won't re-wrap prematurely.
+   - Remove this block (or lower --letter-gap) after confirming the effect.
+*/
+.site-header .brand{
+  /* keep whatever display is set in header.css; just override layout behavior */
+  justify-content: flex-start !important;
+  gap: var(--letter-gap) !important;
+
+  /* ensure we have room for the giant gap */
+  width: clamp(var(--brand-min), var(--brand-fluid), var(--brand-max)) !important;
+  max-width: clamp(var(--brand-min), var(--brand-fluid), var(--brand-max)) !important;
+}
+
+/* If your markup groups letters into words (e.g., two flex rows), keep word gap tame */
+.site-header .brand .word{
+  margin-right: var(--word-gap);
+}
+.site-header .brand .word:last-child{
+  margin-right: 0;
+}
+
+/* Fallback: if your wordmark is plain text (no per-letter spans), add tracking as a backstop */
+.site-header .brand,
+.site-header .brand .wordmark{
+  letter-spacing: .08em; /* small; the huge spacing comes from gap above */
 }
