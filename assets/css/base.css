@@ -1,6 +1,6 @@
-/* Edvin Portfolio — base.css (v29.5)
+/* Edvin Portfolio — base.css (v29.6)
    Scope: global variables, resets, base layout, background image, debug badge.
-   Change: widen brand wordmark spread by enlarging width clamp tokens.
+   Change: widen brand wordmark spread by enlarging width clamp tokens again.
 */
 
 /* ===== Variables ===== */
@@ -9,7 +9,9 @@
   --header-h: 92px;
 
   /* Brand (wider letter spread via container width) */
-  --brand-min: 520px; --brand-fluid: 78vw; --brand-max: 1180px;
+  --brand-min: 520px; 
+  --brand-fluid: 85vw; 
+  --brand-max: 1320px;
   --brand-size: clamp(14px, 1vw, 20px);
   --word-gap: clamp(14px, 2vw, 48px);
 
