@@ -1,4 +1,4 @@
-/* Edvin Portfolio — hero.css (v29.13 align lock)
+/* Edvin Portfolio — hero.css (v29.12 + comet placement)
    v29.6  content-only vertical shift (keeps hover frost correct)
    v29.7  arrows centered to viewport
    v29.8  light-bg contrast halo
@@ -7,7 +7,6 @@
    v29.11 same hue, lighter tone via color-mix
    v29.12 chevrons recolored to indigo/blue-purple + matching glow
    + comet: static bottom-center ornament (uses assets/comet.svg), no filters
-   v29.13 align lock: equal height for both corner-intro cards on desktop
 */
 
 /* ---- Layout lock ---- */
@@ -17,9 +16,6 @@
   height: calc(100svh - var(--header-h)) !important;
   scroll-snap-align: start;
   z-index: 1;
-
-  /* v29.13: add local token to lock equal height of intro cards (desktop) */
-  --intro-lock-h: 12lh;
 }
 
 /* Two-column split with glowing divider */
@@ -66,16 +62,7 @@
   /* keep text off the rails on both sides */
   padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
   padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w));
-
-  /* v29.13 — align lock: give both cards identical height and center content */
-  min-block-size: var(--intro-lock-h);
-  block-size: var(--intro-lock-h);
-  display:flex; flex-direction:column; justify-content:center;
 }
-/* normalize first/last paragraph margins to avoid micro drift */
-.corner-intro :is(p:first-child){ margin-block-start: 0; }
-.corner-intro :is(p:last-child){  margin-block-end: 0; }
-
 .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
 .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
 
@@ -218,10 +205,6 @@
     text-align:left; text-align-last:left;
     background: none; border-radius: 0;
     padding: 0;
-
-    /* v29.13: unlock fixed height on mobile for readability */
-    block-size: auto;
-    min-block-size: 0;
   }
   .corner-intro::before, .corner-intro::after{ display:none; }
   .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
