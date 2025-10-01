@@ -1,7 +1,6 @@
-/* Edvin Portfolio — base.css (v29.8)
+/* Edvin Portfolio — base.css (v29.9)
    Scope: global variables, resets, base layout, background image, debug badge.
-   Changes in v29.8:
-   - Add hero intro equal-height alignment (single grid row; stretch children).
+   v29.9: Stronger hero intro equal-height + symmetric placement. Normalizes inner margins/padding and kills stray transforms.
 */
 
 /* ===== Variables ===== */
@@ -43,6 +42,8 @@
   --intro-width: 48ch;       /* max text measure inside each card */
   --intro-gap: 96px;         /* gap between the two cards */
   --intro-panel: 0;          /* reserved; 0 = both, 1 = left only, 2 = right only */
+  --intro-min-h: 9.5lh;      /* baseline equal height for both panels */
+  --intro-pad: 18px;         /* normalized vertical padding inside cards */
 
   /* Rails */
   --intro-rail-w: 3px;
@@ -91,48 +92,65 @@ body{
   user-select:none; pointer-events:none;
 }
 
-/* ===== Hero intro equal-height alignment =====
-   Goal: ensure the two frosted text cards in the hero align top and bottom.
-   Approach: force their parent row into a single grid line and stretch items.
-   Notes:
-   - We intentionally use :is() with alternate class names to be robust to markup.
-   - If hero.css already sets a layout, this wins via !important on display only.
+/* ===== HERO INTRO — strong equal-height + symmetry =====
+   - Force a 2-col grid on the hero intro container (whatever its class is).
+   - Stretch children to the row height (so tops and bottoms align).
+   - Center each card in its column; normalize inner paddings/margins.
+   - Kill any stray content-only vertical shift (transforms) that might desync edges.
 */
-#hero :is(.intro, .intro-wrap, .intro-grid){
+#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns){
   display: grid !important;
-  grid-template-columns: 1fr 1fr;
-  align-items: stretch;                 /* make both cards equal height */
+  grid-template-columns: 1fr 1fr !important;
+  align-items: stretch !important;         /* equal heights */
+  justify-items: center;                    /* center each card horizontally */
   column-gap: var(--intro-gap);
   row-gap: 0;
   margin-top: var(--intro-top);
 }
 
-/* Make the immediate children stretch to the row height */
-#hero :is(.intro, .intro-wrap, .intro-grid) > *{
+#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) > *{
+  min-height: var(--intro-min-h);
   height: 100%;
-  display: grid;                        /* lets inner card center/pad as before */
+  display: grid;                             /* container for the inner card */
 }
 
-/* Constrain text width inside each card to keep measures identical */
-#hero :is(.intro, .intro-wrap, .intro-grid) > * :is(.card, .frost, .intro-panel, .panel, .content){
+/* Inner card/frost content is centered vertically, width-limited, and full-height */
+#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) > * :where(.card, .frost, .intro-panel, .panel, .content){
   max-width: var(--intro-width);
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: var(--intro-pad);
+}
+
+/* Normalize text margins so first/last lines don't add extra height asymmetrically */
+#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) > * :where(p, ul, ol){ 
+  margin-block: .6em; 
+}
+#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) > * :where(p:first-child){ 
+  margin-block-start: 0; 
+}
+#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) > * :where(p:last-child){ 
+  margin-block-end: 0; 
+}
+
+/* Ensure the vertical rails (if drawn with ::before/::after) span the full card height */
+#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) > * :where(.card, .frost)::before,
+#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) > * :where(.card, .frost)::after{
   height: 100%;
 }
 
-/* Safety: remove accidental extra margins that would cause misalignment */
-#hero :is(.intro, .intro-wrap, .intro-grid) > * :is(p, ul, ol){
-  margin-block-start: 0.75em;
-  margin-block-end: 0.75em;
-}
-#hero :is(.intro, .intro-wrap, .intro-grid) > * :is(h1,h2,h3){
-  margin-block-start: 0;
-  margin-block-end: .4em;
+/* Nuke any content-only vertical shift that might offset tops/bottoms */
+#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) :is(.shift-up, .shift-down){
+  transform: none !important;
 }
 
-/* Mobile fallback: stack panels (keeps text readable) */
+/* Mobile: stack panels */
 @media (max-width: 980px){
-  #hero :is(.intro, .intro-wrap, .intro-grid){
-    grid-template-columns: 1fr;
+  #hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns){
+    grid-template-columns: 1fr !important;
     row-gap: 28px;
   }
 }
