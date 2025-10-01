@@ -1,111 +1,81 @@
-/* Edvin Portfolio — hero.css (v29.13)
-   Scope: Split hero (50/50 halves), corner intros with rails, mid divider glow,
-          edge chevrons, comet marker.
-   This version preserves the master playbook behavior and adds a single
-   alignment control so the two intro cards align top & bottom on desktop.
+/* Edvin Portfolio — hero.css (v29.13 align lock)
+   v29.6  content-only vertical shift (keeps hover frost correct)
+   v29.7  arrows centered to viewport
+   v29.8  light-bg contrast halo
+   v29.9  icon-only chevrons
+   v29.10 arrows use site bg color + softened halo
+   v29.11 same hue, lighter tone via color-mix
+   v29.12 chevrons recolored to indigo/blue-purple + matching glow
+   + comet: static bottom-center ornament (uses assets/comet.svg), no filters
+   v29.13 align lock: equal height for both corner-intro cards on desktop
 */
 
-/* ===== Local hero tokens (uses globals from base.css) ===== */
-#hero{
-  /* lock both corner-intro cards to the same height on desktop; tweak to taste */
+/* ---- Layout lock ---- */
+.hero{
+  position: relative !important;
+  margin-top: var(--header-h) !important;
+  height: calc(100svh - var(--header-h)) !important;
+  scroll-snap-align: start;
+  z-index: 1;
+
+  /* v29.13: add local token to lock equal height of intro cards (desktop) */
   --intro-lock-h: 12lh;
-
-  /* vertical padding inside each card (applied to text container) */
-  --intro-pad: 18px;
-
-  /* edge chevron look (indigo/blue-purple family) */
-  --edge-halo-opacity: .10;
-  --edge-glow-opacity: .14;
-  --edge-stroke: #6a6af7;
-  --edge-lift: 22%;
-  --edge-lift-hover: 30%;
-  --edge-stroke-w: 3.6;
 }
 
-/* ===== Hero wrapper ===== */
-.hero{ position:relative; }
-
-/* Content-only vertical shift (keeps hover frost coverage intact) */
-.hero { --hero-shift: 10vh; }
-.hero .half > * { transform: translateY(var(--hero-shift)); }
-.hero .corner-intro { transform: translateY(var(--hero-shift)); }
-
-/* Responsive reductions for the shift */
-@media (max-width:1200px){ .hero{ --hero-shift: 8vh; } }
-@media (max-width: 900px){ .hero{ --hero-shift: 0; } }
-@media (max-width: 700px){ .hero{ --hero-shift: 0; } }
-
-/* ===== Split layout (the two 50/50 panels) ===== */
+/* Two-column split with glowing divider */
 .split-50{
+  position:relative;
   display:grid;
   grid-template-columns: 1fr 1fr;
-  align-items:stretch;
-  position:relative;
-}
-
-/* mid divider line + subtle glow (center of viewport) */
-.split-50::before{
-  content:"";
-  position:absolute; inset:0;
-  background:
-    linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,var(--divider-opacity)), rgba(255,255,255,0))
-      50% 50% / 1px 80% no-repeat;
-  pointer-events:none;
+  gap:0;
+  inline-size:100%;
+  block-size:100%;
 }
 .split-50::after{
   content:"";
-  position:absolute; inset:0;
-  background:
-    radial-gradient(30% 100% at 50% 50%, rgba(186,205,255,.22), rgba(0,0,0,0) 70%);
-  filter: blur(var(--divider-glow-blur));
-  opacity: .6;
+  position:absolute; inset-block:0; inset-inline-start:50%;
+  width:1px; transform:translateX(-.5px);
+  background: linear-gradient(to bottom, transparent, rgba(255,255,255,.18), transparent);
+  opacity:var(--divider-opacity);
   pointer-events:none;
 }
-
-/* ===== Clickable halves (Photography / Videography) ===== */
-.half{
-  display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
-  inline-size:100%; block-size:100%; text-decoration:none; color:var(--fg);
-  background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none;
-  transition: background-color .25s ease, backdrop-filter .25s ease, transform .25s ease, box-shadow .25s ease, opacity .25s ease;
-  position:relative; isolation:isolate; padding: 0 clamp(18px, 3.5vw, 48px);
-}
-.half:hover{
-  background: var(--frost-bg);
-  -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(115%);
-  backdrop-filter: blur(var(--frost-blur)) saturate(115%);
-  box-shadow: var(--frost-shadow);
+.split-50::before{
+  content:"";
+  position:absolute; inset-block:0; inset-inline-start:50%;
+  width: var(--divider-glow-width); transform:translateX(-50%);
+  background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
+  filter: blur(var(--divider-glow-blur));
+  opacity:.42; pointer-events:none;
 }
 
-/* ===== Corner intro cards (left/right) =====
-   Absolutely positioned frosted cards with vertical rails.
-   We lock their heights to the same value so tops & bottoms align.
-*/
+/* Corner intro paragraphs + equal-length rails */
 .corner-intro{
-  position:absolute;
-  top: var(--intro-top);
-  width: min(92vw, var(--intro-width));
-  max-width: var(--intro-width);
-  padding: var(--intro-pad) calc(var(--intro-rail-gap) + var(--intro-rail-w));
-  color: var(--fg);
-  background: var(--frost-bg);
-  -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat));
-  backdrop-filter: blur(var(--frost-blur)) saturate(var(--frost-sat));
-  border-radius: 16px;
-  box-shadow: var(--frost-shadow);
-  /* === Alignment lock: same height for both cards on desktop === */
+  position:absolute; z-index:2; top: var(--intro-top);
+  width: var(--intro-width);
+  line-height:1.48;
+  font-size: clamp(14px, 1.05vw, 16px);
+  color: rgba(233,233,238,.96);
+  text-shadow: 0 0 10px rgba(0,0,0,.45);
+  pointer-events:none;
+
+  text-align: justify;
+  text-justify: inter-word;
+  -webkit-hyphens:auto; hyphens:auto;
+  overflow-wrap:anywhere; text-wrap: pretty;
+
+  /* keep text off the rails on both sides */
+  padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
+  padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w));
+
+  /* v29.13 — align lock: give both cards identical height and center content */
   min-block-size: var(--intro-lock-h);
   block-size: var(--intro-lock-h);
   display:flex; flex-direction:column; justify-content:center;
 }
+/* normalize first/last paragraph margins to avoid micro drift */
+.corner-intro :is(p:first-child){ margin-block-start: 0; }
+.corner-intro :is(p:last-child){  margin-block-end: 0; }
 
-/* keep text off the rails on both sides */
-.corner-intro{ 
-  padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
-  padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w));
-}
-
-/* side placement */
 .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
 .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
 
@@ -113,7 +83,7 @@
 .corner-intro::before,
 .corner-intro::after{
   content:""; position:absolute; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
-  block-size: var(--rail-height);
+  height: var(--rail-height);
   top: calc(50% + var(--rail-offset)); transform: translateY(-50%);
   pointer-events:none; background-repeat:no-repeat;
 }
@@ -132,37 +102,58 @@
     radial-gradient(100% 60% at right center, rgba(var(--brand-glow2-rgb), .22) 0, rgba(0,0,0,0) 65%);
 }
 
-/* Normalize inner text margins (prevents micro drift between panels) */
-.corner-intro :is(p, ul, ol){ margin-block: .6em; }
-.corner-intro :is(p:first-child){ margin-block-start: 0; }
-.corner-intro :is(p:last-child){  margin-block-end: 0; }
+/* Clickable halves */
+.half{
+  display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
+  inline-size:100%; block-size:100%; text-decoration:none; color:var(--fg);
+  background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none;
+  transition: background-color .25s ease, backdrop-filter .25s ease, transform .25s ease, box-shadow .25s ease, opacity .25s ease;
+  position:relative; isolation:isolate; padding: 0 clamp(18px, 3.5vw, 48px);
+}
+.half:hover{
+  background: var(--frost-bg);
+  -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(115%);
+  backdrop-filter: blur(var(--frost-blur)) saturate(115%);
+  box-shadow: var(--frost-shadow);
+}
 
 /* ===== Icon-only edge controls (chevrons) ===== */
-.hero .edge{
+
+/* tunables (indigo/blue-purple) */
+.hero{
+  --edge-halo-opacity: .10;                    /* set to 0 to remove halo entirely */
+  --edge-glow-opacity: .14;
+  --edge-stroke: #6a6af7;                      /* base indigo/violet hue */
+  --edge-lift: 22%;                            /* lift toward white */
+  --edge-lift-hover: 30%;                      /* a bit brighter on hover */
+  --edge-stroke-w: 3.6;
+}
+
+.edge{
   position:absolute;
   top: calc(50% - var(--header-h) / 2);        /* viewport-true center */
   transform: translateY(-50%);
   z-index:2;
   width:64px; height:64px;
-  pointer-events:auto; cursor:pointer;
+  pointer-events:auto; cursor: pointer;
 }
 
 /* halo + glow */
-.hero .edge::before,
-.hero .edge::after{
+.edge::before,
+.edge::after{
   content:"";
   position:absolute; inset:50% auto auto 50%;
   transform: translate(-50%,-50%);
   border-radius:50%;
   pointer-events:none;
 }
-.hero .edge::before{
+.edge::before{
   width:72px; height:72px;
   background: radial-gradient(closest-side, rgba(255,255,255,.6), rgba(255,255,255,0) 75%);
   filter: blur(8px);
   opacity: var(--edge-halo-opacity);
 }
-.hero .edge::after{
+.edge::after{
   width:96px; height:96px;
   background: radial-gradient(closest-side, rgba(102,120,255,.22), rgba(0,0,0,0) 70%);
   filter: blur(10px);
@@ -170,38 +161,54 @@
 }
 
 /* svg chevrons */
-.hero .edge svg{
+.edge svg{
   width:100%; height:100%;
   display:block;
-  stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift)), #fff var(--edge-lift));
+  stroke: var(--edge-stroke);
   stroke-width: var(--edge-stroke-w);
   fill:none; stroke-linecap:round; stroke-linejoin:round;
   transition: transform .2s ease, filter .2s ease, opacity .2s ease;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)) drop-shadow(0 6px 15px rgba(0,0,0,.30));
 }
-.hero .edge:hover svg{
-  stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift-hover)), #fff var(--edge-lift-hover));
-  transform: scale(1.04);
+
+/* use color-mix when available for the lifted tone */
+@supports (color: color-mix(in srgb, white, black)){
+  .edge svg{
+    stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift)), white var(--edge-lift));
+  }
+  .edge:hover svg{
+    stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift-hover)), white var(--edge-lift-hover));
+  }
 }
 
-/* handy positions */
-.edge-left{ left: clamp(10px, 3vw, 32px); }
-.edge-right{ right: clamp(10px, 3vw, 32px); }
+.edge-left{ left:12px } .edge-right{ right:12px }
 
-/* ===== Comet (static) ===== */
-.hero::after{
-  /* tweak these if needed */
-  --comet-size: clamp(80px, 8vw, 120px);
-  --comet-bottom: clamp(14px, 2.2vw, 30px);
-  --comet-rot: 200deg; /* pointing downward */
-
-  content:"";
-  position:absolute; left:50%; bottom:var(--comet-bottom);
-  inline-size: var(--comet-size); aspect-ratio:1/1;
-  transform: translateX(-50%) rotate(var(--comet-rot));
-  background: center / contain no-repeat url('../comet.svg');
-  pointer-events:none;
+/* hover: bigger + deeper shadow */
+.edge:hover{ --edge-scale: 1.18; }
+.edge:hover::before{ filter: blur(6px); opacity: calc(var(--edge-halo-opacity) * 1.25); }
+.edge:hover::after{ opacity: calc(var(--edge-glow-opacity) * 1.25); }
+.edge:hover svg{
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 8px 22px rgba(0,0,0,.35));
 }
+
+/* Titles and bullets */
+.half h2{
+  margin:0 0 10px 0;
+  font-family:"Space Grotesk", Inter, system-ui;
+  font-size: clamp(28px, 3.6vw, 56px);
+  letter-spacing:.10em; text-transform:uppercase;
+  text-shadow:0 2px 18px rgba(0,0,0,.45);
+  pointer-events:none; text-align:center;
+}
+.bullets{
+  margin:0; padding:0; list-style:none;
+  display:flex; flex-wrap:wrap; justify-content:center; gap:.35rem .9rem;
+  color:var(--muted); font-size: clamp(12px, 1vw, 15px); line-height:1.35;
+  min-height: calc(1.35em * 2 + 6px); text-align:center; opacity:.95;
+}
+.bullets li{ display:inline-flex; align-items:center; white-space:nowrap; }
+.bullets li::before{ content:"•"; opacity:.7; margin-right:.55rem; }
+.bullets li:first-child::before{ content:""; margin:0; }
 
 /* ===== Responsive (hero only) ===== */
 @media (max-width: 900px){
@@ -211,8 +218,10 @@
     text-align:left; text-align-last:left;
     background: none; border-radius: 0;
     padding: 0;
-    /* unlock the fixed height on mobile for readability */
-    block-size: auto; min-block-size: 0;
+
+    /* v29.13: unlock fixed height on mobile for readability */
+    block-size: auto;
+    min-block-size: 0;
   }
   .corner-intro::before, .corner-intro::after{ display:none; }
   .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
@@ -221,7 +230,30 @@
   .bullets{ min-height: 0; }
 
   /* slightly smaller icons on narrow screens */
-  .hero .edge{ width:56px; height:56px; }
-  .hero .edge::before{ width:62px; height:62px; }
-  .hero .edge::after{  width:84px; height:84px; }
+  .edge{ width:56px; height:56px; }
+  .edge::before{ width:62px; height:62px; }
+  .edge::after{ width:84px; height:84px; }
+}
+
+/* ===== Hero vertical shift (content-only) ===== */
+.hero { --hero-shift: 10vh; }
+.hero .half > * { transform: translateY(var(--hero-shift)); }
+.hero .corner-intro { transform: translateY(var(--hero-shift)); }
+@media (max-width: 1200px){ .hero { --hero-shift: 8vh; } }
+@media (max-width: 900px){  .hero { --hero-shift: 0; } }
+@media (max-width: 700px){  .hero { --hero-shift: 0; } }
+
+/* ===== Comet placement (static, no filters) ===== */
+.hero::after{
+  /* tweak these if needed */
+  --comet-size: clamp(80px, 8vw, 120px);
+  --comet-bottom: clamp(14px, 2.2vw, 30px);
+  --comet-rot: 200deg; /* pointing downward */
+
+  content:"";
+  position:absolute; left:50%; bottom:var(--comet-bottom);
+  width:var(--comet-size); aspect-ratio:1/1;
+  transform: translateX(-50%) rotate(var(--comet-rot));
+  background: center / contain no-repeat url('../comet.svg'); /* yellow icon */
+  pointer-events:none;
 }
