@@ -1,12 +1,11 @@
-/* Edvin Portfolio — hero.css (v29.12 + comet placement)
+/* Edvin Portfolio — hero.css (v29.12)
    v29.6  content-only vertical shift (keeps hover frost correct)
    v29.7  arrows centered to viewport
    v29.8  light-bg contrast halo
    v29.9  icon-only chevrons
    v29.10 arrows use site bg color + softened halo
    v29.11 same hue, lighter tone via color-mix
-   v29.12 chevrons recolored to indigo/blue-purple + matching glow
-   + comet: static bottom-center ornament (uses assets/comet.svg), no filters
+   v29.12 chevrons recolored to indigo/blue-purple + matching glow (very subtle halo)
 */
 
 /* ---- Layout lock ---- */
@@ -104,7 +103,7 @@
   box-shadow: var(--frost-shadow);
 }
 
-/* ===== Icon-only edge controls (chevrons) ===== */
+/* ===== Icon-only edge controls ===== */
 
 /* tunables (indigo/blue-purple) */
 .hero{
@@ -125,46 +124,57 @@
   pointer-events:auto; cursor: pointer;
 }
 
-/* halo + glow */
-.edge::before,
-.edge::after{
-  content:"";
-  position:absolute; inset:50% auto auto 50%;
-  transform: translate(-50%,-50%);
-  border-radius:50%;
-  pointer-events:none;
-}
+/* no disc */
+.edge .disc{ display:none; }
+
+/* very subtle dark halo for light areas */
 .edge::before{
-  width:72px; height:72px;
-  background: radial-gradient(closest-side, rgba(255,255,255,.6), rgba(255,255,255,0) 75%);
-  filter: blur(8px);
+  content:""; position:absolute; left:50%; top:50%; transform: translate(-50%,-50%);
+  width:68px; height:68px; border-radius:999px; pointer-events:none;
+  background: radial-gradient(closest-side,
+              rgba(0,0,0,.14) 0%,
+              rgba(0,0,0,.08) 55%,
+              rgba(0,0,0,0) 72%);
+  filter: blur(5px);
+  mix-blend-mode: multiply;
   opacity: var(--edge-halo-opacity);
 }
+
+/* tinted glow that matches the arrow color */
 .edge::after{
-  width:96px; height:96px;
-  background: radial-gradient(closest-side, rgba(102,120,255,.22), rgba(0,0,0,0) 70%);
-  filter: blur(10px);
+  content:""; position:absolute; left:50%; top:50%; transform: translate(-50%,-50%);
+  width:92px; height:92px; border-radius:999px; pointer-events:none;
+  filter: blur(14px);
   opacity: var(--edge-glow-opacity);
+  background: radial-gradient(closest-side, rgba(106,106,247,.45), rgba(106,106,247,0));
 }
 
-/* svg chevrons */
+/* arrow icon — same hue, lifted toward white */
 .edge svg{
-  width:100%; height:100%;
-  display:block;
-  stroke: var(--edge-stroke);
+  position:absolute; left:50%; top:50%;
+  transform: translate(-50%,-50%) scale(var(--edge-scale,1));
+  width: clamp(36px, 4.2vw, 64px); height: clamp(36px, 4.2vw, 64px);
+  fill:none;
+  stroke: var(--edge-stroke);                   /* fallback if no color-mix */
   stroke-width: var(--edge-stroke-w);
-  fill:none; stroke-linecap:round; stroke-linejoin:round;
-  transition: transform .2s ease, filter .2s ease, opacity .2s ease;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)) drop-shadow(0 6px 15px rgba(0,0,0,.30));
+  stroke-linecap:round; stroke-linejoin:round;
+  filter: drop-shadow(0 0 1px rgba(255,255,255,.18)) drop-shadow(0 2px 8px rgba(0,0,0,.35));
+  transition: transform .18s ease, filter .18s ease, stroke .18s ease;
 }
 
 /* use color-mix when available for the lifted tone */
 @supports (color: color-mix(in srgb, white, black)){
   .edge svg{
-    stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift)), white var(--edge-lift));
+    stroke: color-mix(in srgb,
+              var(--edge-stroke) calc(100% - var(--edge-lift)),
+              white var(--edge-lift)
+            );
   }
   .edge:hover svg{
-    stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift-hover)), white var(--edge-lift-hover));
+    stroke: color-mix(in srgb,
+              var(--edge-stroke) calc(100% - var(--edge-lift-hover)),
+              white var(--edge-lift-hover)
+            );
   }
 }
 
@@ -225,18 +235,35 @@
 @media (max-width: 1200px){ .hero { --hero-shift: 8vh; } }
 @media (max-width: 900px){  .hero { --hero-shift: 0; } }
 @media (max-width: 700px){  .hero { --hero-shift: 0; } }
+```
 
-/* ===== Comet placement (static, no filters) ===== */
-.hero::after{
-  /* tweak these if needed */
-  --comet-size: clamp(80px, 8vw, 120px);
-  --comet-bottom: clamp(14px, 2.2vw, 30px);
-  --comet-rot: 200deg; /* pointing downward */
+### `assets/css/sections.css` (v29.3)
+```css
+/* Edvin Portfolio — sections.css (v29.3)
+   Scope: the content sections below the hero (panels + inner widths + headings + paragraphs).
+   Visuals: identical to v29.2.1 (pure move). */
 
-  content:"";
-  position:absolute; left:50%; bottom:var(--comet-bottom);
-  width:var(--comet-size); aspect-ratio:1/1;
-  transform: translateX(-50%) rotate(var(--comet-rot));
-  background: center / contain no-repeat url('../comet.svg'); /* yellow icon */
-  pointer-events:none;
+.panel{
+  min-height:100svh;
+  padding: 24px clamp(16px, 5vw, 64px);
+  display:flex; align-items:center; justify-content:center;
+  scroll-snap-align:start;
+  position:relative; z-index:1;
+}
+
+.section-wrap{
+  width:min(1100px, 92vw);
+  margin-inline:auto;
+}
+
+.section-wrap h3{
+  font-family:"Space Grotesk", Inter, system-ui;
+  font-size: clamp(22px, 2.4vw, 36px);
+  letter-spacing:.04em;
+  margin:0 0 12px 0;
+}
+
+.section-wrap p{
+  margin:0 0 18px 0;
+  color:var(--muted);
 }
