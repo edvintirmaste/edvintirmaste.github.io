@@ -1,6 +1,6 @@
-/* Edvin Portfolio — base.css (v29.10)
+/* Edvin Portfolio — base.css (v29.12 CLEAN)
    Scope: global variables, resets, base layout, background image, debug badge.
-   v29.10: Lock identical hero card height so both panels align top & bottom.
+   NOTE: No hero-specific layout here.
 */
 
 /* ===== Variables ===== */
@@ -26,7 +26,7 @@
   --bar-sat: 110%;
   --fade-depth: 160px;
 
-  /* FRACTURE */
+  /* FRACTURE (organic, non-repeating) */
   --fracture-strength: .06;
 
   /* Divider */
@@ -37,12 +37,10 @@
   --frost-bg: rgba(255,255,255,.06);
   --frost-blur: 8px; --frost-sat: 115%; --frost-shadow: 0 14px 38px rgba(0,0,0,.28);
 
-  /* Intro blocks */
+  /* Intro tokens (global, used by hero but defined here) */
   --intro-top: 12.5vh;
   --intro-width: 48ch;
   --intro-gap: 96px;
-  --intro-pad: 18px;
-  --intro-lock-h: 11lh;   /* <<< hard lock height for both hero cards */
 
   /* Rails */
   --intro-rail-w: 3px;
@@ -51,7 +49,7 @@
   --intro-glow-alpha: .28;
   --intro-rail-gap: 14px;
 
-  /* equal-length rails centered on the block */
+  /* Equal-length rails centered on the block */
   --rail-height: 5.8lh;
   --rail-offset: 0lh;
 }
@@ -89,72 +87,4 @@ body{
   padding:4px 6px; border-radius:6px;
   opacity:.95; box-shadow: 0 2px 8px rgba(0,0,0,.25);
   user-select:none; pointer-events:none;
-}
-
-/* ===== HERO INTRO — locked equal height & symmetry =====
-   Works even if hero.css uses its own classes. We:
-   - Force a 2-col grid row.
-   - Lock the inner card to the same height on both sides.
-   - Center content vertically.
-   - Normalize paragraph margins so the first/last line don't add drift.
-*/
-#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns){
-  display: grid !important;
-  grid-template-columns: minmax(0,1fr) minmax(0,1fr) !important;
-  align-items: stretch !important;
-  justify-items: center;
-  column-gap: var(--intro-gap);
-  row-gap: 0;
-  margin-top: var(--intro-top);
-}
-
-#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) > *{
-  display: grid;
-  height: 100%;
-}
-
-/* Lock the actual card/frost content to the same height on both sides */
-#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) 
-     > * :where(.card, .frost, .intro-panel, .panel, .content){
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  max-width: var(--intro-width);
-  width: 100%;
-  /* hard lock equal height: */
-  min-height: var(--intro-lock-h);
-  height: var(--intro-lock-h);
-  padding-block: var(--intro-pad);
-}
-
-/* Text rhythm normalization */
-#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) > * :where(p, ul, ol){ 
-  margin-block: .6em; 
-}
-#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) > * :where(p:first-child){ 
-  margin-block-start: 0; 
-}
-#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) > * :where(p:last-child){ 
-  margin-block-end: 0; 
-}
-
-/* Ensure decorative side rails (pseudo elements) span full locked height */
-#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) 
-     > * :where(.card, .frost)::before,
-#hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) 
-     > * :where(.card, .frost)::after{
-  height: 100%;
-}
-
-/* Mobile: stack panels */
-@media (max-width: 980px){
-  #hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns){
-    grid-template-columns: 1fr !important;
-    row-gap: 28px;
-  }
-  #hero :where(.intro, .intro-wrap, .intro-grid, .split, .columns) 
-       > * :where(.card, .frost, .intro-panel, .panel, .content){
-    height: auto;                 /* unlock on mobile */
-    min-height: auto;
-  }
 }
