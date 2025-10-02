@@ -1,4 +1,4 @@
-/* Edvin Portfolio — hero.css (v29.13)
+/* Edvin Portfolio — hero.css (v29.14)
    v29.6  content-only vertical shift (keeps hover frost correct)
    v29.7  arrows centered to viewport
    v29.8  light-bg contrast halo
@@ -6,8 +6,8 @@
    v29.10 arrows use site bg color + softened halo
    v29.11 same hue, lighter tone via color-mix
    v29.12 chevrons recolored to indigo/blue-purple + matching glow
-   v29.13 arrows get attention when a side (.half) is hovered or focused:
-          scale up a bit + brighter stroke + slightly stronger glow (no layout shift)
+   v29.13 side-hover attention on arrows (scale + brighten via :has)
+   v29.14 comet rotated straight down (270deg)
    + comet: static bottom-center ornament (uses assets/comet.svg), no filters
 */
 
@@ -181,9 +181,7 @@
   filter: drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 8px 22px rgba(0,0,0,.35));
 }
 
-/* ===== Side-hover attention on arrows (no JS; uses :has) =====
-   Works if halves have .left/.right classes, OR simply as first/last .half.
-   Triggers on :hover, :focus-visible, and :active for keyboard/tap. */
+/* ===== Side-hover attention on arrows (no JS; uses :has) ===== */
 @supports selector(:has(*)){
   /* LEFT triggers */
   .hero:has(.half.left:hover)            .edge-left,
@@ -213,7 +211,6 @@
     .hero:has(.half.left:active)           .edge-left svg,
     .hero:has(.split-50 > .half:first-of-type:hover)         .edge-left svg,
     .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left svg{
-      /* use the same lifted tone as arrow hover */
       stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift-hover)), white var(--edge-lift-hover));
     }
   }
@@ -304,7 +301,7 @@
   /* tweak these if needed */
   --comet-size: clamp(80px, 8vw, 120px);
   --comet-bottom: clamp(14px, 2.2vw, 30px);
-  --comet-rot: 200deg; /* pointing downward */
+  --comet-rot: 270deg; /* straight down */
 
   content:"";
   position:absolute; left:50%; bottom:var(--comet-bottom);
