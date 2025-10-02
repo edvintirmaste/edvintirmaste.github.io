@@ -1,6 +1,6 @@
-/* Edvin Portfolio — hero.css (v29.21)
-   v29.6–v29.20 unchanged behavior (arrows, side-hover, layout, etc.)
-   v29.21 DEBUG: add magenta probe on .hero::after to confirm hook & stacking
+/* Edvin Portfolio — hero.css (v29.22)
+   v29.22 — comet restored on ::after, head points DOWN (90deg), robust path fallbacks.
+   Also keeps arrow side-hover grow/halo you asked for.
 */
 
 /* ---- Layout lock ---- */
@@ -11,11 +11,10 @@
   scroll-snap-align: start;
   z-index: 1;
 
-  /* comet defaults (kept) */
+  /* comet defaults */
   --comet-size: clamp(80px, 8vw, 120px);
   --comet-bottom: clamp(14px, 2.2vw, 30px);
-  --comet-rot: 90deg;                      /* intended: head DOWN */
-  --comet-url: url("../svg/comet.svg");    /* adjust if your file lives elsewhere */
+  --comet-rot: 90deg; /* right → DOWN */
 }
 
 /* Two-column split with glowing divider */
@@ -53,7 +52,10 @@
   color: rgba(233,233,238,.96);
   text-shadow: 0 0 10px rgba(0,0,0,.45);
   pointer-events:none;
-  text-align: justify; text-justify: inter-word; -webkit-hyphens:auto; hyphens:auto;
+
+  text-align: justify;
+  text-justify: inter-word;
+  -webkit-hyphens:auto; hyphens:auto;
   overflow-wrap:anywhere; text-wrap: pretty;
 
   padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
@@ -101,29 +103,61 @@
 
 /* ===== Icon-only edge controls (chevrons) ===== */
 .hero{
-  --edge-halo-opacity: .10; --edge-glow-opacity: .14;
-  --edge-stroke: #6a6af7; --edge-lift: 22%; --edge-lift-hover: 30%; --edge-stroke-w: 3.6;
+  --edge-halo-opacity: .10;
+  --edge-glow-opacity: .14;
+  --edge-stroke: #6a6af7;
+  --edge-lift: 22%;
+  --edge-lift-hover: 30%;
+  --edge-stroke-w: 3.6;
 }
+
 .edge{
-  position:absolute; top: calc(50% - var(--header-h) / 2); transform: translateY(-50%);
-  z-index:2; width:64px; height:64px; pointer-events:auto; cursor: pointer;
+  position:absolute;
+  top: calc(50% - var(--header-h) / 2);
+  transform: translateY(-50%);
+  z-index:2;
+  width:64px; height:64px;
+  pointer-events:auto; cursor: pointer;
 }
-.edge::before, .edge::after{
-  content:""; position:absolute; inset:50% auto auto 50%; transform: translate(-50%,-50%);
-  border-radius:50%; pointer-events:none;
+
+.edge::before,
+.edge::after{
+  content:"";
+  position:absolute; inset:50% auto auto 50%;
+  transform: translate(-50%,-50%);
+  border-radius:50%;
+  pointer-events:none;
 }
-.edge::before{ width:72px; height:72px; background: radial-gradient(closest-side, rgba(255,255,255,.6), rgba(255,255,255,0) 75%); filter: blur(8px); opacity: var(--edge-halo-opacity); }
-.edge::after{ width:96px; height:96px; background: radial-gradient(closest-side, rgba(102,120,255,.22), rgba(0,0,0,0) 70%); filter: blur(10px); opacity: var(--edge-glow-opacity); }
+.edge::before{
+  width:72px; height:72px;
+  background: radial-gradient(closest-side, rgba(255,255,255,.6), rgba(255,255,255,0) 75%);
+  filter: blur(8px);
+  opacity: var(--edge-halo-opacity);
+}
+.edge::after{
+  width:96px; height:96px;
+  background: radial-gradient(closest-side, rgba(102,120,255,.22), rgba(0,0,0,0) 70%);
+  filter: blur(10px);
+  opacity: var(--edge-glow-opacity);
+}
+
 .edge svg{
-  width:100%; height:100%; display:block; stroke: var(--edge-stroke); stroke-width: var(--edge-stroke-w);
+  width:100%; height:100%;
+  display:block;
+  stroke: var(--edge-stroke);
+  stroke-width: var(--edge-stroke-w);
   fill:none; stroke-linecap:round; stroke-linejoin:round;
   transition: transform .2s ease, filter .2s ease, opacity .2s ease;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)) drop-shadow(0 6px 15px rgba(0,0,0,.30));
   transform: scale(var(--edge-scale, 1));
 }
 @supports (color: color-mix(in srgb, white, black)){
-  .edge svg{ stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift)), white var(--edge-lift)); }
-  .edge:hover svg{ stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift-hover)), white var(--edge-lift-hover)); }
+  .edge svg{
+    stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift)), white var(--edge-lift));
+  }
+  .edge:hover svg{
+    stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift-hover)), white var(--edge-lift-hover));
+  }
 }
 .edge-left{ left:12px } .edge-right{ right:12px }
 .edge:hover{ --edge-scale: 1.18; }
@@ -139,14 +173,20 @@
   .hero:has(.split-50 > .half:first-of-type:hover) .edge-left,
   .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left,
   .hero:has(.split-50 > .half:first-of-type:active) .edge-left{ --edge-scale: 1.24; }
+
   .hero:has(.half.left:hover) .edge-left::before,
   .hero:has(.half.left:focus-visible) .edge-left::before,
   .hero:has(.split-50 > .half:first-of-type:hover) .edge-left::before,
-  .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left::before{ opacity: calc(var(--edge-halo-opacity) * 1.35); filter: blur(6px); }
+  .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left::before{
+    opacity: calc(var(--edge-halo-opacity) * 1.35);
+    filter: blur(6px);
+  }
   .hero:has(.half.left:hover) .edge-left::after,
   .hero:has(.half.left:focus-visible) .edge-left::after,
   .hero:has(.split-50 > .half:first-of-type:hover) .edge-left::after,
-  .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left::after{ opacity: calc(var(--edge-glow-opacity) * 1.25); }
+  .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left::after{
+    opacity: calc(var(--edge-glow-opacity) * 1.25);
+  }
 
   .hero:has(.half.right:hover) .edge-right,
   .hero:has(.half.right:focus-visible) .edge-right,
@@ -154,14 +194,20 @@
   .hero:has(.split-50 > .half:last-of-type:hover) .edge-right,
   .hero:has(.split-50 > .half:last-of-type:focus-visible) .edge-right,
   .hero:has(.split-50 > .half:last-of-type:active) .edge-right{ --edge-scale: 1.24; }
+
   .hero:has(.half.right:hover) .edge-right::before,
   .hero:has(.half.right:focus-visible) .edge-right::before,
   .hero:has(.split-50 > .half:last-of-type:hover) .edge-right::before,
-  .hero:has(.split-50 > .half:last-of-type:focus-visible) .edge-right::before{ opacity: calc(var(--edge-halo-opacity) * 1.35); filter: blur(6px); }
+  .hero:has(.split-50 > .half:last-of-type:focus-visible) .edge-right::before{
+    opacity: calc(var(--edge-halo-opacity) * 1.35);
+    filter: blur(6px);
+  }
   .hero:has(.half.right:hover) .edge-right::after,
   .hero:has(.half.right:focus-visible) .edge-right::after,
   .hero:has(.split-50 > .half:last-of-type:hover) .edge-right::after,
-  .hero:has(.split-50 > .half:last-of-type:focus-visible) .edge-right::after{ opacity: calc(var(--edge-glow-opacity) * 1.25); }
+  .hero:has(.split-50 > .half:last-of-type:focus-visible) .edge-right::after{
+    opacity: calc(var(--edge-glow-opacity) * 1.25);
+  }
 }
 
 /* Titles and bullets */
@@ -211,29 +257,22 @@
 @media (max-width: 900px){  .hero { --hero-shift: 0; } }
 @media (max-width: 700px){  .hero { --hero-shift: 0; } }
 
-/* ===== Comet (intended final, kept for context; may be overridden by debug probe) ===== */
+/* ===== Comet (final) ===== */
 .hero::after{
-  content: "";
+  content:"";
   position:absolute; left:50%; bottom:var(--comet-bottom);
   width:var(--comet-size); aspect-ratio:1/1;
-  background: center / contain no-repeat var(--comet-url);
+  transform-origin: 50% 50%;
+  transform: translateX(-50%) rotate(var(--comet-rot)) scale(1,1);
+
+  /* Try common locations; whichever exists will render */
+  background:
+    center / contain no-repeat url("../svg/comet.svg"),
+    center / contain no-repeat url("../comet.svg"),
+    center / contain no-repeat url("../../assets/svg/comet.svg"),
+    center / contain no-repeat url("../../assets/comet.svg"),
+    center / contain no-repeat url("../svg/comet.png"),
+    center / contain no-repeat url("../comet.png");
   pointer-events:none;
   z-index:1;
-  transform-origin: 50% 50%;
-  transform: translateX(-50%) rotate(var(--comet-rot));
-}
-
-/* ===== DEBUG PROBE — should be VISIBLE as a magenta square bottom-center =====
-   If you DO NOT see this, the selector .hero::after is not taking effect (or another file overrides it later).
-   If you DO see it, the hook is fine and the issue is just the asset path; I’ll flip it back to the comet next. */
-.hero::after{
-  content: "" !important;
-  background: #ff00ff !important;           /* vivid magenta block */
-  background-image: none !important;
-  width: 26px !important;
-  height: 26px !important;
-  border-radius: 6px !important;
-  outline: 2px solid #00ffff !important;    /* cyan outline for contrast */
-  transform: translateX(-50%) !important;
-  z-index: 9999 !important;
 }
