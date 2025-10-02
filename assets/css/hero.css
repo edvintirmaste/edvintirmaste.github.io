@@ -14,7 +14,7 @@
   /* comet defaults */
   --comet-size: clamp(80px, 8vw, 120px);
   --comet-bottom: clamp(14px, 2.2vw, 30px);
-  --comet-rot: 270deg; /* right → DOWN */
+  --comet-rot: 135deg; /* right → DOWN */
 }
 
 /* Two-column split with glowing divider */
