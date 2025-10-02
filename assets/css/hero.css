@@ -12,8 +12,8 @@
   z-index: 1;
 
   /* comet defaults */
-  --comet-size: clamp(100px, 10vw, 140px);
-  --comet-bottom: clamp(16px, 4.2vw, 36px);
+  --comet-size: clamp(120px, 12vw, 160px);
+  --comet-bottom: clamp(18px, 4.4vw, 42px);
   --comet-rot: 0deg; /* right → DOWN */
 }
 
