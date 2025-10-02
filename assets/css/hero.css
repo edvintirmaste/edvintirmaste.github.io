@@ -1,4 +1,4 @@
-/* Edvin Portfolio — hero.css (v29.16)
+/* Edvin Portfolio — hero.css (v29.17)
    v29.6  content-only vertical shift (keeps hover frost correct)
    v29.7  arrows centered to viewport
    v29.8  light-bg contrast halo
@@ -10,6 +10,7 @@
    v29.14 comet rotated straight down (270deg)
    v29.15 comet rotated 90deg (right → down)
    v29.16 comet locked down; prevent flips (transform-origin + scale(1,1))
+   v29.17 FORCE rotate down with !important to defeat any overrides
    + comet: static bottom-center ornament (uses assets/comet.svg), no filters
 */
 
@@ -313,7 +314,8 @@
   background: center / contain no-repeat url('../comet.svg'); /* yellow icon */
   pointer-events:none;
 
-  /* Lock orientation ↓ and neutralize any mirroring */
+  /* Force orientation ↓ and neutralize any mirroring */
   transform-origin: 50% 50%;
-  transform: translateX(-50%) rotate(90deg) scale(1,1);
+  transform: translateX(-50%) rotate(90deg) scale(1,1) !important;
+  will-change: transform;
 }
