@@ -1,4 +1,4 @@
-/* Edvin Portfolio — hero.css (v29.19)
+/* Edvin Portfolio — hero.css (v29.20)
    v29.6  content-only vertical shift (keeps hover frost correct)
    v29.7  arrows centered to viewport
    v29.8  light-bg contrast halo
@@ -7,12 +7,8 @@
    v29.11 same hue, lighter tone via color-mix
    v29.12 chevrons recolored to indigo/blue-purple + matching glow
    v29.13 side-hover attention on arrows (scale + brighten via :has)
-   v29.14 comet attempt via ::after
-   v29.15 rotate 90deg
-   v29.16 lock + no flips
-   v29.17 force with !important
-   v29.18 moved comet to ::before
-   v29.19 rotate INLINE <img> comet; disable pseudo comet
+   v29.14–19 comet experiments; disable/inline attempts
+   v29.20 RESTORE comet on ::after, correct path, force head DOWN
 */
 
 /* ---- Layout lock ---- */
@@ -22,6 +18,12 @@
   height: calc(100svh - var(--header-h)) !important;
   scroll-snap-align: start;
   z-index: 1;
+
+  /* comet defaults */
+  --comet-size: clamp(80px, 8vw, 120px);
+  --comet-bottom: clamp(14px, 2.2vw, 30px);
+  --comet-rot: 90deg;                 /* right → down */
+  --comet-url: url("../svg/comet.svg");/* correct path (assets/css → ../svg/) */
 }
 
 /* Two-column split with glowing divider */
@@ -301,22 +303,15 @@
 @media (max-width: 900px){  .hero { --hero-shift: 0; } }
 @media (max-width: 700px){  .hero { --hero-shift: 0; } }
 
-/* ===== Comet: disable pseudo versions ===== */
-.hero::before, .hero::after{
-  content: none !important;
-}
+/* ===== Comet (restore on ::after) ===== */
+.hero::after{
+  content: "" !important;                   /* defeat any earlier 'none' */
+  position:absolute; left:50%; bottom:var(--comet-bottom);
+  width:var(--comet-size); aspect-ratio:1/1;
+  background: center / contain no-repeat var(--comet-url);
+  pointer-events:none;
+  z-index:1;
 
-/* ===== Comet: rotate INLINE <img> (robust hook) ===== */
-.hero img.comet,
-.hero img[alt*="comet" i],
-.hero img[src*="comet" i]{
-  position: absolute !important;
-  left: 50% !important;
-  bottom: var(--comet-bottom, clamp(14px, 2.2vw, 30px)) !important;
-  width: var(--comet-size, clamp(80px, 8vw, 120px)) !important;
-  height: auto !important;
-  transform-origin: 50% 50% !important;
-  transform: translateX(-50%) rotate(90deg) !important; /* head points DOWN */
-  pointer-events: none !important;
-  z-index: 1 !important;
+  transform-origin: 50% 50%;
+  transform: translateX(-50%) rotate(var(--comet-rot)) !important; /* head DOWN */
 }
