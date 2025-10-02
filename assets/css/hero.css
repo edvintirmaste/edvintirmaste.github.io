@@ -1,4 +1,4 @@
-/* Edvin Portfolio — hero.css (v29.14)
+/* Edvin Portfolio — hero.css (v29.15)
    v29.6  content-only vertical shift (keeps hover frost correct)
    v29.7  arrows centered to viewport
    v29.8  light-bg contrast halo
@@ -8,6 +8,7 @@
    v29.12 chevrons recolored to indigo/blue-purple + matching glow
    v29.13 side-hover attention on arrows (scale + brighten via :has)
    v29.14 comet rotated straight down (270deg)
+   v29.15 comet rotated 90deg (right → down)
    + comet: static bottom-center ornament (uses assets/comet.svg), no filters
 */
 
@@ -301,7 +302,7 @@
   /* tweak these if needed */
   --comet-size: clamp(80px, 8vw, 120px);
   --comet-bottom: clamp(14px, 2.2vw, 30px);
-  --comet-rot: 270deg; /* straight down */
+  --comet-rot: 90deg; /* rotate right-pointing sprite down */
 
   content:"";
   position:absolute; left:50%; bottom:var(--comet-bottom);
