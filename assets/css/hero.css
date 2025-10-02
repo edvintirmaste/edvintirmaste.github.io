@@ -1,4 +1,4 @@
-/* Edvin Portfolio — hero.css (v29.12 + comet placement)
+/* Edvin Portfolio — hero.css (v29.13)
    v29.6  content-only vertical shift (keeps hover frost correct)
    v29.7  arrows centered to viewport
    v29.8  light-bg contrast halo
@@ -6,6 +6,8 @@
    v29.10 arrows use site bg color + softened halo
    v29.11 same hue, lighter tone via color-mix
    v29.12 chevrons recolored to indigo/blue-purple + matching glow
+   v29.13 arrows get attention when a side (.half) is hovered or focused:
+          scale up a bit + brighter stroke + slightly stronger glow (no layout shift)
    + comet: static bottom-center ornament (uses assets/comet.svg), no filters
 */
 
@@ -125,7 +127,7 @@
   pointer-events:auto; cursor: pointer;
 }
 
-/* halo + glow */
+/* halo + glow (kept subtle for perf) */
 .edge::before,
 .edge::after{
   content:"";
@@ -156,9 +158,10 @@
   fill:none; stroke-linecap:round; stroke-linejoin:round;
   transition: transform .2s ease, filter .2s ease, opacity .2s ease;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)) drop-shadow(0 6px 15px rgba(0,0,0,.30));
+  transform: scale(var(--edge-scale, 1));      /* ← enable scale via CSS var */
 }
 
-/* use color-mix when available for the lifted tone */
+/* lifted tone on hover */
 @supports (color: color-mix(in srgb, white, black)){
   .edge svg{
     stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift)), white var(--edge-lift));
@@ -170,12 +173,82 @@
 
 .edge-left{ left:12px } .edge-right{ right:12px }
 
-/* hover: bigger + deeper shadow */
+/* direct hover on the arrow: bigger + deeper shadow (kept) */
 .edge:hover{ --edge-scale: 1.18; }
 .edge:hover::before{ filter: blur(6px); opacity: calc(var(--edge-halo-opacity) * 1.25); }
 .edge:hover::after{ opacity: calc(var(--edge-glow-opacity) * 1.25); }
 .edge:hover svg{
   filter: drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 8px 22px rgba(0,0,0,.35));
+}
+
+/* ===== Side-hover attention on arrows (no JS; uses :has) =====
+   Works if halves have .left/.right classes, OR simply as first/last .half.
+   Triggers on :hover, :focus-visible, and :active for keyboard/tap. */
+@supports selector(:has(*)){
+  /* LEFT triggers */
+  .hero:has(.half.left:hover)            .edge-left,
+  .hero:has(.half.left:focus-visible)    .edge-left,
+  .hero:has(.half.left:active)           .edge-left,
+  .hero:has(.split-50 > .half:first-of-type:hover)         .edge-left,
+  .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left,
+  .hero:has(.split-50 > .half:first-of-type:active)        .edge-left{
+    --edge-scale: 1.24;
+  }
+  .hero:has(.half.left:hover)            .edge-left::before,
+  .hero:has(.half.left:focus-visible)    .edge-left::before,
+  .hero:has(.split-50 > .half:first-of-type:hover)         .edge-left::before,
+  .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left::before{
+    opacity: calc(var(--edge-halo-opacity) * 1.35);
+    filter: blur(6px);
+  }
+  .hero:has(.half.left:hover)            .edge-left::after,
+  .hero:has(.half.left:focus-visible)    .edge-left::after,
+  .hero:has(.split-50 > .half:first-of-type:hover)         .edge-left::after,
+  .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left::after{
+    opacity: calc(var(--edge-glow-opacity) * 1.25);
+  }
+  @supports (color: color-mix(in srgb, white, black)){
+    .hero:has(.half.left:hover)            .edge-left svg,
+    .hero:has(.half.left:focus-visible)    .edge-left svg,
+    .hero:has(.half.left:active)           .edge-left svg,
+    .hero:has(.split-50 > .half:first-of-type:hover)         .edge-left svg,
+    .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left svg{
+      /* use the same lifted tone as arrow hover */
+      stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift-hover)), white var(--edge-lift-hover));
+    }
+  }
+
+  /* RIGHT triggers */
+  .hero:has(.half.right:hover)           .edge-right,
+  .hero:has(.half.right:focus-visible)   .edge-right,
+  .hero:has(.half.right:active)          .edge-right,
+  .hero:has(.split-50 > .half:last-of-type:hover)          .edge-right,
+  .hero:has(.split-50 > .half:last-of-type:focus-visible)  .edge-right,
+  .hero:has(.split-50 > .half:last-of-type:active)         .edge-right{
+    --edge-scale: 1.24;
+  }
+  .hero:has(.half.right:hover)           .edge-right::before,
+  .hero:has(.half.right:focus-visible)   .edge-right::before,
+  .hero:has(.split-50 > .half:last-of-type:hover)          .edge-right::before,
+  .hero:has(.split-50 > .half:last-of-type:focus-visible)  .edge-right::before{
+    opacity: calc(var(--edge-halo-opacity) * 1.35);
+    filter: blur(6px);
+  }
+  .hero:has(.half.right:hover)           .edge-right::after,
+  .hero:has(.half.right:focus-visible)   .edge-right::after,
+  .hero:has(.split-50 > .half:last-of-type:hover)          .edge-right::after,
+  .hero:has(.split-50 > .half:last-of-type:focus-visible)  .edge-right::after{
+    opacity: calc(var(--edge-glow-opacity) * 1.25);
+  }
+  @supports (color: color-mix(in srgb, white, black)){
+    .hero:has(.half.right:hover)           .edge-right svg,
+    .hero:has(.half.right:focus-visible)   .edge-right svg,
+    .hero:has(.half.right:active)          .edge-right svg,
+    .hero:has(.split-50 > .half:last-of-type:hover)         .edge-right svg,
+    .hero:has(.split-50 > .half:last-of-type:focus-visible) .edge-right svg{
+      stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift-hover)), white var(--edge-lift-hover));
+    }
+  }
 }
 
 /* Titles and bullets */
