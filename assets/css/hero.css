@@ -1,7 +1,7 @@
-/* Edvin Portfolio — hero.css (v29.26)
-   v29.22 — comet on ::after, head down (sprite native), robust path fallbacks.
-   v29.25 — inner-white fills version.
-   v29.26 — one-ended round rectangle on ::before with sizing/position controls.
+/* Edvin Portfolio — hero.css (v29.27)
+   v29.22 — comet on ::after, head down, robust path fallbacks.
+   v29.26 — temp one-ended shape.
+   v29.27 — Single-ended pill (rectangle + one circular short side) with full controls.
 */
 
 /* ---- Layout lock ---- */
@@ -12,38 +12,42 @@
   scroll-snap-align: start;
   z-index: 1;
 
-  /* comet sizing/placement (unchanged) */
+  /* ===== Comet sizing/placement (unchanged) ===== */
   --comet-size: clamp(120px, 12vw, 160px);
   --comet-bottom: clamp(18px, 4.4vw, 42px);
   --comet-rot: 0deg; /* head DOWN (sprite native) */
 
-  /* =========  SHAPE CONTROLS (you edit these)  =========
-     The shape is a vertical rectangle with its BOTTOM short side rounded into a semicircle.
-     - --shape-w:   total width  (also the semicircle DIAMETER)
-     - --shape-h:   total height (rectangle body + semicircle cap)
-     - --cap-r:     semicircle RADIUS (usually half of --shape-w)
-     - --shape-left / --shape-bottom: position anchors
-     - --shape-rotate: rotate the whole shape (e.g., 90deg)
-     - --shape-offset-x: translateX; use -50% to center on left anchor
+  /* =========  ONE-ENDED PILL — YOUR CONTROLS  =========
+     The mask builds a rectangle + one semicircle on the chosen short side.
+     - --shape-w:    total width of the pill box
+     - --shape-h:    total height of the pill box (this is also the semicircle DIAMETER)
+     - --cap-r:      semicircle RADIUS (typically calc(var(--shape-h)/2) for perfect half-circle)
+     - --shape-left: left anchor of the pill (px/%)
+     - --shape-top:  top anchor of the pill (px/%)
+     - --tx / --ty:  translate offsets (use -50%/-50% to anchor by center)
+     - --shape-rotate: rotate the whole pill (e.g., 0deg/90deg)
+     - --shape-color: fill color of the pill
+     Orientation: default RIGHT-capped. Switch via [data-cap="left|top|bottom"] on .hero
   */
-  --shape-w: clamp(22px, 2.2vw, 34px);
-  --shape-h: clamp(80px, 10vw, 140px);
-  --cap-r: calc(var(--shape-w) / 2);
+  --shape-w: clamp(240px, 32vw, 520px);
+  --shape-h: clamp(36px, 4.6vw, 72px);
+  --cap-r: calc(var(--shape-h) / 2);
+  --shape-color: #fff;
 
   --shape-left: 50%;
-  --shape-bottom: var(--comet-bottom);
+  --shape-top: 50%;
+  --tx: -50%;
+  --ty: -50%;
   --shape-rotate: 0deg;
-  --shape-offset-x: -50%;
 }
 
-/* Two-column split with glowing divider */
+/* ===== Split layout & visuals (unchanged blocks) ===== */
 .split-50{
   position:relative;
   display:grid;
   grid-template-columns: 1fr 1fr;
   gap:0;
-  inline-size:100%;
-  block-size:100%;
+  inline-size:100%; block-size:100%;
 }
 .split-50::after{
   content:"";
@@ -62,7 +66,6 @@
   opacity:.42; pointer-events:none;
 }
 
-/* Corner intro paragraphs + equal-length rails */
 .corner-intro{
   position:absolute; z-index:2; top: var(--intro-top);
   width: var(--intro-width);
@@ -71,18 +74,14 @@
   color: rgba(233,233,238,.96);
   text-shadow: 0 0 10px rgba(0,0,0,.45);
   pointer-events:none;
-
-  text-align: justify;
-  text-justify: inter-word;
+  text-align: justify; text-justify: inter-word;
   -webkit-hyphens:auto; hyphens:auto;
   overflow-wrap:anywhere; text-wrap: pretty;
-
   padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
   padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w));
 }
 .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
 .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
-
 .corner-intro::before,
 .corner-intro::after{
   content:""; position:absolute; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
@@ -105,7 +104,6 @@
     radial-gradient(100% 60% at right center, rgba(var(--brand-glow2-rgb), .22) 0, rgba(0,0,0,0) 65%);
 }
 
-/* Clickable halves */
 .half{
   display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
   inline-size:100%; block-size:100%; text-decoration:none; color:var(--fg);
@@ -120,7 +118,7 @@
   box-shadow: var(--frost-shadow);
 }
 
-/* ===== Icon-only edge controls (chevrons) ===== */
+/* ===== Edge chevrons (unchanged) ===== */
 .hero{
   --edge-halo-opacity: .10;
   --edge-glow-opacity: .14;
@@ -129,42 +127,20 @@
   --edge-lift-hover: 30%;
   --edge-stroke-w: 3.6;
 }
-
 .edge{
-  position:absolute;
-  top: calc(50% - var(--header-h) / 2);
-  transform: translateY(-50%);
-  z-index:2;
-  width:64px; height:64px;
-  pointer-events:auto; cursor: pointer;
+  position:absolute; top: calc(50% - var(--header-h) / 2);
+  transform: translateY(-50%); z-index:2;
+  width:64px; height:64px; pointer-events:auto; cursor:pointer;
 }
-
-.edge::before,
-.edge::after{
-  content:"";
-  position:absolute; inset:50% auto auto 50%;
-  transform: translate(-50%,-50%);
-  border-radius:50%;
-  pointer-events:none;
+.edge::before, .edge::after{
+  content:""; position:absolute; inset:50% auto auto 50%; transform: translate(-50%,-50%);
+  border-radius:50%; pointer-events:none;
 }
-.edge::before{
-  width:72px; height:72px;
-  background: radial-gradient(closest-side, rgba(255,255,255,.6), rgba(255,255,255,0) 75%);
-  filter: blur(8px);
-  opacity: var(--edge-halo-opacity);
-}
-.edge::after{
-  width:96px; height:96px;
-  background: radial-gradient(closest-side, rgba(102,120,255,.22), rgba(0,0,0,0) 70%);
-  filter: blur(10px);
-  opacity: var(--edge-glow-opacity);
-}
-
+.edge::before{ width:72px; height:72px; background: radial-gradient(closest-side, rgba(255,255,255,.6), rgba(255,255,255,0) 75%); filter: blur(8px); opacity: var(--edge-halo-opacity); }
+.edge::after { width:96px; height:96px; background: radial-gradient(closest-side, rgba(102,120,255,.22), rgba(0,0,0,0) 70%); filter: blur(10px); opacity: var(--edge-glow-opacity); }
 .edge svg{
-  width:100%; height:100%;
-  display:block;
-  stroke: var(--edge-stroke);
-  stroke-width: var(--edge-stroke-w);
+  width:100%; height:100%; display:block;
+  stroke: var(--edge-stroke); stroke-width: var(--edge-stroke-w);
   fill:none; stroke-linecap:round; stroke-linejoin:round;
   transition: transform .2s ease, filter .2s ease, opacity .2s ease;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)) drop-shadow(0 6px 15px rgba(0,0,0,.30));
@@ -184,52 +160,7 @@
 .edge:hover::after{ opacity: calc(var(--edge-glow-opacity) * 1.25); }
 .edge:hover svg{ filter: drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 8px 22px rgba(0,0,0,.35)); }
 
-/* ===== Side-hover attention on arrows (no JS; uses :has) ===== */
-@supports selector(:has(*)){
-  .hero:has(.half.left:hover) .edge-left,
-  .hero:has(.half.left:focus-visible) .edge-left,
-  .hero:has(.half.left:active) .edge-left,
-  .hero:has(.split-50 > .half:first-of-type:hover) .edge-left,
-  .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left,
-  .hero:has(.split-50 > .half:first-of-type:active) .edge-left{ --edge-scale: 1.24; }
-
-  .hero:has(.half.left:hover) .edge-left::before,
-  .hero:has(.half.left:focus-visible) .edge-left::before,
-  .hero:has(.split-50 > .half:first-of-type:hover) .edge-left::before,
-  .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left::before{
-    opacity: calc(var(--edge-halo-opacity) * 1.35);
-    filter: blur(6px);
-  }
-  .hero:has(.half.left:hover) .edge-left::after,
-  .hero:has(.half.left:focus-visible) .edge-left::after,
-  .hero:has(.split-50 > .half:first-of-type:hover) .edge-left::after,
-  .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left::after{
-    opacity: calc(var(--edge-glow-opacity) * 1.25);
-  }
-
-  .hero:has(.half.right:hover) .edge-right,
-  .hero:has(.half.right:focus-visible) .edge-right,
-  .hero:has(.half.right:active) .edge-right,
-  .hero:has(.split-50 > .half:last-of-type:hover) .edge-right,
-  .hero:has(.split-50 > .half:last-of-type:focus-visible) .edge-right,
-  .hero:has(.split-50 > .half:last-of-type:active) .edge-right{ --edge-scale: 1.24; }
-
-  .hero:has(.half.right:hover) .edge-right::before,
-  .hero:has(.half.right:focus-visible) .edge-right::before,
-  .hero:has(.split-50 > .half:last-of-type:hover) .edge-right::before,
-  .hero:has(.split-50 > .half:last-of-type:focus-visible) .edge-right::before{
-    opacity: calc(var(--edge-halo-opacity) * 1.35);
-    filter: blur(6px);
-  }
-  .hero:has(.half.right:hover) .edge-right::after,
-  .hero:has(.half.right:focus-visible) .edge-right::after,
-  .hero:has(.split-50 > .half:last-of-type:hover) .edge-right::after,
-  .hero:has(.split-50 > .half:last-of-type:focus-visible) .edge-right::after{
-    opacity: calc(var(--edge-glow-opacity) * 1.25);
-  }
-}
-
-/* Titles and bullets */
+/* ===== Titles & bullets (unchanged) ===== */
 .half h2{
   margin:0 0 10px 0;
   font-family:"Space Grotesk", Inter, system-ui;
@@ -254,8 +185,7 @@
     position:static; margin: 10px 16px 0;
     width: min(92vw, var(--intro-width));
     text-align:left; text-align-last:left;
-    background: none; border-radius: 0;
-    padding: 0;
+    background: none; border-radius: 0; padding: 0;
   }
   .corner-intro::before, .corner-intro::after{ display:none; }
   .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
@@ -276,43 +206,63 @@
 @media (max-width: 900px){  .hero { --hero-shift: 0; } }
 @media (max-width: 700px){  .hero { --hero-shift: 0; } }
 
-/* ===== One-ended round rectangle (white) =====
-   Orientation: the semicircle is at the BOTTOM.
-   To make it at the TOP, see the optional rule right below this block.
-*/
+/* ===================================================== */
+/* ========== ONE-ENDED PILL (mask on ::before) ========= */
+/* Default: RIGHT-capped (rounded end on the right)      */
+/* ===================================================== */
 .hero::before{
   content:"";
   position:absolute;
   left: var(--shape-left);
-  bottom: var(--shape-bottom);
+  top: var(--shape-top);
   width: var(--shape-w);
   height: var(--shape-h);
   transform-origin: 50% 50%;
-  transform: translateX(var(--shape-offset-x)) rotate(var(--shape-rotate));
-  background: #fff;
+  transform: translate(var(--tx), var(--ty)) rotate(var(--shape-rotate));
+  background: var(--shape-color);
   pointer-events:none;
-  z-index: 0;
+  z-index:0;
 
-  /* MASK = rectangle body + semicircle cap (bottom) */
+  /* cap diameter derived from height; ensure width > height for a proper body */
+  --cap-d: calc(2 * var(--cap-r)); /* normally equals var(--shape-h) */
+
+  /* Rectangle body + right semicircle cap */
   -webkit-mask:
-    /* semicircle cap */
-    radial-gradient(closest-side, #000 98%, transparent 100%) bottom / 100% calc(2 * var(--cap-r)) no-repeat,
-    /* rectangular body above the cap */
-    linear-gradient(#000 0 0) top / 100% calc(100% - (2 * var(--cap-r))) no-repeat;
+    linear-gradient(#000 0 0) left   / calc(100% - var(--cap-d)) 100% no-repeat,
+    radial-gradient(closest-side, #000 98%, transparent 100%) right  / var(--cap-d) var(--cap-d) no-repeat;
           mask:
-    radial-gradient(closest-side, #000 98%, transparent 100%) bottom / 100% calc(2 * var(--cap-r)) no-repeat,
-    linear-gradient(#000 0 0) top / 100% calc(100% - (2 * var(--cap-r))) no-repeat;
+    linear-gradient(#000 0 0) left   / calc(100% - var(--cap-d)) 100% no-repeat,
+    radial-gradient(closest-side, #000 98%, transparent 100%) right  / var(--cap-d) var(--cap-d) no-repeat;
 }
 
-/* OPTIONAL: put the semicircle at the TOP instead of the bottom.
-   Toggle by adding the attribute [data-cap="top"] to .hero in HTML. */
+/* LEFT-capped */
+.hero[data-cap="left"]::before{
+  -webkit-mask:
+    linear-gradient(#000 0 0) right  / calc(100% - var(--cap-d)) 100% no-repeat,
+    radial-gradient(closest-side, #000 98%, transparent 100%) left   / var(--cap-d) var(--cap-d) no-repeat;
+          mask:
+    linear-gradient(#000 0 0) right  / calc(100% - var(--cap-d)) 100% no-repeat,
+    radial-gradient(closest-side, #000 98%, transparent 100%) left   / var(--cap-d) var(--cap-d) no-repeat;
+}
+
+/* TOP-capped (rounded short side at the top) */
 .hero[data-cap="top"]::before{
   -webkit-mask:
-    radial-gradient(closest-side, #000 98%, transparent 100%) top / 100% calc(2 * var(--cap-r)) no-repeat,
-    linear-gradient(#000 0 0) bottom / 100% calc(100% - (2 * var(--cap-r))) no-repeat;
+    linear-gradient(#000 0 0) bottom / 100% calc(100% - var(--cap-d)) no-repeat,
+    radial-gradient(closest-side, #000 98%, transparent 100%) top    / var(--cap-d) var(--cap-d) no-repeat;
           mask:
-    radial-gradient(closest-side, #000 98%, transparent 100%) top / 100% calc(2 * var(--cap-r)) no-repeat,
-    linear-gradient(#000 0 0) bottom / 100% calc(100% - (2 * var(--cap-r))) no-repeat;
+    linear-gradient(#000 0 0) bottom / 100% calc(100% - var(--cap-d)) no-repeat,
+    radial-gradient(closest-side, #000 98%, transparent 100%) top    / var(--cap-d) var(--cap-d) no-repeat;
+}
+
+/* BOTTOM-capped */
+.hero[data-cap="bottom"]::before{
+  -webkit-mask:
+    linear-gradient(#000 0 0) top    / 100% calc(100% - var(--cap-d)) no-repeat,
+    radial-gradient(closest-side, #000 98%, transparent 100%) bottom / var(--cap-d) var(--cap-d) no-repeat;
+          mask:
+    linear-gradient(#000 0 0) top    / 100% calc(100% - var(--cap-d)) no-repeat,
+    radial-gradient(closest-side, #000 98%, transparent 100%) bottom / var(--cap-d) var(--cap-d) no-repeat;
 }
 
 /* ===== Comet artwork (unchanged) ===== */
@@ -329,6 +279,5 @@
     center / contain no-repeat url("../../assets/comet.svg"),
     center / contain no-repeat url("../svg/comet.png"),
     center / contain no-repeat url("../comet.png");
-  pointer-events:none;
-  z-index:1;
+  pointer-events:none; z-index:1;
 }
