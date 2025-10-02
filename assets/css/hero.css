@@ -1,7 +1,7 @@
-/* Edvin Portfolio — hero.css (v29.28)
-   v29.22 — comet on ::after, head down, robust path fallbacks.
-   v29.27 — masked one-ended pill (bug: detached circle).
-   v29.28 — FIX: one-ended pill built with border-radius (clean semicircle).
+/* Edvin Portfolio — hero.css (v29.29)
+   v29.22 — comet on ::after, head down.
+   v29.28 — one-ended pill via border-radius.
+   v29.29 — place pill behind comet (z:4), above halves; default vertical bottom-capped under comet.
 */
 
 /* ---- Layout lock ---- */
@@ -17,59 +17,77 @@
   --comet-bottom: clamp(18px, 4.4vw, 42px);
   --comet-rot: 0deg; /* head DOWN (sprite native) */
 
-  /* ========= ONE-ENDED PILL — YOUR CONTROLS =========
-     height = overall pill height; cap radius should be height/2 for a perfect semicircle.
+  /* ========= WHITE PILL CONTROLS =========
+     Vertical bar with rounded BOTTOM by default, centered under the comet.
+     - --pill-w:      thickness (short side)
+     - --pill-h:      length (long side)
+     - --pill-radius: rounded end radius (keep = --pill-w/2 for a perfect semicircle)
+     - --pill-x-nudge: extra X shift from the comet center (px/%)
+     - --pill-y-nudge: extra Y shift from the comet's bottom anchor (px/%; positive = up)
+     - Orientation: bottom-capped by default; switch via [data-cap="top|left|right"] if needed.
   */
-  --shape-w: clamp(240px, 32vw, 520px); /* total width */
-  --shape-h: clamp(36px, 4.6vw, 72px);  /* total height (also 2 * ideal radius) */
-  --cap-r: calc(var(--shape-h) / 2);     /* semicircle radius */
+  --pill-w: clamp(10px, 1.2vw, 18px);
+  --pill-h: clamp(80px, 9vw, 140px);
+  --pill-radius: calc(var(--pill-w) / 2);
 
-  --shape-color: #fff;
+  --pill-x-nudge: 0px;
+  --pill-y-nudge: 8px;
 
-  /* position & rotation */
-  --shape-left: 50%;
-  --shape-top: 22%;
-  --tx: -50%;     /* use -50%/-50% to anchor by center; set to 0/0 to anchor by top-left */
-  --ty: 0%;
-  --shape-rotate: 0deg;
-
-  /* which side is rounded: right (default) | left | top | bottom via [data-cap] */
+  --pill-color: #fff;
 }
 
-/* ===== Split, intros, halves, edges, bullets… (unchanged) ===== */
+/* ===== Split layout & visuals (unchanged) ===== */
 .split-50{
-  position:relative; display:grid; grid-template-columns: 1fr 1fr; gap:0;
-  inline-size:100%; block-size:100%;
+  position:relative;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:0;
+  inline-size:100%;
+  block-size:100%;
 }
 .split-50::after{
-  content:""; position:absolute; inset-block:0; inset-inline-start:50%;
+  content:"";
+  position:absolute; inset-block:0; inset-inline-start:50%;
   width:1px; transform:translateX(-.5px);
   background: linear-gradient(to bottom, transparent, rgba(255,255,255,.18), transparent);
-  opacity:var(--divider-opacity); pointer-events:none;
+  opacity:var(--divider-opacity);
+  pointer-events:none;
 }
 .split-50::before{
-  content:""; position:absolute; inset-block:0; inset-inline-start:50%;
+  content:"";
+  position:absolute; inset-block:0; inset-inline-start:50%;
   width: var(--divider-glow-width); transform:translateX(-50%);
   background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
-  filter: blur(var(--divider-glow-blur)); opacity:.42; pointer-events:none;
+  filter: blur(var(--divider-glow-blur));
+  opacity:.42; pointer-events:none;
 }
 
+/* Corner intro paragraphs + rails */
 .corner-intro{
   position:absolute; z-index:2; top: var(--intro-top);
-  width: var(--intro-width); line-height:1.48;
-  font-size: clamp(14px, 1.05vw, 16px); color: rgba(233,233,238,.96);
-  text-shadow: 0 0 10px rgba(0,0,0,.45); pointer-events:none;
-  text-align: justify; text-justify: inter-word; -webkit-hyphens:auto; hyphens:auto;
+  width: var(--intro-width);
+  line-height:1.48;
+  font-size: clamp(14px, 1.05vw, 16px);
+  color: rgba(233,233,238,.96);
+  text-shadow: 0 0 10px rgba(0,0,0,.45);
+  pointer-events:none;
+
+  text-align: justify;
+  text-justify: inter-word;
+  -webkit-hyphens:auto; hyphens:auto;
   overflow-wrap:anywhere; text-wrap: pretty;
+
   padding-left:  calc(var(--intro-rail-gap) + var(--intro-rail-w));
   padding-right: calc(var(--intro-rail-gap) + var(--intro-rail-w));
 }
 .corner-intro.left  { left:  calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:left; }
 .corner-intro.right { right: calc(50% - var(--intro-gap) - var(--intro-width));  text-align-last:right; }
+
 .corner-intro::before,
 .corner-intro::after{
   content:""; position:absolute; width: calc(var(--intro-glow-w) + var(--intro-rail-w));
-  height: var(--rail-height); top: calc(50% + var(--rail-offset)); transform: translateY(-50%);
+  height: var(--rail-height);
+  top: calc(50% + var(--rail-offset)); transform: translateY(-50%);
   pointer-events:none; background-repeat:no-repeat;
 }
 .corner-intro::before{
@@ -87,6 +105,7 @@
     radial-gradient(100% 60% at right center, rgba(var(--brand-glow2-rgb), .22) 0, rgba(0,0,0,0) 65%);
 }
 
+/* Clickable halves */
 .half{
   display:flex; align-items:center; justify-content:center; flex-direction:column; gap:12px;
   inline-size:100%; block-size:100%; text-decoration:none; color:var(--fg);
@@ -94,34 +113,53 @@
   transition: background-color .25s ease, backdrop-filter .25s ease, transform .25s ease, box-shadow .25s ease, opacity .25s ease;
   position:relative; isolation:isolate; padding: 0 clamp(18px, 3.5vw, 48px);
 }
-.half:hover{
-  background: var(--frost-bg);
-  -webkit-backdrop-filter: blur(var(--frost-blur)) saturate(115%);
-  backdrop-filter: blur(var(--frost-blur)) saturate(115%);
-  box-shadow: var(--frost-shadow);
-}
 
+/* ===== Edge chevrons ===== */
 .hero{
   --edge-halo-opacity: .10;
   --edge-glow-opacity: .14;
   --edge-stroke: #6a6af7;
-  --edge-lift: 22%; --edge-lift-hover: 30%; --edge-stroke-w: 3.6;
+  --edge-lift: 22%;
+  --edge-lift-hover: 30%;
+  --edge-stroke-w: 3.6;
 }
+
 .edge{
-  position:absolute; top: calc(50% - var(--header-h) / 2); transform: translateY(-50%);
-  z-index:2; width:64px; height:64px; pointer-events:auto; cursor:pointer;
+  position:absolute;
+  top: calc(50% - var(--header-h) / 2);
+  transform: translateY(-50%);
+  z-index:6; /* on top of everything */
+  width:64px; height:64px;
+  pointer-events:auto; cursor: pointer;
 }
-.edge::before, .edge::after{
-  content:""; position:absolute; inset:50% auto auto 50%; transform: translate(-50%,-50%);
-  border-radius:50%; pointer-events:none;
+
+.edge::before,
+.edge::after{
+  content:"";
+  position:absolute; inset:50% auto auto 50%;
+  transform: translate(-50%,-50%);
+  border-radius:50%;
+  pointer-events:none;
 }
-.edge::before{ width:72px; height:72px; background: radial-gradient(closest-side, rgba(255,255,255,.6), rgba(255,255,255,0) 75%); filter: blur(8px); opacity: var(--edge-halo-opacity); }
-.edge::after { width:96px; height:96px; background: radial-gradient(closest-side, rgba(102,120,255,.22), rgba(0,0,0,0) 70%); filter: blur(10px); opacity: var(--edge-glow-opacity); }
+.edge::before{
+  width:72px; height:72px;
+  background: radial-gradient(closest-side, rgba(255,255,255,.6), rgba(255,255,255,0) 75%);
+  filter: blur(8px);
+  opacity: var(--edge-halo-opacity);
+}
+.edge::after{
+  width:96px; height:96px;
+  background: radial-gradient(closest-side, rgba(102,120,255,.22), rgba(0,0,0,0) 70%);
+  filter: blur(10px);
+  opacity: var(--edge-glow-opacity);
+}
 
 .edge svg{
-  width:100%; height:100%; display:block;
-  stroke: var(--edge-stroke); stroke-width: var(--edge-stroke-w); fill:none;
-  stroke-linecap:round; stroke-linejoin:round;
+  width:100%; height:100%;
+  display:block;
+  stroke: var(--edge-stroke);
+  stroke-width: var(--edge-stroke-w);
+  fill:none; stroke-linecap:round; stroke-linejoin:round;
   transition: transform .2s ease, filter .2s ease, opacity .2s ease;
   filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)) drop-shadow(0 6px 15px rgba(0,0,0,.30));
   transform: scale(var(--edge-scale, 1));
@@ -140,27 +178,40 @@
 .edge:hover::after{ opacity: calc(var(--edge-glow-opacity) * 1.25); }
 .edge:hover svg{ filter: drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 8px 22px rgba(0,0,0,.35)); }
 
+/* Titles and bullets */
 .half h2{
-  margin:0 0 10px 0; font-family:"Space Grotesk", Inter, system-ui;
-  font-size: clamp(28px, 3.6vw, 56px); letter-spacing:.10em; text-transform:uppercase;
-  text-shadow:0 2px 18px rgba(0,0,0,.45); pointer-events:none; text-align:center;
+  margin:0 0 10px 0;
+  font-family:"Space Grotesk", Inter, system-ui;
+  font-size: clamp(28px, 3.6vw, 56px);
+  letter-spacing:.10em; text-transform:uppercase;
+  text-shadow:0 2px 18px rgba(0,0,0,.45);
+  pointer-events:none; text-align:center;
 }
 .bullets{
-  margin:0; padding:0; list-style:none; display:flex; flex-wrap:wrap; justify-content:center; gap:.35rem .9rem;
-  color:var(--muted); font-size: clamp(12px, 1vw, 15px); line-height:1.35; min-height: calc(1.35em * 2 + 6px); text-align:center; opacity:.95;
+  margin:0; padding:0; list-style:none;
+  display:flex; flex-wrap:wrap; justify-content:center; gap:.35rem .9rem;
+  color:var(--muted); font-size: clamp(12px, 1vw, 15px); line-height:1.35;
+  min-height: calc(1.35em * 2 + 6px); text-align:center; opacity:.95;
 }
 .bullets li{ display:inline-flex; align-items:center; white-space:nowrap; }
-.bullets li:first-child::before{ content:""; margin:0; }
 .bullets li::before{ content:"•"; opacity:.7; margin-right:.55rem; }
+.bullets li:first-child::before{ content:""; margin:0; }
 
 /* ===== Responsive (hero only) ===== */
 @media (max-width: 900px){
-  .corner-intro{ position:static; margin:10px 16px 0; width:min(92vw, var(--intro-width)); text-align:left; text-align-last:left; background:none; border-radius:0; padding:0; }
+  .corner-intro{
+    position:static; margin: 10px 16px 0;
+    width: min(92vw, var(--intro-width));
+    text-align:left; text-align-last:left;
+    background: none; border-radius: 0;
+    padding: 0;
+  }
   .corner-intro::before, .corner-intro::after{ display:none; }
   .split-50{ grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
   .split-50::after, .split-50::before{ display:none; }
   .edge-left{ left:10px } .edge-right{ right:10px }
   .bullets{ min-height: 0; }
+
   .edge{ width:56px; height:56px; }
   .edge::before{ width:62px; height:62px; }
   .edge::after{ width:84px; height:84px; }
@@ -170,47 +221,49 @@
 .hero { --hero-shift: 10vh; }
 .hero .half > * { transform: translateY(var(--hero-shift)); }
 .hero .corner-intro { transform: translateY(var(--hero-shift)); }
-@media (max-width:1200px){ .hero { --hero-shift: 8vh; } }
-@media (max-width: 900px){ .hero { --hero-shift: 0; } }
-@media (max-width: 700px){ .hero { --hero-shift: 0; } }
+@media (max-width: 1200px){ .hero { --hero-shift: 8vh; } }
+@media (max-width: 900px){  .hero { --hero-shift: 0; } }
+@media (max-width: 700px){  .hero { --hero-shift: 0; } }
 
 /* ===================================================== */
-/* ========== ONE-ENDED PILL (border-radius) ============ */
-/* Default: RIGHT-capped (rounded end on the right)      */
+/* ========== WHITE PILL behind comet (z-index 4) ====== */
+/* Default: vertical, rounded BOTTOM, centered under comet */
 /* ===================================================== */
 .hero::before{
   content:"";
   position:absolute;
-  left: var(--shape-left);
-  top: var(--shape-top);
-  width: var(--shape-w);
-  height: var(--shape-h);
-  transform-origin: 50% 50%;
-  transform: translate(var(--tx), var(--ty)) rotate(var(--shape-rotate));
-  background: var(--shape-color);
+  left: 50%;
+  bottom: calc(var(--comet-bottom) + var(--pill-y-nudge));
+  width: var(--pill-w);
+  height: var(--pill-h);
+  transform-origin: 50% 100%;
+  transform: translateX(calc(-50% + var(--pill-x-nudge)));
+  background: var(--pill-color);
   pointer-events:none;
-  z-index:0;
+  z-index:4;
 
-  /* Perfect semicircle when --cap-r = --shape-h / 2 */
-  border-radius: 0 var(--cap-r) var(--cap-r) 0 / 0 var(--cap-r) var(--cap-r) 0;
+  /* bottom-capped vertical pill (perfect semicircle if radius = pill-w/2) */
+  border-radius: 0 0 var(--pill-radius) var(--pill-radius) / 0 0 var(--pill-radius) var(--pill-radius);
 }
 
-/* LEFT-capped */
-.hero[data-cap="left"]::before{
-  border-radius: var(--cap-r) 0 0 var(--cap-r) / var(--cap-r) 0 0 var(--cap-r);
-}
-
-/* TOP-capped */
+/* OPTIONAL orientations if you need later */
 .hero[data-cap="top"]::before{
-  border-radius: var(--cap-r) var(--cap-r) 0 0 / var(--cap-r) var(--cap-r) 0 0;
+  border-radius: var(--pill-radius) var(--pill-radius) 0 0 / var(--pill-radius) var(--pill-radius) 0 0;
+}
+.hero[data-cap="left"]::before{
+  width: var(--pill-h); height: var(--pill-w); /* swap to horizontal */
+  transform-origin: 0 50%;
+  transform: translateX(calc(-50% + var(--pill-x-nudge))) rotate(90deg);
+  border-radius: var(--pill-radius) 0 0 var(--pill-radius) / var(--pill-radius) 0 0 var(--pill-radius);
+}
+.hero[data-cap="right"]::before{
+  width: var(--pill-h); height: var(--pill-w); /* swap to horizontal */
+  transform-origin: 100% 50%;
+  transform: translateX(calc(-50% + var(--pill-x-nudge))) rotate(-90deg);
+  border-radius: 0 var(--pill-radius) var(--pill-radius) 0 / 0 var(--pill-radius) var(--pill-radius) 0;
 }
 
-/* BOTTOM-capped */
-.hero[data-cap="bottom"]::before{
-  border-radius: 0 0 var(--cap-r) var(--cap-r) / 0 0 var(--cap-r) var(--cap-r);
-}
-
-/* ===== Comet artwork (unchanged) ===== */
+/* ===== Comet artwork — ABOVE pill ===== */
 .hero::after{
   content:"";
   position:absolute; left:50%; bottom:var(--comet-bottom);
@@ -224,5 +277,6 @@
     center / contain no-repeat url("../../assets/comet.svg"),
     center / contain no-repeat url("../svg/comet.png"),
     center / contain no-repeat url("../comet.png");
-  pointer-events:none; z-index:1;
+  pointer-events:none;
+  z-index:5; /* sits above the pill */
 }
