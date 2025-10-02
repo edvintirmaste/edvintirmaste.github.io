@@ -1,4 +1,4 @@
-/* Edvin Portfolio — hero.css (v29.17)
+/* Edvin Portfolio — hero.css (v29.18)
    v29.6  content-only vertical shift (keeps hover frost correct)
    v29.7  arrows centered to viewport
    v29.8  light-bg contrast halo
@@ -7,11 +7,11 @@
    v29.11 same hue, lighter tone via color-mix
    v29.12 chevrons recolored to indigo/blue-purple + matching glow
    v29.13 side-hover attention on arrows (scale + brighten via :has)
-   v29.14 comet rotated straight down (270deg)
-   v29.15 comet rotated 90deg (right → down)
-   v29.16 comet locked down; prevent flips (transform-origin + scale(1,1))
-   v29.17 FORCE rotate down with !important to defeat any overrides
-   + comet: static bottom-center ornament (uses assets/comet.svg), no filters
+   v29.14 comet attempt 1 (after)
+   v29.15 rotate 90deg
+   v29.16 lock + no flips
+   v29.17 force with !important
+   v29.18 MOVE comet to ::before, disable old ::after, head points DOWN
 */
 
 /* ---- Layout lock ---- */
@@ -184,9 +184,7 @@
   filter: drop-shadow(0 1px 2px rgba(0,0,0,.7)) drop-shadow(0 8px 22px rgba(0,0,0,.35));
 }
 
-/* ===== Side-hover attention on arrows (no JS; uses :has) =====
-   Works if halves have .left/.right classes, OR simply as first/last .half.
-   Triggers on :hover, :focus-visible, and :active for keyboard/tap. */
+/* ===== Side-hover attention on arrows (no JS; uses :has) ===== */
 @supports selector(:has(*)){
   /* LEFT triggers */
   .hero:has(.half.left:hover)            .edge-left,
@@ -216,7 +214,6 @@
     .hero:has(.half.left:active)           .edge-left svg,
     .hero:has(.split-50 > .half:first-of-type:hover)         .edge-left svg,
     .hero:has(.split-50 > .half:first-of-type:focus-visible) .edge-left svg{
-      /* use the same lifted tone as arrow hover */
       stroke: color-mix(in srgb, var(--edge-stroke) calc(100% - var(--edge-lift-hover)), white var(--edge-lift-hover));
     }
   }
@@ -302,8 +299,8 @@
 @media (max-width: 900px){  .hero { --hero-shift: 0; } }
 @media (max-width: 700px){  .hero { --hero-shift: 0; } }
 
-/* ===== Comet placement (static, no filters) ===== */
-.hero::after{
+/* ===== Comet placement (NEW: use ::before) ===== */
+.hero::before{
   /* tweak these if needed */
   --comet-size: clamp(80px, 8vw, 120px);
   --comet-bottom: clamp(14px, 2.2vw, 30px);
@@ -311,11 +308,16 @@
   content:"";
   position:absolute; left:50%; bottom:var(--comet-bottom);
   width:var(--comet-size); aspect-ratio:1/1;
-  background: center / contain no-repeat url('../comet.svg'); /* yellow icon */
+  background: center / contain no-repeat url('../comet.svg');
   pointer-events:none;
+  z-index:1;
 
-  /* Force orientation ↓ and neutralize any mirroring */
+  /* Lock orientation ↓ and neutralize any mirroring */
   transform-origin: 50% 50%;
-  transform: translateX(-50%) rotate(90deg) scale(1,1) !important;
-  will-change: transform;
+  transform: translateX(-50%) rotate(90deg) scale(1,1);
+}
+
+/* Disable any legacy comet on ::after that might be defined elsewhere */
+.hero::after{
+  content:none !important;
 }
