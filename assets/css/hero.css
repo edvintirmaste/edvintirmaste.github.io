@@ -1,6 +1,6 @@
-/* Edvin Portfolio — hero.css (v29.22)
-   v29.22 — comet restored on ::after, head points DOWN (90deg), robust path fallbacks.
-   Also keeps arrow side-hover grow/halo you asked for.
+/* Edvin Portfolio — hero.css (v29.23)
+   v29.22 — comet on ::after, head down (sprite native), robust path fallbacks.
+   v29.23 — NEW: masked white underlay on ::before to fill any interior transparency without bleeding outside edges.
 */
 
 /* ---- Layout lock ---- */
@@ -14,7 +14,7 @@
   /* comet defaults */
   --comet-size: clamp(120px, 12vw, 160px);
   --comet-bottom: clamp(18px, 4.4vw, 42px);
-  --comet-rot: 0deg; /* head DOWN (sprite’s native orientation) */
+  --comet-rot: 0deg; /* head DOWN (sprite native) */
 }
 
 /* Two-column split with glowing divider */
@@ -257,7 +257,43 @@
 @media (max-width: 900px){  .hero { --hero-shift: 0; } }
 @media (max-width: 700px){  .hero { --hero-shift: 0; } }
 
-/* ===== Comet (final) ===== */
+/* ===== Comet: masked inner-white underlay (new) ===== */
+.hero::before{
+  content:"";
+  position:absolute; left:50%; bottom:var(--comet-bottom);
+  width:var(--comet-size); aspect-ratio:1/1;
+  transform-origin:50% 50%;
+  transform: translateX(-50%) rotate(var(--comet-rot));
+  background:#fff;
+
+  /* Use the comet silhouette as a mask (robust path fallbacks) */
+  -webkit-mask-image:
+    url("../svg/comet.svg"),
+    url("../comet.svg"),
+    url("../../assets/svg/comet.svg"),
+    url("../../assets/comet.svg"),
+    url("../svg/comet.png"),
+    url("../comet.png");
+  -webkit-mask-repeat:no-repeat;
+  -webkit-mask-position:center;
+  -webkit-mask-size:contain;
+
+          mask-image:
+    url("../svg/comet.svg"),
+    url("../comet.svg"),
+    url("../../assets/svg/comet.svg"),
+    url("../../assets/comet.svg"),
+    url("../svg/comet.png"),
+    url("../comet.png");
+  mask-repeat:no-repeat;
+  mask-position:center;
+  mask-size:contain;
+
+  pointer-events:none;
+  z-index:0; /* sits under ::after artwork */
+}
+
+/* ===== Comet (artwork) ===== */
 .hero::after{
   content:"";
   position:absolute; left:50%; bottom:var(--comet-bottom);
